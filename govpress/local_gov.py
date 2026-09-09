@@ -14,13 +14,16 @@
 from __future__ import annotations
 
 import re
+import ssl
 import time
 from dataclasses import dataclass, field
 from typing import Callable
-from urllib.parse import urljoin
+from urllib.parse import urljoin, urlparse
 
 import requests
 from bs4 import BeautifulSoup
+from requests.adapters import HTTPAdapter
+from urllib3.util.ssl_ import create_urllib3_context
 
 from .models import LOCAL, Article, clean_text, normalize_date
 
@@ -37,6 +40,88 @@ HEADERS = {
     "Accept": "text/html,application/xhtml+xml",
     "Accept-Language": "ko-KR,ko;q=0.9,en;q=0.8",
 }
+
+
+# 관공서 사이트에 붙을 때 걸리는 TLS 문제는 두 종류다. 둘 다 브라우저에서는
+# 멀쩡히 열리기 때문에 "차단당했다"고 오해하기 쉽다.
+#
+# 1) 악수 실패 (SSLV3_ALERT_HANDSHAKE_FAILURE)
+#    서버가 오래된 프로토콜·암호만 제시하는데, 요즘 OpenSSL은 기본값으로
+#    그걸 거절한다. 우리 쪽이 받아들일 범위를 넓히면 붙는다.
+#
+# 2) 인증서 검증 실패 (CERTIFICATE_VERIFY_FAILED)
+#    발급기관을 모르겠다는 뜻이다. 국내 정부 인증기관 루트가 윈도우에는
+#    있지만 파이썬 번들(certifi)에는 없거나, 사무실 보안장비가 통신을
+#    가로채 재서명하는 경우다. 검증을 끄는 대신 **운영체제 저장소**를
+#    보게 하면 브라우저와 같은 기준으로 검증하게 된다.
+#
+# 그래서 순서는: 기본 → 구형TLS+OS저장소 → (그래도 안 되면) 검증 생략.
+# 마지막 단계는 눈에 보이게 알린다.
+_LEGACY_TLS_HOSTS: set[str] = set()
+_INSECURE_HOSTS: set[str] = set()
+_session_cache: dict[str, requests.Session] = {}
+
+
+def _os_trust_context() -> ssl.SSLContext:
+    """운영체제 인증서 저장소를 쓰는 컨텍스트.
+
+    truststore가 있으면 윈도우/macOS 저장소를 그대로 쓴다. 브라우저가
+    신뢰하는 기관이면 여기서도 신뢰한다. 없으면 기본 번들로 물러선다.
+    """
+    try:
+        import truststore
+
+        return truststore.SSLContext(ssl.PROTOCOL_TLS_CLIENT)
+    except ImportError:
+        return create_urllib3_context()
+
+
+class _LegacyTLSAdapter(HTTPAdapter):
+    """구형 TLS 서버용 어댑터. 인증서는 OS 저장소 기준으로 검증한다."""
+
+    def __init__(self, verify: bool = True, **kwargs):
+        self._verify = verify
+        super().__init__(**kwargs)
+
+    def init_poolmanager(self, *args, **kwargs):
+        context = _os_trust_context() if self._verify else create_urllib3_context()
+
+        context.options |= 0x4  # OP_LEGACY_SERVER_CONNECT
+        context.set_ciphers("DEFAULT@SECLEVEL=1")
+        try:
+            context.minimum_version = ssl.TLSVersion.TLSv1
+        except (AttributeError, ValueError):
+            pass
+
+        if not self._verify:
+            context.check_hostname = False
+            context.verify_mode = ssl.CERT_NONE
+
+        kwargs["ssl_context"] = context
+        return super().init_poolmanager(*args, **kwargs)
+
+
+def _make_session(key: str, verify: bool) -> requests.Session:
+    if key not in _session_cache:
+        session = requests.Session()
+        session.mount("https://", _LegacyTLSAdapter(verify=verify))
+        if not verify:
+            session.verify = False
+        _session_cache[key] = session
+    return _session_cache[key]
+
+
+def legacy_session() -> requests.Session:
+    """구형 TLS + 운영체제 인증서 저장소."""
+    return _make_session("legacy", verify=True)
+
+
+def insecure_session() -> requests.Session:
+    """마지막 수단. 인증서 검증을 건너뛴다."""
+    import urllib3
+
+    urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+    return _make_session("insecure", verify=False)
 
 
 @dataclass(frozen=True)
@@ -598,11 +683,43 @@ def to_articles(items: list[dict], site: Site) -> list[Article]:
 
 
 def fetch_page(site: Site, page: int, session=None, timeout: int = 25) -> list[Article]:
-    client = session or requests
-    response = client.get(site.page_url(page), headers=HEADERS, timeout=timeout)
+    """한 페이지를 받아 파싱한다.
+
+    TLS 악수에 실패하면 구형 설정으로 한 번 더 시도한다. 그 호스트는
+    기억해 두어, 다음부터는 곧바로 구형 설정으로 붙는다.
+    """
+    url = site.page_url(page)
+    host = urlparse(url).hostname or ""
+
+    if host in _INSECURE_HOSTS:
+        response = insecure_session().get(url, headers=HEADERS, timeout=timeout)
+    elif host in _LEGACY_TLS_HOSTS:
+        response = legacy_session().get(url, headers=HEADERS, timeout=timeout)
+    else:
+        client = session or requests
+        try:
+            response = client.get(url, headers=HEADERS, timeout=timeout)
+        except requests.exceptions.SSLError:
+            _LEGACY_TLS_HOSTS.add(host)
+            try:
+                response = legacy_session().get(url, headers=HEADERS, timeout=timeout)
+            except requests.exceptions.SSLError:
+                _INSECURE_HOSTS.add(host)
+                response = insecure_session().get(url, headers=HEADERS, timeout=timeout)
+
     response.raise_for_status()
     response.encoding = response.apparent_encoding or "utf-8"
     return to_articles(site.parser(response.text, site), site)
+
+
+def tls_note(site: Site) -> str:
+    """이 사이트에 어떤 연결을 쓰고 있는지. 진행 표시에 붙인다."""
+    host = urlparse(site.list_url).hostname or ""
+    if host in _INSECURE_HOSTS:
+        return " (인증서 검증 생략)"
+    if host in _LEGACY_TLS_HOSTS:
+        return " (구형 TLS)"
+    return ""
 
 
 def collect(
@@ -630,7 +747,7 @@ def collect(
                 items = fetch_page(site, request_page, session=session)
             except Exception as exc:
                 if on_progress:
-                    on_progress(site.name, page, 0, f"실패: {exc}")
+                    on_progress(site.name, page, 0, f"실패: {exc}", "")
                 break
 
             fresh = [a for a in items if (a.source, a.uid) not in collected]
@@ -638,7 +755,7 @@ def collect(
                 collected[(article.source, article.uid)] = article
 
             if on_progress:
-                on_progress(site.name, page, len(fresh), None)
+                on_progress(site.name, page, len(fresh), None, tls_note(site))
 
             if not items or not fresh:
                 break

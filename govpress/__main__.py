@@ -111,11 +111,11 @@ def _collect_local(args) -> int:
     scope = ", ".join(s.name for s in targets) if targets else "전체 지자체"
     print(f"지자체 수집 시작 — {scope} · 최근 {args.pages}페이지")
 
-    def progress(label, page, added, error):
+    def progress(label, page, added, error, note=""):
         if error:
             print(f"  [{label}] {page}페이지 {error}", file=sys.stderr)
         elif added:
-            print(f"  [{label}] {page}페이지 → {added}건")
+            print(f"  [{label}] {page}페이지 → {added}건{note}")
 
     articles = local_gov.collect(sites=targets, pages=args.pages, on_progress=progress)
     if not articles:

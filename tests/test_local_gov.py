@@ -325,3 +325,66 @@ def test_size방식_사이트는_한_번만_요청한다(monkeypatch):
 
     assert len(calls) == 1, f"요청이 {len(calls)}번 나갔습니다"
     assert calls[0].endswith("cntPerPage=90"), calls[0]
+
+
+# --- 구형 TLS 서버 -----------------------------------------------------------
+
+def test_TLS_실패하면_구형설정으로_한번_더_시도한다(monkeypatch):
+    """성남시·용인시처럼 오래된 TLS만 지원하는 서버가 있다."""
+    import requests as rq
+
+    local_gov._LEGACY_TLS_HOSTS.clear()
+    attempts = []
+
+    class Response:
+        text = load("local_seongnam.html")
+        apparent_encoding = "utf-8"
+        encoding = None
+        def raise_for_status(self): return None
+
+    class Strict:
+        def get(self, url, headers=None, timeout=None):
+            attempts.append("strict")
+            raise rq.exceptions.SSLError("sslv3 alert handshake failure")
+
+    class Legacy:
+        def get(self, url, headers=None, timeout=None):
+            attempts.append("legacy")
+            return Response()
+
+    monkeypatch.setattr(local_gov, "legacy_session", lambda: Legacy())
+
+    site = local_gov.find("성남시")
+    articles = local_gov.fetch_page(site, 1, session=Strict())
+
+    assert attempts == ["strict", "legacy"]
+    assert len(articles) == 3
+    assert site.list_url.split("/")[2] in local_gov._LEGACY_TLS_HOSTS
+
+
+def test_한번_실패한_호스트는_바로_구형설정을_쓴다(monkeypatch):
+    """매번 실패를 반복하면 수집이 두 배로 느려진다."""
+    class Response:
+        text = load("local_seongnam.html")
+        apparent_encoding = "utf-8"
+        encoding = None
+        def raise_for_status(self): return None
+
+    calls = []
+
+    class Legacy:
+        def get(self, url, headers=None, timeout=None):
+            calls.append(url)
+            return Response()
+
+    class ShouldNotBeUsed:
+        def get(self, *a, **k):
+            raise AssertionError("이미 실패한 호스트인데 다시 엄격 설정을 썼습니다")
+
+    local_gov._LEGACY_TLS_HOSTS.clear()
+    local_gov._LEGACY_TLS_HOSTS.add("www.seongnam.go.kr")
+    monkeypatch.setattr(local_gov, "legacy_session", lambda: Legacy())
+
+    local_gov.fetch_page(local_gov.find("성남시"), 1, session=ShouldNotBeUsed())
+    assert len(calls) == 1
+    local_gov._LEGACY_TLS_HOSTS.clear()
