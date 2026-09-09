@@ -195,5 +195,133 @@ def test_모든_지자체가_지역에_속한다():
 def test_지역이_둘로_나뉜다():
     grouped = dict(local_gov.sites_by_region())
     assert set(grouped) == {"서울", "경기"}
-    assert {s.name for s in grouped["서울"]} == {"서울시", "송파구"}
-    assert {s.name for s in grouped["경기"]} == {"구리시", "하남시"}
+    assert {s.name for s in grouped["서울"]} == {"강동구", "서울시", "송파구"}
+    assert {s.name for s in grouped["경기"]} == {
+        "경기도", "구리시", "성남시", "용인시", "하남시",
+    }
+
+
+def test_여덟_곳이_모두_등록되어_있다():
+    assert len(local_gov.SITES) == 8
+    assert local_gov.PENDING == ()
+
+
+# --- 나머지 네 곳 -----------------------------------------------------------
+
+@pytest.fixture(scope="module")
+def parsed():
+    """사이트별 fixture를 한 번에 파싱해 둔다."""
+    out = {}
+    for name, fixture in [
+        ("성남시", "local_seongnam.html"),
+        ("용인시", "local_yongin.html"),
+        ("경기도", "local_gyeonggi.html"),
+        ("강동구", "local_gangdong.html"),
+    ]:
+        site = local_gov.find(name)
+        out[name] = local_gov.to_articles(site.parser(load(fixture), site), site)
+    return out
+
+
+@pytest.mark.parametrize("name", ["성남시", "용인시", "경기도", "강동구"])
+def test_네_곳_모두_실사용_가능하다(parsed, name):
+    articles = parsed[name]
+    assert len(articles) == 3, f"{name} 파싱 건수가 다릅니다"
+    assert all(a.is_valid() for a in articles)
+    assert all(a.agency == name for a in articles)
+    assert all(a.category == LOCAL for a in articles)
+
+
+@pytest.mark.parametrize("name", ["성남시", "용인시", "경기도", "강동구"])
+def test_네_곳_모두_담당부서를_읽는다(parsed, name):
+    assert all(a.summary for a in parsed[name]), f"{name} 담당부서가 비었습니다"
+
+
+@pytest.mark.parametrize(
+    "name,expected_prefix",
+    [
+        ("성남시", "https://www.seongnam.go.kr/bbs010101/"),
+        ("용인시", "https://www.yongin.go.kr/user/bbs/BD_selectBbs.do?"),
+        ("경기도", "https://gnews.gg.go.kr/briefing/brief_gongbo_view.do?"),
+        ("강동구", "https://www.gangdong.go.kr/web/newportal/press/"),
+    ],
+)
+def test_네_곳_링크가_원문을_가리킨다(parsed, name, expected_prefix):
+    for article in parsed[name]:
+        assert article.link.startswith(expected_prefix)
+        assert "javascript" not in article.link
+
+
+def test_경기도_링크에서_세션아이디를_떼어낸다(parsed):
+    """jsessionid는 세션이 끝나면 무의미해진다. 저장해 두면 안 된다."""
+    for article in parsed["경기도"]:
+        assert "jsessionid" not in article.link
+        assert "keyword" not in article.link and "page=" not in article.link
+
+
+def test_성남시_링크는_경로에_글번호가_붙는다(parsed):
+    assert parsed["성남시"][0].link.endswith("/405200")
+
+
+def test_용인시는_글마다_게시판코드가_달라도_링크를_지킨다(parsed):
+    """같은 목록 안에서도 q_bbsCode가 글마다 다르다."""
+    codes = {a.link.split("q_bbsCode=")[1].split("&")[0] for a in parsed["용인시"]}
+    assert len(codes) > 1, "게시판 코드가 하나로 뭉개졌습니다"
+
+
+def test_제목에_New_아이콘이나_라벨이_섞이지_않는다(parsed):
+    for name, articles in parsed.items():
+        for article in articles:
+            assert "New" not in article.title, f"{name}: {article.title}"
+            assert not article.title.startswith("제목"), f"{name}: {article.title}"
+
+
+# --- 페이지 넘기기 ----------------------------------------------------------
+
+@pytest.mark.parametrize(
+    "name,expected",
+    [
+        ("서울시", "https://www.seoul.go.kr/news/news_report.do?curPage=2"),
+        ("강동구", "https://www.gangdong.go.kr/web/newportal/press/list?cp=2"),
+        ("경기도", "https://gnews.gg.go.kr/briefing/brief_gongbo.do?page=2"),
+    ],
+)
+def test_페이지_주소를_사이트별로_만든다(name, expected):
+    assert local_gov.find(name).page_url(2) == expected
+
+
+def test_성남시는_페이지_대신_건수를_늘린다():
+    """성남시는 페이지 이동이 POST뿐이라 한 번에 받을 건수를 키운다."""
+    site = local_gov.find("성남시")
+    assert site.single_request
+    assert site.page_url(1) == "https://www.seongnam.go.kr/bbs010101?cntPerPage=30"
+    assert site.page_url(2) == "https://www.seongnam.go.kr/bbs010101?cntPerPage=60"
+
+
+def test_나머지_지자체는_페이지_번호를_쓴다():
+    for site in local_gov.SITES:
+        if site.name != "성남시":
+            assert not site.single_request
+
+
+def test_size방식_사이트는_한_번만_요청한다(monkeypatch):
+    """30건→60건→90건을 겹쳐 받으면 같은 글을 계속 다시 읽게 된다."""
+    calls = []
+
+    class FakeSession:
+        def get(self, url, headers=None, timeout=None):
+            calls.append(url)
+            class R:
+                text = load("local_seongnam.html")
+                apparent_encoding = "utf-8"
+                encoding = None
+                def raise_for_status(self): return None
+            return R()
+
+    monkeypatch.setattr(local_gov.requests, "Session", lambda: FakeSession())
+    monkeypatch.setattr(local_gov.time, "sleep", lambda *_: None)
+
+    local_gov.collect(sites=[local_gov.find("성남시")], pages=3)
+
+    assert len(calls) == 1, f"요청이 {len(calls)}번 나갔습니다"
+    assert calls[0].endswith("cntPerPage=90"), calls[0]

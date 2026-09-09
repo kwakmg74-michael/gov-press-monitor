@@ -55,14 +55,24 @@ class Site:
     list_url: str
     page_param: str
     parser: Callable[[str, "Site"], list[dict]] = field(repr=False)
+    # "page": 파라미터에 페이지 번호를 넣는다 (대부분)
+    # "size": 페이지 이동이 POST뿐이라, 대신 한 번에 몇 건을 받을지 지정한다 (성남시)
+    page_mode: str = "page"
+    page_size: int = 10
 
     @property
     def source(self) -> str:
         return f"local:{self.name}"
 
+    @property
+    def single_request(self) -> bool:
+        """한 번의 요청으로 끝나는가."""
+        return self.page_mode == "size"
+
     def page_url(self, page: int) -> str:
         joiner = "&" if "?" in self.list_url else "?"
-        return f"{self.list_url}{joiner}{self.page_param}={page}"
+        value = page * self.page_size if self.page_mode == "size" else page
+        return f"{self.list_url}{joiner}{self.page_param}={value}"
 
 
 # --- 사이트별 파서 -----------------------------------------------------------
@@ -124,23 +134,37 @@ def _row_text(cell) -> str:
     if cell is None:
         return ""
     clone = BeautifulSoup(str(cell), "html.parser")
-    for junk in clone.select(".add-head, .p-icon, .new, .hd-element"):
+    for junk in clone.select(
+        ".add-head, .mobile-tit, .p-icon, .new, .hd-element, .bbsNewImage, img"
+    ):
         junk.decompose()
     return clean_text(clone.get_text(" ", strip=True))
 
 
-def _board_permalink(href: str, site: Site) -> str:
-    """상세 링크에서 페이지 상태값을 떼고 게시글만 가리키게 만든다."""
+def _keep_params(href: str, site: Site, names: tuple[str, ...]) -> str:
+    """상세 링크에서 필요한 파라미터만 남긴다.
+
+    목록에서 딴 링크에는 페이지 번호, 검색 조건, 세션 아이디 같은
+    "지금 이 순간"의 상태가 잔뜩 붙어 온다. 그대로 저장하면 나중에
+    열었을 때 지저분하고, 세션 아이디는 아예 의미가 없어진다.
+    """
     absolute = urljoin(site.list_url, href)
     base, _, query = absolute.partition("?")
+    base = base.split(";")[0]  # ;jsessionid=... 제거
+
     keep = {}
     for chunk in query.split("&"):
         name, _, value = chunk.partition("=")
-        if name in ("bbsNo", "nttNo", "key") and value:
+        if name in names and value:
             keep[name] = value
     if not keep:
         return absolute
     return base + "?" + "&".join(f"{k}={v}" for k, v in keep.items())
+
+
+def _board_permalink(href: str, site: Site) -> str:
+    """행정표준 게시판용 링크 정리."""
+    return _keep_params(href, site, ("bbsNo", "nttNo", "key"))
 
 
 def parse_standard_board(html: str, site: Site) -> list[dict]:
@@ -248,6 +272,211 @@ def parse_card_board(html: str, site: Site) -> list[dict]:
     return items
 
 
+_SEONGNAM_UID_RE = re.compile(r"fn_move_form\('(\d+)'\)")
+
+
+def parse_seongnam(html: str, site: Site) -> list[dict]:
+    """성남시 새소식.
+
+        table.board-table tbody tr
+          td[0] 번호 / td[1].text-left 제목(a) / td[2] 작성부서 / td[3] 등록일
+
+    목록 링크가 `fn_move_form('405200')` 이라 pstSn을 뽑아 조립한다.
+    상세 주소는 `/bbs010101/{pstSn}` 형태로 깔끔하다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+    seen: set[str] = set()
+
+    base = site.list_url.split("?")[0].rstrip("/")
+
+    for row in soup.select("table.board-table tbody tr"):
+        cells = row.find_all("td")
+        if len(cells) < 4:
+            continue
+
+        anchor = cells[1].find("a")
+        if not anchor:
+            continue
+
+        match = _SEONGNAM_UID_RE.search(anchor.get("onclick", "") or "")
+        if not match:
+            continue
+        uid = match.group(1)
+
+        title = _row_text(anchor)
+        published = normalize_date(_row_text(cells[3]))
+        if not title or not published or uid in seen:
+            continue
+        seen.add(uid)
+
+        items.append(
+            {
+                "uid": uid,
+                "title": title,
+                "link": f"{base}/{uid}",
+                "department": _row_text(cells[2]),
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
+def parse_yongin(html: str, site: Site) -> list[dict]:
+    """용인시 시정소식.
+
+        div.t_list table tbody tr
+          td[0] 번호 / td[1] 분류 / td[2].td_al 제목(a)
+          td[3] 첨부 / td[4] 부서명 / td[5] 등록일 / td[6] 조회수
+
+    상세 링크는 href에 그대로 들어 있고 `q_bbscttSn`이 고유 번호다.
+    같은 목록 안에서도 글마다 q_bbsCode가 다르므로 링크를 통째로 정리해 둔다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+    seen: set[str] = set()
+
+    for row in soup.select("div.t_list table tbody tr"):
+        anchor = row.select_one('a[href*="BD_selectBbs.do"]')
+        if not anchor:
+            continue
+
+        href = anchor.get("href", "") or ""
+        match = re.search(r"q_bbscttSn=(\w+)", href)
+        if not match:
+            continue
+        uid = match.group(1)
+
+        cells = row.find_all("td")
+        title = _row_text(anchor)
+
+        published = ""
+        date_index = -1
+        for index in range(len(cells) - 1, -1, -1):
+            published = normalize_date(_row_text(cells[index]))
+            if published:
+                date_index = index
+                break
+
+        department = _row_text(cells[date_index - 1]) if date_index > 0 else ""
+
+        if not title or not published or uid in seen:
+            continue
+        seen.add(uid)
+
+        items.append(
+            {
+                "uid": uid,
+                "title": title,
+                "link": _keep_params(href, site, ("q_bbsCode", "q_clCode", "q_bbscttSn")),
+                "department": department,
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
+def parse_gyeonggi(html: str, site: Site) -> list[dict]:
+    """경기도 뉴스포털 보도자료.
+
+        td.tit a.txtLink[href*="brief_gongbo_view.do"]  -> 제목
+        td.dp                                           -> 담당부서
+        td.date                                         -> 등록일
+
+    링크에 `;jsessionid=...`가 붙어 오므로 떼어낸다. 세션이 끝나면
+    무의미해지는 값이라 그대로 저장하면 나중에 링크가 지저분해진다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+    seen: set[str] = set()
+
+    for row in soup.select("tr"):
+        anchor = row.select_one('a[href*="brief_gongbo_view.do"]')
+        if not anchor:
+            continue
+
+        href = anchor.get("href", "") or ""
+        match = re.search(r"number=(\d+)", href)
+        if not match:
+            continue
+        uid = match.group(1)
+
+        title = _row_text(anchor)
+        published = normalize_date(_row_text(row.select_one("td.date")))
+        department = _row_text(row.select_one("td.dp"))
+
+        if not title or not published or uid in seen:
+            continue
+        seen.add(uid)
+
+        items.append(
+            {
+                "uid": uid,
+                "title": title,
+                "link": _keep_params(href, site, ("BS_CODE", "number")),
+                "department": department,
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
+def parse_gangdong(html: str, site: Site) -> list[dict]:
+    """강동구 보도자료.
+
+        div.table01 table tbody tr
+          td[0] 번호 / td[1].tx-lt 제목(a) / td[2] 주관부서 / td[3] 등록일
+
+    상세 주소가 `/web/newportal/press/15448`처럼 경로에 글 번호가 들어간다.
+    쿼리 파라미터가 없어 링크를 손볼 것도 없다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+    seen: set[str] = set()
+
+    for row in soup.select("div.table01 table tbody tr"):
+        anchor = row.select_one('a[href*="/press/"]')
+        if not anchor:
+            continue
+
+        href = anchor.get("href", "") or ""
+        uid = href.rstrip("/").rsplit("/", 1)[-1]
+        if not uid.isdigit():
+            continue
+
+        cells = row.find_all("td")
+        title = _row_text(anchor)
+
+        published = ""
+        date_index = -1
+        for index in range(len(cells) - 1, -1, -1):
+            published = normalize_date(_row_text(cells[index]))
+            if published:
+                date_index = index
+                break
+
+        department = _row_text(cells[date_index - 1]) if date_index > 0 else ""
+
+        if not title or not published or uid in seen:
+            continue
+        seen.add(uid)
+
+        items.append(
+            {
+                "uid": uid,
+                "title": title,
+                "link": urljoin(site.list_url, href),
+                "department": department,
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
 # --- 사이트 목록 -------------------------------------------------------------
 #
 # 실제 목록 HTML을 확인하고 파서 테스트를 통과한 것만 넣는다.
@@ -263,6 +492,13 @@ SITES: tuple[Site, ...] = (
         parser=parse_seoul,
     ),
     Site(
+        name="강동구",
+        region="서울",
+        list_url="https://www.gangdong.go.kr/web/newportal/press/list",
+        page_param="cp",
+        parser=parse_gangdong,
+    ),
+    Site(
         name="송파구",
         region="서울",
         list_url="https://www.songpa.go.kr/www/selectBbsNttList.do?bbsNo=96&key=2781",
@@ -270,11 +506,35 @@ SITES: tuple[Site, ...] = (
         parser=parse_standard_board,
     ),
     Site(
+        name="경기도",
+        region="경기",
+        list_url="https://gnews.gg.go.kr/briefing/brief_gongbo.do",
+        page_param="page",
+        parser=parse_gyeonggi,
+    ),
+    Site(
         name="구리시",
         region="경기",
         list_url="https://www.guri.go.kr/www/selectBbsNttList.do?bbsNo=42&key=393",
         page_param="pageIndex",
         parser=parse_standard_board,
+    ),
+    Site(
+        name="성남시",
+        region="경기",
+        list_url="https://www.seongnam.go.kr/bbs010101",
+        # 페이지 이동이 POST뿐이라 한 번에 받을 건수를 늘리는 쪽으로 간다.
+        page_param="cntPerPage",
+        page_mode="size",
+        page_size=30,
+        parser=parse_seongnam,
+    ),
+    Site(
+        name="용인시",
+        region="경기",
+        list_url="https://www.yongin.go.kr/user/bbs/BD_selectBbsList.do?q_bbsCode=1001&q_clCode=1",
+        page_param="q_currPage",
+        parser=parse_yongin,
     ),
     Site(
         name="하남시",
@@ -287,7 +547,9 @@ SITES: tuple[Site, ...] = (
 
 # 넣을 예정이지만 아직 목록 구조를 확인하지 못한 곳.
 # 확인이 끝나는 대로 SITES로 옮긴다.
-PENDING = ("강동구", "경기도", "성남시", "용인시")
+#
+# 남양주시는 개발자도구 감지 페이지가 떠서 정상 목록을 받을 수 없었다.
+PENDING: tuple[str, ...] = ()
 
 
 def sites_by_region() -> list[tuple[str, list[Site]]]:
@@ -359,9 +621,13 @@ def collect(
     session = requests.Session()
 
     for site in targets:
-        for page in range(1, pages + 1):
+        # "size" 방식은 한 번의 요청에 원하는 만큼 담아 오므로 반복하지 않는다.
+        # 그대로 두면 30건 → 60건 → 90건을 겹쳐 받아 같은 글을 계속 다시 읽는다.
+        last_page = 1 if site.single_request else pages
+        for page in range(1, last_page + 1):
+            request_page = pages if site.single_request else page
             try:
-                items = fetch_page(site, page, session=session)
+                items = fetch_page(site, request_page, session=session)
             except Exception as exc:
                 if on_progress:
                     on_progress(site.name, page, 0, f"실패: {exc}")
