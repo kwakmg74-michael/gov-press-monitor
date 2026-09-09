@@ -116,6 +116,21 @@ def test_부처가_구분별_가나다순으로_들어간다(tmp_path):
         assert names == sorted(names), f"{group['group']}가 가나다순이 아닙니다"
 
 
+def test_지자체는_광역이_먼저_그다음_가나다순이다(tmp_path):
+    tabs = {t["category"]: t for t in read_tabs(render(tmp_path))}
+    groups = {g["group"]: [d["name"] for d in g["depts"]] for g in tabs[models.LOCAL]["groups"]}
+    assert groups["서울"] == ["서울시", "강동구", "송파구"]
+    assert groups["경기"] == ["경기도", "구리시", "성남시", "용인시", "하남시"]
+
+
+def test_체크박스에_정렬용_필드가_새지_않는다(tmp_path):
+    """rank는 정렬에만 쓰고 HTML로는 내보내지 않는다."""
+    for tab in read_tabs(render(tmp_path)):
+        for group in tab["groups"]:
+            for dept in group["depts"]:
+                assert set(dept) == {"name", "count", "parent"}
+
+
 def test_보도자료가_없는_부처도_목록에_나온다(tmp_path):
     """수집된 기관만 보여 주면 그날 발표가 없던 부처는 고를 수 없게 된다."""
     listed = {d["name"] for g in government_tab(tmp_path)["groups"] for d in g["depts"]}

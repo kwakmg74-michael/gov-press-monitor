@@ -46,6 +46,8 @@ def _dept_groups(rows, category: str) -> list[dict]:
                         "name": site.name,
                         "count": counts.pop(site.name, 0),
                         "parent": "",
+                        # 광역(서울시·경기도)이 그 지역 맨 앞에 온다.
+                        "rank": 0 if site.metro else 1,
                     }
                 )
 
@@ -66,15 +68,16 @@ def _dept_groups(rows, category: str) -> list[dict]:
             {"name": name, "count": counts[name], "parent": ""}
         )
 
-    return [
-        {
-            "group": group,
-            "note": notes.get(group, ""),
-            "depts": sorted(buckets[group], key=lambda d: d["name"]),
-        }
-        for group in order
-        if group in buckets
-    ]
+    # rank가 없으면 1로 봐서, 결국 이름순이 된다. 지자체만 광역을 0으로 올린다.
+    groups = []
+    for group in order:
+        if group not in buckets:
+            continue
+        depts = sorted(buckets[group], key=lambda d: (d.get("rank", 1), d["name"]))
+        for dept in depts:
+            dept.pop("rank", None)
+        groups.append({"group": group, "note": notes.get(group, ""), "depts": depts})
+    return groups
 
 
 def _roster_size(category: str) -> int:

@@ -133,6 +133,7 @@ class Site:
     list_url   : 보도자료 목록 페이지
     page_param : 페이지 번호를 넘기는 쿼리 이름
     parser     : 목록 HTML -> list[dict] (title/uid/link/published_at/department)
+    metro      : 광역자치단체인가 (서울시·경기도 — 지역 묶음의 맨 앞에 온다)
     """
 
     name: str
@@ -144,10 +145,16 @@ class Site:
     # "size": 페이지 이동이 POST뿐이라, 대신 한 번에 몇 건을 받을지 지정한다 (성남시)
     page_mode: str = "page"
     page_size: int = 10
+    metro: bool = False
 
     @property
     def source(self) -> str:
         return f"local:{self.name}"
+
+    @property
+    def sort_key(self) -> tuple[int, str]:
+        """광역이 먼저, 그다음 가나다순."""
+        return (0 if self.metro else 1, self.name)
 
     @property
     def single_request(self) -> bool:
@@ -575,6 +582,7 @@ SITES: tuple[Site, ...] = (
         list_url="https://www.seoul.go.kr/news/news_report.do",
         page_param="curPage",
         parser=parse_seoul,
+        metro=True,
     ),
     Site(
         name="강동구",
@@ -596,6 +604,7 @@ SITES: tuple[Site, ...] = (
         list_url="https://gnews.gg.go.kr/briefing/brief_gongbo.do",
         page_param="page",
         parser=parse_gyeonggi,
+        metro=True,
     ),
     Site(
         name="구리시",
@@ -638,12 +647,12 @@ PENDING: tuple[str, ...] = ()
 
 
 def sites_by_region() -> list[tuple[str, list[Site]]]:
-    """지역별로 묶고, 지역 안은 가나다순."""
+    """지역별로 묶고, 지역 안은 광역이 먼저 그다음 가나다순."""
     buckets: dict[str, list[Site]] = {}
     for site in SITES:
         buckets.setdefault(site.region, []).append(site)
     return [
-        (region, sorted(buckets[region], key=lambda s: s.name))
+        (region, sorted(buckets[region], key=lambda s: s.sort_key))
         for region in REGION_ORDER
         if region in buckets
     ]

@@ -97,6 +97,21 @@ def test_지역별로_묶인다():
     assert local_gov.region_of("서울시") == "서울"
 
 
+def test_광역이_지역_맨_앞에_온다():
+    """서울시·경기도는 고정, 나머지는 가나다순."""
+    grouped = dict(local_gov.sites_by_region())
+    assert [s.name for s in grouped["서울"]] == ["서울시", "강동구", "송파구"]
+    assert [s.name for s in grouped["경기"]] == [
+        "경기도", "구리시", "성남시", "용인시", "하남시",
+    ]
+
+
+def test_지역마다_광역은_한_곳뿐이다():
+    for region, sites in local_gov.sites_by_region():
+        metros = [s.name for s in sites if s.metro]
+        assert len(metros) == 1, f"{region}의 광역이 {metros}입니다"
+
+
 def test_지역_순서는_서울_다음_경기다():
     assert local_gov.REGION_ORDER == ("서울", "경기")
 
