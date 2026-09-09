@@ -16,7 +16,24 @@ import json
 from datetime import datetime
 from pathlib import Path
 
-from . import agencies, local_gov, models, storage
+from . import agencies, local_gov, models, public_org, research, storage
+
+
+# 분류별 명단표를 가진 모듈. 정부기관은 코드표(agencies)라 따로 다룬다.
+_MODULES = {
+    models.LOCAL: local_gov,
+    models.PUBLIC: public_org,
+    models.RESEARCH: research,
+}
+
+
+def _unique(names: list[str]) -> list[str]:
+    """순서를 지키면서 중복을 걸러 낸다."""
+    seen: list[str] = []
+    for name in names:
+        if name not in seen:
+            seen.append(name)
+    return seen
 
 
 def _dept_groups(rows, category: str) -> list[dict]:
@@ -36,18 +53,21 @@ def _dept_groups(rows, category: str) -> list[dict]:
     order: list[str] = list(agencies.GROUP_ORDER)
     notes: dict[str, str] = {}
 
-    if category == models.LOCAL:
-        # 지자체는 지역(서울/경기)으로 묶는다.
-        order = list(local_gov.REGION_ORDER) + [agencies.OTHER_GROUP]
-        for region, sites in local_gov.sites_by_region():
+    module = _MODULES.get(category)
+    if module is not None:
+        # 지자체는 지역(서울/경기), 그 밖에는 분야로 묶는다.
+        # 분야 목록에 이미 '기타'가 있을 수 있으므로 중복을 걸러 낸다 —
+        # 그대로 두면 같은 묶음이 화면에 두 번 그려진다.
+        order = _unique(list(module.GROUP_ORDER) + [agencies.OTHER_GROUP])
+        for group, sites in module.sites_by_group():
             for site in sites:
-                buckets.setdefault(region, []).append(
+                buckets.setdefault(group, []).append(
                     {
                         "name": site.name,
                         "count": counts.pop(site.name, 0),
                         "parent": "",
-                        # 광역(서울시·경기도)이 그 지역 맨 앞에 온다.
-                        "rank": 0 if site.metro else 1,
+                        # 대표 기관(광역자치단체)이 그 묶음 맨 앞에 온다.
+                        "rank": 0 if site.primary else 1,
                     }
                 )
 
@@ -88,8 +108,10 @@ def _roster_size(category: str) -> int:
     """
     if category == models.GOVERNMENT:
         return len(agencies.MINISTRIES)
-    if category == models.LOCAL:
-        return len(local_gov.SITES)
+    module = _MODULES.get(category)
+    if module is not None:
+        # 게시판이 아니라 기관을 센다. 한 기관에 게시판이 여럿이어도 한 곳이다.
+        return len(module.agency_names())
     return 0
 
 

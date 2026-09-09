@@ -15,7 +15,7 @@ import unicodedata
 import webbrowser
 from collections import defaultdict
 
-from . import agencies, dashboard, korea_kr, local_gov, storage
+from . import agencies, dashboard, korea_kr, local_gov, public_org, research, storage
 from .models import InvalidDate, parse_date_range
 
 
@@ -80,36 +80,52 @@ def _depts(_args) -> int:
     return 0
 
 
-def _locals(_args) -> int:
-    """수집 대상 지자체 목록."""
-    for region, sites in local_gov.sites_by_region():
-        print(f"\n[{region}] {len(sites)}곳")
+def _show_sites(module, title: str) -> int:
+    """수집 대상 목록. 한 기관에 게시판이 여럿이면 함께 보여 준다."""
+    for group, sites in module.sites_by_group():
+        print(f"\n[{group}] {len(sites)}곳")
         for site in sites:
+            extra = module.boards_of(site.name) if hasattr(module, "boards_of") else [site]
             print(f"  {_pad(site.name, 14)}{site.list_url}")
+            for other in extra[1:]:
+                print(f"  {_pad('', 14)}{other.list_url}  ({other.board})")
 
-    if local_gov.PENDING:
+    print(f"\n총 {len(module.agency_names())}곳 / 게시판 {len(module.SITES)}개.")
+    if module.PENDING:
         print("\n[확인 대기] 목록 구조 확인 후 추가 예정")
-        print("  " + ", ".join(local_gov.PENDING))
+        print("  " + ", ".join(module.PENDING))
     return 0
 
 
-def _collect_local(args) -> int:
+def _locals(_args) -> int:
+    return _show_sites(local_gov, "지자체")
+
+
+def _publics(_args) -> int:
+    return _show_sites(public_org, "공공기관")
+
+
+def _collect_sites(module, args, what: str) -> int:
     targets = None
-    if args.city:
+    if args.only:
         targets = []
-        for name in args.city:
-            site = local_gov.find(name)
-            if site is None:
+        for name in args.only:
+            found = module.boards_of(name) if hasattr(module, "boards_of") else []
+            if not found:
+                site = module.find(name)
+                found = [site] if site else []
+            if not found:
                 print(
                     f"오류: '{name}'는 아직 수집 대상이 아닙니다. "
-                    "`python -m govpress locals`로 목록을 확인하세요.",
+                    f"`python -m govpress {what}s`로 목록을 확인하세요.",
                     file=sys.stderr,
                 )
                 return 2
-            targets.append(site)
+            targets.extend(found)
 
-    scope = ", ".join(s.name for s in targets) if targets else "전체 지자체"
-    print(f"지자체 수집 시작 — {scope} · 최근 {args.pages}페이지")
+    names = sorted({s.name for s in targets}) if targets else None
+    scope = ", ".join(names) if names else f"전체 {what}"
+    print(f"{what} 수집 시작 — {scope} · 최근 {args.pages}페이지")
 
     def progress(label, page, added, error, note=""):
         if error:
@@ -117,7 +133,7 @@ def _collect_local(args) -> int:
         elif added:
             print(f"  [{label}] {page}페이지 → {added}건{note}")
 
-    articles = local_gov.collect(sites=targets, pages=args.pages, on_progress=progress)
+    articles = module.collect(sites=targets, pages=args.pages, on_progress=progress)
     if not articles:
         print("수집된 보도자료가 없습니다.", file=sys.stderr)
         return 1
@@ -125,6 +141,22 @@ def _collect_local(args) -> int:
     result = storage.save(articles, args.db)
     print(f"수집 {len(articles)}건 / 신규 저장 {result['new']}건 / DB 누적 {result['total']}건")
     return 0
+
+
+def _collect_local(args) -> int:
+    return _collect_sites(local_gov, args, "지자체")
+
+
+def _collect_public(args) -> int:
+    return _collect_sites(public_org, args, "공공기관")
+
+
+def _labs(_args) -> int:
+    return _show_sites(research, "연구소")
+
+
+def _collect_research(args) -> int:
+    return _collect_sites(research, args, "연구소")
 
 
 def _collect(args) -> int:
@@ -203,8 +235,18 @@ def main(argv=None) -> int:
     sub.add_parser("locals", help="선택 가능한 지자체 목록 보기")
 
     local = sub.add_parser("collect-local", help="지자체 보도자료 수집")
-    local.add_argument("--city", nargs="+", metavar="지자체", help="수집할 지자체 (생략하면 전체)")
-    local.add_argument("--pages", type=int, default=3, help="지자체별로 받아올 페이지 수 (기본 3)")
+    local.add_argument("--city", "--only", dest="only", nargs="+", metavar="지자체",
+                       help="수집할 지자체 (생략하면 전체)")
+    local.add_argument("--pages", type=int, default=3, help="기관별로 받아올 페이지 수 (기본 3)")
+
+    sub.add_parser("publics", help="선택 가능한 공공기관 목록 보기")
+    sub.add_parser("labs", help="선택 가능한 연구소 목록 보기")
+    lab = sub.add_parser("collect-research", help="연구소 자료 수집")
+    lab.add_argument("--only", nargs="+", metavar="기관", help="수집할 기관 (생략하면 전체)")
+    lab.add_argument("--pages", type=int, default=3, help="기관별로 받아올 페이지 수 (기본 3)")
+    public = sub.add_parser("collect-public", help="공공기관 보도자료 수집")
+    public.add_argument("--only", nargs="+", metavar="기관", help="수집할 기관 (생략하면 전체)")
+    public.add_argument("--pages", type=int, default=3, help="기관별로 받아올 페이지 수 (기본 3)")
 
     collect = sub.add_parser("collect", help="korea.kr에서 보도자료 수집")
     _add_collect_options(collect)
@@ -226,6 +268,14 @@ def main(argv=None) -> int:
         return _locals(args)
     if args.command == "collect-local":
         return _collect_local(args)
+    if args.command == "publics":
+        return _publics(args)
+    if args.command == "collect-public":
+        return _collect_public(args)
+    if args.command == "labs":
+        return _labs(args)
+    if args.command == "collect-research":
+        return _collect_research(args)
     if args.command == "collect":
         return _collect(args)
     if args.command == "dashboard":

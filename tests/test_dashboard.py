@@ -68,13 +68,13 @@ def test_정부기관_탭에만_데이터가_있다(tmp_path):
 
 def test_탭_숫자는_기사가_아니라_기관_수다(tmp_path):
     """기사 건수는 날마다 출렁인다. 탭에는 '몇 곳을 훑는지'를 보여 준다."""
-    from govpress import agencies, local_gov
+    from govpress import agencies, local_gov, public_org, research
 
     tabs = {t["category"]: t for t in read_tabs(render(tmp_path))}
     assert tabs["정부기관"]["agencies"] == len(agencies.MINISTRIES)
-    assert tabs["지자체"]["agencies"] == len(local_gov.SITES)
-    assert tabs["공공기관"]["agencies"] == 0
-    assert tabs["연구소"]["agencies"] == 0
+    assert tabs["지자체"]["agencies"] == len(local_gov.agency_names())
+    assert tabs["공공기관"]["agencies"] == len(public_org.agency_names())
+    assert tabs["연구소"]["agencies"] == len(research.agency_names())
 
     # 기사가 하나도 없는 fixture에서도 기관 수는 그대로 나온다
     assert tabs["지자체"]["count"] == 0
@@ -121,6 +121,19 @@ def test_지자체는_광역이_먼저_그다음_가나다순이다(tmp_path):
     groups = {g["group"]: [d["name"] for d in g["depts"]] for g in tabs[models.LOCAL]["groups"]}
     assert groups["서울"] == ["서울시", "강동구", "송파구"]
     assert groups["경기"] == ["경기도", "구리시", "성남시", "용인시", "하남시"]
+
+
+def test_같은_묶음이_두_번_그려지지_않는다(tmp_path):
+    """분야 목록에 이미 '기타'가 있는데 뒤에 또 붙이면 화면에 두 번 나온다."""
+    for tab in read_tabs(render(tmp_path)):
+        names = [g["group"] for g in tab["groups"]]
+        assert len(names) == len(set(names)), f"{tab['category']} 탭에 중복 묶음: {names}"
+
+
+def test_기관도_한_탭에_한_번만_나온다(tmp_path):
+    for tab in read_tabs(render(tmp_path)):
+        names = [d["name"] for g in tab["groups"] for d in g["depts"]]
+        assert len(names) == len(set(names)), f"{tab['category']} 탭에 중복 기관: {names}"
 
 
 def test_체크박스에_정렬용_필드가_새지_않는다(tmp_path):

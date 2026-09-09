@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 from govpress import local_gov
+from govpress import boards
 from govpress.models import LOCAL
 
 FIXTURES = Path(__file__).parent / "fixtures"
@@ -21,7 +22,7 @@ def load(name: str) -> str:
 @pytest.fixture(scope="module")
 def seoul_articles():
     site = local_gov.find("서울시")
-    return local_gov.to_articles(local_gov.parse_seoul(load("local_seoul.html"), site), site)
+    return boards.to_articles(local_gov.parse_seoul(load("local_seoul.html"), site), site)
 
 
 def test_서울시_행을_모두_뽑는다(seoul_articles):
@@ -108,7 +109,7 @@ def test_광역이_지역_맨_앞에_온다():
 
 def test_지역마다_광역은_한_곳뿐이다():
     for region, sites in local_gov.sites_by_region():
-        metros = [s.name for s in sites if s.metro]
+        metros = [s.name for s in sites if s.primary]
         assert len(metros) == 1, f"{region}의 광역이 {metros}입니다"
 
 
@@ -127,13 +128,13 @@ def test_아직_확인하지_않은_지자체는_목록에_넣지_않는다():
 @pytest.fixture(scope="module")
 def songpa():
     site = local_gov.find("송파구")
-    return local_gov.to_articles(site.parser(load("local_songpa.html"), site), site)
+    return boards.to_articles(site.parser(load("local_songpa.html"), site), site)
 
 
 @pytest.fixture(scope="module")
 def guri():
     site = local_gov.find("구리시")
-    return local_gov.to_articles(site.parser(load("local_guri.html"), site), site)
+    return boards.to_articles(site.parser(load("local_guri.html"), site), site)
 
 
 def test_송파구_항목이_실사용_가능하다(songpa):
@@ -180,7 +181,7 @@ def test_표준게시판_날짜가_ISO형식이다(songpa, guri):
 @pytest.fixture(scope="module")
 def hanam():
     site = local_gov.find("하남시")
-    return local_gov.to_articles(site.parser(load("local_hanam.html"), site), site)
+    return boards.to_articles(site.parser(load("local_hanam.html"), site), site)
 
 
 def test_하남시_카드형에서도_뽑아낸다(hanam):
@@ -204,7 +205,7 @@ def test_하남시_날짜(hanam):
 
 def test_모든_지자체가_지역에_속한다():
     for site in local_gov.SITES:
-        assert site.region in local_gov.REGION_ORDER
+        assert site.group in local_gov.REGION_ORDER
 
 
 def test_지역이_둘로_나뉜다():
@@ -234,7 +235,7 @@ def parsed():
         ("강동구", "local_gangdong.html"),
     ]:
         site = local_gov.find(name)
-        out[name] = local_gov.to_articles(site.parser(load(fixture), site), site)
+        out[name] = boards.to_articles(site.parser(load(fixture), site), site)
     return out
 
 
@@ -333,8 +334,8 @@ def test_size방식_사이트는_한_번만_요청한다(monkeypatch):
                 def raise_for_status(self): return None
             return R()
 
-    monkeypatch.setattr(local_gov.requests, "Session", lambda: FakeSession())
-    monkeypatch.setattr(local_gov.time, "sleep", lambda *_: None)
+    monkeypatch.setattr(boards.requests, "Session", lambda: FakeSession())
+    monkeypatch.setattr(boards.time, "sleep", lambda *_: None)
 
     local_gov.collect(sites=[local_gov.find("성남시")], pages=3)
 
@@ -348,7 +349,7 @@ def test_TLS_실패하면_구형설정으로_한번_더_시도한다(monkeypatch
     """성남시·용인시처럼 오래된 TLS만 지원하는 서버가 있다."""
     import requests as rq
 
-    local_gov._LEGACY_TLS_HOSTS.clear()
+    boards._LEGACY_TLS_HOSTS.clear()
     attempts = []
 
     class Response:
@@ -367,14 +368,14 @@ def test_TLS_실패하면_구형설정으로_한번_더_시도한다(monkeypatch
             attempts.append("legacy")
             return Response()
 
-    monkeypatch.setattr(local_gov, "legacy_session", lambda: Legacy())
+    monkeypatch.setattr(boards, "legacy_session", lambda: Legacy())
 
     site = local_gov.find("성남시")
-    articles = local_gov.fetch_page(site, 1, session=Strict())
+    articles = boards.fetch_page(site, 1, session=Strict())
 
     assert attempts == ["strict", "legacy"]
     assert len(articles) == 3
-    assert site.list_url.split("/")[2] in local_gov._LEGACY_TLS_HOSTS
+    assert site.list_url.split("/")[2] in boards._LEGACY_TLS_HOSTS
 
 
 def test_한번_실패한_호스트는_바로_구형설정을_쓴다(monkeypatch):
@@ -396,10 +397,10 @@ def test_한번_실패한_호스트는_바로_구형설정을_쓴다(monkeypatch
         def get(self, *a, **k):
             raise AssertionError("이미 실패한 호스트인데 다시 엄격 설정을 썼습니다")
 
-    local_gov._LEGACY_TLS_HOSTS.clear()
-    local_gov._LEGACY_TLS_HOSTS.add("www.seongnam.go.kr")
-    monkeypatch.setattr(local_gov, "legacy_session", lambda: Legacy())
+    boards._LEGACY_TLS_HOSTS.clear()
+    boards._LEGACY_TLS_HOSTS.add("www.seongnam.go.kr")
+    monkeypatch.setattr(boards, "legacy_session", lambda: Legacy())
 
-    local_gov.fetch_page(local_gov.find("성남시"), 1, session=ShouldNotBeUsed())
+    boards.fetch_page(local_gov.find("성남시"), 1, session=ShouldNotBeUsed())
     assert len(calls) == 1
-    local_gov._LEGACY_TLS_HOSTS.clear()
+    boards._LEGACY_TLS_HOSTS.clear()

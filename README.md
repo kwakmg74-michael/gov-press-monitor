@@ -14,8 +14,8 @@
 |---|---|---|
 | 정부기관 | 53곳 | korea.kr 통합 수집 |
 | 지자체 | 8곳 | 서울 3곳(서울시·강동구·송파구), 경기 5곳(경기도·구리시·성남시·용인시·하남시) |
-| 공공기관 | 0곳 | 예정 |
-| 연구소 | 0곳 | 예정 |
+| 공공기관 | 6곳 | 게시판 7개 (서울주택도시개발공사는 보도·해명 2개) |
+| 연구소 | 2곳 | 국토연구원·건축공간연구원, 나머지는 확인 중 |
 
 ## 왜 이 구조인가
 
@@ -97,12 +97,15 @@ python -m govpress run --dept 국토부 --days 30 --open
 | 파일 | 역할 |
 |---|---|
 | `govpress/korea_kr.py` | korea.kr 목록 파싱과 페이지 순회 |
+| `govpress/boards.py` | 게시판 수집 공통 뼈대 — `Site`, 받아 오기, TLS, 중복 제거 |
 | `govpress/local_gov.py` | 지자체 사이트별 어댑터, 지역(서울/경기) 묶음 |
+| `govpress/public_org.py` | 공공기관 사이트별 어댑터, 분야 묶음 |
+| `govpress/research.py` | 연구소 사이트별 어댑터 |
 | `govpress/agencies.py` | 정부부처 코드표(54곳), 조직도 기준 구분·소속, 이름·줄임말 해석 |
 | `govpress/models.py` | `Article` 모델, 분류(탭) 정의, 날짜/텍스트 정규화 |
 | `govpress/storage.py` | SQLite 저장, 중복 제거, 조회 |
 | `govpress/dashboard.py` | 단일 HTML 대시보드 생성 |
-| `govpress/__main__.py` | `collect` / `dashboard` / `run` 명령 |
+| `govpress/__main__.py` | `collect` / `collect-local` / `collect-public` / `collect-research` / `dashboard` / `run` 명령 |
 
 ## 테스트
 
@@ -230,10 +233,52 @@ python -m govpress collect-local --city 서울시  # 특정 지자체만
 적어 둡니다. 짐작해서 쓴 파서는 조용히 메뉴 링크를 기사로 주워 담거나
 빈 결과를 내는데, 그걸 알아채기가 어렵기 때문입니다.
 
+## 공공기관·연구소 추가하기
+
+```bash
+python -m govpress publics                       # 공공기관 목록
+python -m govpress collect-public                # 전체
+python -m govpress collect-public --only 금융감독원
+
+python -m govpress labs                          # 연구소 목록
+python -m govpress collect-research
+```
+
+지자체와 구조가 같다. `public_org.py` / `research.py`의 `SITES`에 한 줄
+추가하면 확장된다. 붙여 보니 지자체보다 훨씬 고르다 — 페이지 넘김이
+`pageIndex`·`nPage`·`page`·`currPage` 네 가지뿐이었다.
+
+### 한 기관에 게시판이 여럿일 때
+
+서울주택도시개발공사는 보도자료와 해명자료가 따로 있고, KB경영연구소는
+게시판이 셋이다. 이럴 때는 `Site`를 여러 개 두고 `board`로 구분한다.
+
+```python
+_site("서울주택도시개발공사", "부동산", "...m_139/list.do", "page", parse_sh,
+      board="보도자료"),
+_site("서울주택도시개발공사", "부동산", "...m_612/list.do", "page", parse_sh,
+      board="해명자료"),
+```
+
+저장 열쇠(`source`)만 갈라지고, **화면에는 기관 이름 하나로 나오며 결과는
+합쳐진다.** 체크박스도 하나고, 탭 숫자도 한 곳으로 센다.
+
+### 주소가 안 바뀌는 게시판
+
+절반쯤은 페이지 버튼이 POST거나 AJAX라 주소창이 그대로다. 그래도 대개
+**같은 파라미터를 주소에 실어 GET으로 요청하면 서버가 받아 준다** —
+식품안전정보원, 한국부동산원, 서울주택도시개발공사가 그랬다. 목록 주소가
+안 바뀐다고 수집이 안 되는 것은 아니므로, 페이지 버튼의 자바스크립트를
+먼저 뜯어본다.
+
+제목 링크도 마찬가지다. `javascript:` 나 `#none` 을 그대로 저장하면 나중에
+열 수 없으므로, 함수 인자에서 글 번호를 뽑아 상세 주소를 새로 만든다.
+
 ## 다음 단계
 
 - 지자체 추가 — 남양주시는 개발자도구 감지 페이지가 떠서 제외했습니다.
-- 공공기관 수집기 — 전국 단위 통합 창구가 없어 기관별 어댑터가 필요합니다.
-  (ALIO는 경영정보 공시라 보도자료가 아닙니다.)
-- 연구소 수집기
+- 공공기관 추가 — 한국인터넷진흥원, 한국자산관리공사, 한국저작권보호원,
+  한국저작권위원회, 한국주택금융공사, 한국지식재산보호원, 한국토지주택공사
+- 연구소 추가 — KB경영연구소(게시판 3개), 한국법제연구원, 한국조세재정연구원,
+  한국행정연구원, 한국개발연구원, 한국지식재산연구원
 - 키워드 알림 (메일/슬랙), 정기 실행 (작업 스케줄러)
