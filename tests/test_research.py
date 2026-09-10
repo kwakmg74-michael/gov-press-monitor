@@ -14,6 +14,8 @@ FIXTURES = Path(__file__).parent / "fixtures"
 CASES = {
     "국토연구원": "research_krihs.html",
     "건축공간연구원": "research_auri.html",
+    "KB경영연구소": "research_kbfg.html",
+    "한국법제연구원": "research_klri.html",
 }
 
 
@@ -99,6 +101,55 @@ def test_건축공간연구원_점찍힌_날짜를_읽는다(parsed):
     assert parsed["건축공간연구원"][0].published_at == "2026-06-30"
 
 
+# --- KB경영연구소 ------------------------------------------------------------
+
+def test_KB_카드에서_제목과_저자를_뽑는다(parsed):
+    articles = parsed["KB경영연구소"]
+    assert articles[0].title == "[KB지식비타민] 시간은 아껴 쓰는 것이 아니라 골라 쓰는 것"
+    assert articles[0].summary == "방석훈"
+    assert articles[0].link.endswith("reportView.do?reportId=2001360")
+
+
+def test_KB_조회수를_날짜로_읽지_않는다(parsed):
+    """dd가 발행일과 조회수 두 개다. 자리로 세면 조회수를 날짜로 읽는다."""
+    assert parsed["KB경영연구소"][0].published_at == "2026-08-31"
+
+
+def test_KB는_게시판이_둘이어도_한_기관이다():
+    names = research.agency_names()
+    assert names.count("KB경영연구소") == 1
+    assert [s.board for s in research.boards_of("KB경영연구소")] == [
+        "연구보고서", "브랜드보고서",
+    ]
+
+
+# --- 한국법제연구원 ----------------------------------------------------------
+
+def test_법제연구원_숨은_라벨을_걷어낸다(parsed):
+    """각 칸 앞에 <em class="hidden">발행일:</em> 같은 라벨이 숨어 있다."""
+    for article in parsed["한국법제연구원"]:
+        assert "발행일" not in article.published_at
+        assert not article.title.startswith("제목")
+        assert "연구진" not in article.summary
+
+
+def test_법제연구원_제목이_통째로_사라지지_않는다(parsed):
+    """제목을 감싼 <a>에 class="new"가 붙어 있어, 링크째 읽으면 지워진다."""
+    articles = parsed["한국법제연구원"]
+    assert articles[0].title == "한국법제연구원 2025 연차보고서"
+    assert all(len(a.title) > 5 for a in articles)
+
+
+def test_법제연구원_new_뱃지가_제목에_남지_않는다(parsed):
+    assert "[new]" not in parsed["한국법제연구원"][1].title
+
+
+def test_법제연구원_상세주소를_경로로_만든다(parsed):
+    assert parsed["한국법제연구원"][0].link == (
+        "https://www.klri.re.kr/kor/publication/2384/view.do"
+    )
+
+
 # --- 목록 구성 --------------------------------------------------------------
 
 def test_빈_HTML은_빈_결과를_준다():
@@ -120,7 +171,8 @@ def test_출처가_다른_분류와_겹치지_않는다():
 def test_분야별로_묶인다():
     grouped = dict((g, [s.name for s in sites]) for g, sites in research.sites_by_group())
     assert grouped["부동산"] == ["국토연구원"]
-    assert grouped["기타"] == ["건축공간연구원"]
+    assert grouped["금융"] == ["KB경영연구소"]
+    assert grouped["기타"] == ["건축공간연구원", "한국법제연구원"]
 
 
 def test_확인하지_않은_기관은_목록에_넣지_않는다():

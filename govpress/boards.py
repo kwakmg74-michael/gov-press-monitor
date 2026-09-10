@@ -246,7 +246,8 @@ def row_text(cell) -> str:
     clone = BeautifulSoup(str(cell), "html.parser")
     for junk in clone.select(
         ".add-head, .mobile-tit, .p-icon, .new, .hd-element, .bbsNewImage, "
-        ".blind, .sound_only, .only-m, .sr-only, .sr_only, .icoNew, i:empty, img"
+        ".blind, .sound_only, .only-m, .sr-only, .sr_only, .hidden, "
+        ".icoNew, i:empty, img"
     ):
         junk.decompose()
     return clean_text(clone.get_text(" ", strip=True))

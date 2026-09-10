@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import re
+from urllib.parse import urljoin
 
 from bs4 import BeautifulSoup
 
@@ -22,7 +23,7 @@ CATEGORY = RESEARCH
 PREFIX = "research"
 
 # 분야 묶음. 대시보드 체크박스가 이 순서로 나뉜다.
-GROUP_ORDER = ("부동산", "기타")
+GROUP_ORDER = ("부동산", "금융", "기타")
 
 
 def _site(name, group, list_url, page_param, parser, **kw) -> Site:
@@ -145,11 +146,141 @@ def parse_publication_cards(html: str, site: Site) -> list[dict]:
     return items
 
 
+# --- KB경영연구소 ------------------------------------------------------------
+
+_KB_ID_RE = re.compile(r"(?:reportId|vitaminId)=(\d+)")
+
+
+def parse_kb_cards(html: str, site: Site) -> list[dict]:
+    """KB경영연구소 발간물 목록.
+
+    구조 (2026-09 확인):
+        li > a[href*=View.do]
+             span.kate  분류      h3  제목
+             dl > dt  저자   dd  발행일   dd.hits  조회수
+
+    날짜 칸을 자리로 세지 않고 `dd` 중 조회수(.hits)가 아닌 것을 고른다.
+    글 번호는 게시판에 따라 `reportId` 또는 `vitaminId`로 이름이 다르다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+
+    for card in soup.select("li"):
+        title_el = card.select_one("h3")
+        anchor = card.select_one('a[href*="View.do"]')
+        if not (title_el and anchor):
+            continue
+
+        uid = boards.script_uid(anchor, _KB_ID_RE)
+        if not uid:
+            continue
+
+        published = ""
+        for dd in card.select("dl dd"):
+            if "hits" in (dd.get("class") or []):
+                continue
+            published = normalize_date(boards.row_text(dd))
+            if published:
+                break
+        if not published:
+            continue
+
+        items.append(
+            {
+                "uid": uid,
+                "title": boards.row_text(title_el),
+                "link": urljoin(site.list_url, anchor.get("href", "")),
+                "department": boards.row_text(card.select_one("dl dt")),
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
+# --- 한국법제연구원 ----------------------------------------------------------
+
+_KLRI_RE = re.compile(r"publication_view\('(\d+)'\)")
+
+
+def parse_klri_cards(html: str, site: Site) -> list[dict]:
+    """한국법제연구원 발간물 목록.
+
+    구조 (2026-09 확인):
+        li
+          p.title > a[onclick=publication_view('2384')] > strong  제목
+          div.date > p[0] 발행일 / p[1] 연구진 / p[2] 쪽수
+
+    두 가지를 조심해야 한다.
+
+    - 각 칸 앞에 `<em class="hidden">발행일:</em>` 같은 라벨이 숨어 있다.
+      그대로 읽으면 날짜가 "발행일:2026-07-01"이 된다.
+    - 제목을 감싼 `<a>`에도 `class="new"`가 붙어 있다. 링크째로 읽으면
+      군더더기 제거 규칙(`.new`)에 걸려 제목이 통째로 사라지므로,
+      **안쪽 `strong`만** 읽는다.
+
+    상세는 `/kor/publication/<번호>/view.do` 로 열린다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    base = site.list_url.rsplit("/", 1)[0]
+    items: list[dict] = []
+
+    for card in soup.select("li"):
+        anchor = card.select_one('a[onclick*="publication_view"]')
+        title_el = anchor.select_one("strong") if anchor else None
+        if not (anchor and title_el):
+            continue
+
+        uid = boards.script_uid(anchor, _KLRI_RE)
+        if not uid:
+            continue
+
+        dates = card.select("div.date p")
+        published = normalize_date(boards.row_text(dates[0])) if dates else ""
+        if not published:
+            continue
+
+        items.append(
+            {
+                "uid": uid,
+                "title": boards.row_text(title_el),
+                "link": f"{base}/{uid}/view.do",
+                "department": boards.row_text(dates[1]) if len(dates) > 1 else "",
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
 # --- 사이트 목록 -------------------------------------------------------------
 #
 # 실제 목록 HTML을 확인하고 파서 테스트를 통과한 것만 넣는다.
 
 SITES: tuple[Site, ...] = (
+    _site(
+        "KB경영연구소",
+        "금융",
+        "https://www.kbfg.com/kbresearch/report/reportList.do",
+        "pageIndex",
+        parse_kb_cards,
+        board="연구보고서",
+    ),
+    _site(
+        "KB경영연구소",
+        "금융",
+        "https://www.kbfg.com/kbresearch/brand/brandList.do",
+        "pageIndex",
+        parse_kb_cards,
+        board="브랜드보고서",
+    ),
+    _site(
+        "한국법제연구원",
+        "기타",
+        "https://www.klri.re.kr/kor/publication/list.do",
+        "pageIndex",
+        parse_klri_cards,
+    ),
     _site(
         "국토연구원",
         "부동산",
@@ -169,8 +300,6 @@ SITES: tuple[Site, ...] = (
 
 # 목록에는 있지만 아직 게시판 구조를 확인하지 못한 곳.
 PENDING: tuple[str, ...] = (
-    "KB경영연구소",
-    "한국법제연구원",
     "한국조세재정연구원",
     "한국행정연구원",
     "한국개발연구원",
