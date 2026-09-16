@@ -525,7 +525,10 @@ def agency_names() -> list[str]:
     return boards.agency_names(SITES)
 
 
-def collect(sites=None, pages: int = 3, delay: float = 0.7, on_progress=None):
+def collect(sites=None, pages: int = 3, delay: float = 0.7, on_progress=None,
+            known=None):
     """지자체 보도자료를 모은다. 대상을 안 주면 전체."""
     targets = list(sites) if sites else list(SITES)
-    return boards.collect(targets, pages=pages, delay=delay, on_progress=on_progress)
+    return boards.collect(
+        targets, pages=pages, delay=delay, on_progress=on_progress, known=known
+    )

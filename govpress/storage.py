@@ -109,6 +109,30 @@ def save(articles: Iterable[Article], db_path: str | Path = DEFAULT_DB) -> dict:
     return {"submitted": len(rows), "new": after - before, "total": after}
 
 
+def known_uids(
+    sources: Iterable[str], db_path: str | Path = DEFAULT_DB
+) -> set[tuple[str, str]]:
+    """이미 저장해 둔 (출처, 글번호) 짝.
+
+    목록에 날짜가 없는 게시판(KDI 등)은 글 하나하나를 열어 봐야 발간일을
+    알 수 있다. 매번 다 열면 실례이므로, 이미 가진 글은 건너뛰려고 쓴다.
+    """
+    wanted = list(sources)
+    if not wanted:
+        return set()
+
+    conn = connect(db_path)
+    try:
+        holes = ",".join("?" * len(wanted))
+        rows = conn.execute(
+            f"SELECT source, uid FROM articles WHERE source IN ({holes})", wanted
+        ).fetchall()
+    finally:
+        conn.close()
+
+    return {(row["source"], row["uid"]) for row in rows}
+
+
 def list_articles(
     db_path: str | Path = DEFAULT_DB,
     limit: int | None = None,

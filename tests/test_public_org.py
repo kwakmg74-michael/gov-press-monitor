@@ -19,6 +19,11 @@ CASES = {
     "한국산업단지공단": "public_kicox.html",
     "한국소비자원": "public_kca.html",
     "서울주택도시개발공사": "public_sh.html",
+    "한국인터넷진흥원": "public_kisa.html",
+    "한국주택금융공사": "public_hf.html",
+    "경기주택도시공사": "public_gh.html",
+    "한국토지주택공사": "public_lh.html",
+    "한국은행": "public_bok.html",
 }
 
 
@@ -91,7 +96,16 @@ def test_한국소비자원_담당부서를_읽는다(parsed):
 
 
 @pytest.mark.parametrize(
-    "name", ["식품안전정보원", "한국부동산원", "한국산업단지공단"]
+    "name",
+    [
+        "식품안전정보원",
+        "한국부동산원",
+        "한국산업단지공단",
+        "한국인터넷진흥원",
+        "한국주택금융공사",
+        "경기주택도시공사",
+        "한국토지주택공사",
+    ],
 )
 def test_담당부서_칸이_없으면_비워_둔다(parsed, name):
     """부서 칸이 없는 게시판에서 날짜 앞 칸을 읽으면 제목이 부서로 들어간다."""
@@ -144,6 +158,84 @@ def test_한국부동산원_점으로_끝나는_날짜도_읽는다(parsed):
     assert parsed["한국부동산원"][0].published_at == "2026-09-09"
 
 
+def test_한국인터넷진흥원_페이지번호를_링크에_남기지_않는다(parsed):
+    """목록 링크에 `page=1`이 붙어 온다. 글의 주소가 아니다."""
+    articles = parsed["한국인터넷진흥원"]
+    assert articles[0].link == "https://www.kisa.or.kr/402/form?postSeq=2637"
+    for article in articles:
+        assert "page=" not in article.link
+
+
+def test_주택금융공사_목록순번을_링크에_남기지_않는다(parsed):
+    """`article.offset`은 목록에서 몇 번째였는지일 뿐이다."""
+    articles = parsed["한국주택금융공사"]
+    assert articles[0].link == (
+        "https://www.hf.go.kr/ko/sub05/sub05_04_05.do?mode=view&articleNo=600580"
+    )
+    for article in articles:
+        assert "offset" not in article.link
+
+
+def test_주택금융공사_한_줄에_날짜가_둘이어도_바로_읽는다(parsed):
+    """좁은 화면용 날짜가 제목 칸 안에 한 번 더 들어 있다."""
+    assert parsed["한국주택금융공사"][0].published_at == "2026-09-10"
+
+
+def test_경기주택도시공사_두자리_연도를_읽는다(parsed):
+    """이 게시판은 '26.09.15'처럼 연도를 두 자리로만 적는다."""
+    assert parsed["경기주택도시공사"][0].published_at == "2026-09-15"
+    assert parsed["경기주택도시공사"][0].link.endswith("articleNo=65194")
+
+
+def test_LH_큰카드와_목록에_같은_글이_겹쳐도_한_번만_센다(parsed):
+    """맨 위 3건은 큰 카드로 한 번 더 나온다."""
+    articles = parsed["한국토지주택공사"]
+    assert len(articles) == len({a.uid for a in articles})
+    assert articles[0].uid == "12121"
+
+
+def test_LH_숨은_새글_라벨이_제목에_섞이지_않는다(parsed):
+    for article in parsed["한국토지주택공사"]:
+        assert not article.title.startswith("새글")
+
+
+def test_LH_등록일_라벨을_날짜로_읽지_않는다(parsed):
+    """날짜 칸 안에 <strong class="label">등록일</strong>이 들어 있다."""
+    for article in parsed["한국토지주택공사"]:
+        assert "등록일" not in article.published_at
+        assert article.published_at.startswith("2026-")
+
+
+def test_LH_링크에서_보던_페이지를_뗀다(parsed):
+    link = parsed["한국토지주택공사"][0].link
+    assert "list_no=12121" in link and "act=view" in link
+    assert "nPage" not in link
+
+
+def test_한국은행_담당부서를_읽는다(parsed):
+    """칸마다 <span class="sr-only">담당부서</span> 라벨이 숨어 있다."""
+    articles = parsed["한국은행"]
+    assert articles[0].summary == "위탁운용팀"
+    for article in articles:
+        assert article.summary and "담당부서" not in article.summary
+
+
+def test_한국은행_조회수를_날짜로_읽지_않는다(parsed):
+    """담당부서·조회수·등록일이 나란히 있어 자리로 세면 조회수를 읽는다."""
+    assert parsed["한국은행"][0].published_at == "2026-09-16"
+
+
+def test_한국은행_링크에서_검색조건을_뗀다(parsed):
+    link = parsed["한국은행"][0].link
+    assert "nttId=11064797" in link
+    assert "pageIndex" not in link and "searchKwd" not in link
+
+
+def test_한국은행은_목록을_그려주는_주소로_받는다():
+    """보도자료 화면은 껍데기만 오고 목록은 listCont.do가 그려 준다."""
+    assert "listCont.do" in public_org.find("한국은행").list_url
+
+
 # --- 목록 구성 --------------------------------------------------------------
 
 def test_빈_HTML은_빈_결과를_준다():
@@ -170,9 +262,15 @@ def test_지자체와_출처_앞머리가_겹치지_않는다():
 
 def test_분야별로_묶인다():
     grouped = dict((g, [s.name for s in sites]) for g, sites in public_org.sites_by_group())
-    assert grouped["부동산"] == ["서울주택도시개발공사", "한국부동산원", "한국산업단지공단"]
-    assert grouped["금융"] == ["금융감독원"]
-    assert grouped["기타"] == ["식품안전정보원", "한국소비자원"]
+    assert grouped["부동산"] == [
+        "경기주택도시공사",
+        "서울주택도시개발공사",
+        "한국부동산원",
+        "한국산업단지공단",
+        "한국토지주택공사",
+    ]
+    assert grouped["금융"] == ["금융감독원", "한국은행", "한국주택금융공사"]
+    assert grouped["기타"] == ["식품안전정보원", "한국소비자원", "한국인터넷진흥원"]
 
 
 def test_묶음_안은_가나다순이다():
@@ -199,3 +297,10 @@ def test_페이지_주소를_만든다():
     assert public_org.find("한국산업단지공단").page_url(2) == (
         "https://www.kicox.or.kr/boardList/1103?pageIndex=2"
     )
+
+
+def test_목록순번으로_페이지를_넘기는_곳도_있다():
+    """2쪽이 '2'가 아니라 '10번째 글부터'다. 1을 빼지 않으면 한 쪽씩 밀린다."""
+    assert public_org.find("한국주택금융공사").page_url(1).endswith("article.offset=0")
+    assert public_org.find("한국주택금융공사").page_url(2).endswith("article.offset=10")
+    assert public_org.find("경기주택도시공사").page_url(3).endswith("article.offset=20")

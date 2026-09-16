@@ -19,6 +19,25 @@ from . import agencies, dashboard, korea_kr, local_gov, public_org, research, st
 from .models import InvalidDate, parse_date_range
 
 
+def use_utf8(*streams) -> None:
+    """화면에 글자를 내보낼 때 한글이 깨져 멈추지 않게 한다.
+
+    윈도우에서 결과를 파일로 넘기면(`>> 수집기록.txt`) 파이썬이 옛 한글
+    인코딩(cp949)으로 쓰려 든다. 그런데 이 프로그램의 안내문에는 '—'
+    같은 글자가 섞여 있어서, cp949로는 쓸 수가 없다. 그러면 안내문 한
+    줄을 못 찍었다는 이유로 **수집 전체가 그 자리에서 멈춘다.**
+
+    실제로 그런 일이 있었다. 자동 수집이 하루 세 번 돌면서 매번 첫 줄에서
+    죽었는데, 화면은 예전 자료로 계속 다시 만들어지니 겉으로는 멀쩡해
+    보였다. 그래서 진입점에서 출력을 UTF-8로 못박아 둔다.
+    """
+    for stream in streams:
+        try:
+            stream.reconfigure(encoding="utf-8", errors="replace")
+        except (AttributeError, ValueError, OSError):
+            pass  # 파이프나 가짜 스트림이면 그냥 둔다
+
+
 def _resolve_targets(names):
     if not names:
         return []
@@ -133,7 +152,16 @@ def _collect_sites(module, args, what: str) -> int:
         elif added:
             print(f"  [{label}] {page}페이지 → {added}건{note}")
 
-    articles = module.collect(sites=targets, pages=args.pages, on_progress=progress)
+    # 목록에 날짜가 없는 게시판은 새 글만 하나씩 열어 발간일을 읽는다.
+    # 이미 가진 글을 다시 열지 않도록 저장해 둔 글 번호를 미리 넘겨 준다.
+    seen = storage.known_uids(
+        [site.source for site in (targets or module.SITES) if site.detail_date],
+        args.db,
+    )
+
+    articles = module.collect(
+        sites=targets, pages=args.pages, on_progress=progress, known=seen
+    )
     if not articles:
         print("수집된 보도자료가 없습니다.", file=sys.stderr)
         return 1
@@ -212,6 +240,37 @@ def _dashboard(args) -> int:
     return 0
 
 
+def _publish(args) -> int:
+    info = storage.stats(args.db)
+    if not info.get("total"):
+        print("DB가 비어 있습니다. 먼저 수집부터 하세요.", file=sys.stderr)
+        return 1
+
+    folder = dashboard.publish(args.db, args.folder).resolve()
+    print(f"게시용 폴더 생성: {folder}")
+    print()
+    print("이 폴더를 통째로 웹 호스팅에 올리면 주소 하나로 공유됩니다.")
+    print("Netlify라면 Deploys 화면에 이 폴더를 끌어다 놓으면 됩니다.")
+    if args.open:
+        _open_folder(folder)
+    return 0
+
+
+def _open_folder(path) -> None:
+    """탐색기(또는 파인더)로 폴더를 연다. 끌어다 놓기 좋게."""
+    import subprocess
+
+    try:
+        if sys.platform.startswith("win"):
+            subprocess.Popen(["explorer", str(path)])
+        elif sys.platform == "darwin":
+            subprocess.Popen(["open", str(path)])
+        else:
+            subprocess.Popen(["xdg-open", str(path)])
+    except Exception:
+        pass
+
+
 def _add_collect_options(parser) -> None:
     parser.add_argument(
         "--dept",
@@ -227,6 +286,7 @@ def _add_collect_options(parser) -> None:
 
 
 def main(argv=None) -> int:
+    use_utf8(sys.stdout, sys.stderr)
     parser = argparse.ArgumentParser(prog="govpress", description="정부부처 보도자료 수집기")
     parser.add_argument("--db", default=storage.DEFAULT_DB, help="SQLite 파일 경로")
     sub = parser.add_subparsers(dest="command")
@@ -255,6 +315,10 @@ def main(argv=None) -> int:
     board.add_argument("--output", default=dashboard.DEFAULT_OUTPUT)
     board.add_argument("--open", action="store_true", help="생성 후 브라우저로 열기")
 
+    pub = sub.add_parser("publish", help="인터넷에 올릴 폴더 만들기")
+    pub.add_argument("--folder", default=dashboard.PUBLISH_DIR)
+    pub.add_argument("--open", action="store_true", help="만든 뒤 폴더 열기")
+
     run = sub.add_parser("run", help="수집 후 대시보드까지 한 번에")
     _add_collect_options(run)
     run.add_argument("--output", default=dashboard.DEFAULT_OUTPUT)
@@ -280,6 +344,8 @@ def main(argv=None) -> int:
         return _collect(args)
     if args.command == "dashboard":
         return _dashboard(args)
+    if args.command == "publish":
+        return _publish(args)
     if args.command == "run":
         code = _collect(args)
         if code != 0:

@@ -149,11 +149,16 @@ class Site:
     category: str = ""
     prefix: str = "local"
     board: str = ""
-    # "page": 파라미터에 페이지 번호를 넣는다 (대부분)
-    # "size": 페이지 이동이 POST뿐이라, 대신 한 번에 몇 건을 받을지 지정한다
+    # "page"  : 파라미터에 페이지 번호를 넣는다 (대부분)
+    # "offset": 페이지 번호 대신 "몇 번째 글부터"를 넣는다 (2쪽 = 10)
+    # "size"  : 페이지 이동이 POST뿐이라, 대신 한 번에 몇 건을 받을지 지정한다
+    # "single": 넘길 페이지가 없다. 최신호 한 권만 펼쳐 주는 화면(KDI 정기간행물)
     page_mode: str = "page"
     page_size: int = 10
     primary: bool = False
+    # 목록에 날짜가 아예 없는 게시판용. 글 하나를 열어 발간일을 읽는 함수.
+    # 이미 저장해 둔 글은 열지 않으므로, 실제로는 새 글에만 쓰인다.
+    detail_date: Callable[[str], str] | None = field(default=None, repr=False)
 
     @property
     def source(self) -> str:
@@ -169,7 +174,7 @@ class Site:
     @property
     def single_request(self) -> bool:
         """한 번의 요청으로 끝나는가."""
-        return self.page_mode == "size"
+        return self.page_mode in ("size", "single")
 
     @property
     def sort_key(self) -> tuple[int, str]:
@@ -177,8 +182,16 @@ class Site:
         return (0 if self.primary else 1, self.name)
 
     def page_url(self, page: int) -> str:
+        if self.page_mode == "single":
+            return self.list_url
+
         joiner = "&" if "?" in self.list_url else "?"
-        value = page * self.page_size if self.page_mode == "size" else page
+        if self.page_mode == "size":
+            value = page * self.page_size
+        elif self.page_mode == "offset":
+            value = (page - 1) * self.page_size
+        else:
+            value = page
         return f"{self.list_url}{joiner}{self.page_param}={value}"
 
 
@@ -316,13 +329,12 @@ def to_articles(items: list[dict], site: Site) -> list[Article]:
     ]
 
 
-def fetch_page(site: Site, page: int, session=None, timeout: int = 25) -> list[Article]:
-    """한 페이지를 받아 파싱한다.
+def get(url: str, session=None, timeout: int = 25):
+    """한 번 받아 온다. TLS 악수에 실패하면 구형 설정으로 다시 시도한다.
 
-    TLS 악수에 실패하면 구형 설정으로 한 번 더 시도한다. 그 호스트는
-    기억해 두어, 다음부터는 곧바로 구형 설정으로 붙는다.
+    한 번 실패한 호스트는 기억해 두어, 다음부터는 곧바로 구형 설정으로
+    붙는다. 이 후퇴는 **그 호스트에만**, **실패한 뒤에만** 적용된다.
     """
-    url = site.page_url(page)
     host = urlparse(url).hostname or ""
 
     if host in _INSECURE_HOSTS:
@@ -343,7 +355,68 @@ def fetch_page(site: Site, page: int, session=None, timeout: int = 25) -> list[A
 
     response.raise_for_status()
     response.encoding = response.apparent_encoding or "utf-8"
-    return to_articles(site.parser(response.text, site), site)
+    return response
+
+
+def fill_missing_dates(
+    items: list[dict],
+    site: Site,
+    known: set[tuple[str, str]] | None = None,
+    budget: int = 20,
+    session=None,
+    timeout: int = 25,
+) -> list[dict]:
+    """목록에 날짜가 없는 글은 상세를 한 번 열어 발간일을 읽는다.
+
+    KDI처럼 목록에 발간일을 아예 적지 않는 곳이 있다. 날짜가 없으면
+    저장 단계에서 버려지므로 어쩔 수 없이 글을 열어 봐야 하는데,
+    매번 30건씩 여는 것은 남의 서버에 대한 예의가 아니다. 그래서
+
+    - 이미 저장해 둔 글(`known`)은 열지 않고 버린다. 새 글이 아니다.
+    - 한 번에 여는 수를 `budget`으로 묶는다.
+
+    평소에는 하루에 새 글 한두 건이라, 실제로 열리는 것도 그만큼이다.
+    """
+    if not site.detail_date:
+        return items
+
+    filled: list[dict] = []
+    for item in items:
+        if item.get("published_at"):
+            filled.append(item)
+            continue
+
+        if known is not None and (site.source, str(item["uid"])) in known:
+            continue  # 이미 가진 글. 날짜를 다시 물을 이유가 없다.
+        if budget <= 0:
+            continue
+
+        budget -= 1
+        try:
+            html = get(item["link"], session=session, timeout=timeout).text
+        except Exception:
+            continue
+
+        published = site.detail_date(html)
+        if published:
+            filled.append(dict(item, published_at=published))
+        time.sleep(0.5)
+
+    return filled
+
+
+def fetch_page(
+    site: Site,
+    page: int,
+    session=None,
+    timeout: int = 25,
+    known: set[tuple[str, str]] | None = None,
+) -> list[Article]:
+    """한 페이지를 받아 파싱한다."""
+    response = get(site.page_url(page), session=session, timeout=timeout)
+    items = site.parser(response.text, site)
+    items = fill_missing_dates(items, site, known, session=session, timeout=timeout)
+    return to_articles(items, site)
 
 
 def tls_note(site: Site) -> str:
@@ -361,6 +434,7 @@ def collect(
     pages: int = 3,
     delay: float = 0.7,
     on_progress=None,
+    known: set[tuple[str, str]] | None = None,
 ) -> list[Article]:
     """보도자료를 모은다.
 
@@ -377,7 +451,7 @@ def collect(
         for page in range(1, last_page + 1):
             request_page = pages if site.single_request else page
             try:
-                items = fetch_page(site, request_page, session=session)
+                items = fetch_page(site, request_page, session=session, known=known)
             except Exception as exc:
                 if on_progress:
                     on_progress(site.label, page, 0, f"실패: {exc}", "")

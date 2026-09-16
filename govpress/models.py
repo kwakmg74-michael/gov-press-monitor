@@ -59,15 +59,27 @@ def parse_date_range(start: str | None, end: str | None) -> tuple[date | None, d
 def normalize_date(value: str | None) -> str:
     """'2026.09.08', '2026-9-8' 등을 'YYYY-MM-DD'로 정규화한다.
 
+    두 자리 연도('26.09.15')는 그 칸이 **날짜 하나뿐일 때만** 받아 준다.
+    본문에 섞인 '26.09.15'까지 날짜로 보면 엉뚱한 값을 줍게 되기 때문이다.
+    경기주택도시공사처럼 목록에 연도를 두 자리로만 적는 곳이 있다.
+
     형식을 알 수 없으면 빈 문자열을 돌려준다. 절대 원본을 그대로 흘리지 않는다.
     """
     if not value:
         return ""
-    m = _DATE_RE.search(str(value))
-    if not m:
-        return ""
-    year, month, day = m.groups()
-    return f"{year}-{int(month):02d}-{int(day):02d}"
+    text = str(value)
+
+    m = _DATE_RE.search(text)
+    if m:
+        year, month, day = m.groups()
+        return f"{year}-{int(month):02d}-{int(day):02d}"
+
+    m = _USER_DATE_RE.match(text)
+    if m:
+        year, month, day = m.groups()
+        return f"{int(year) + 2000}-{int(month):02d}-{int(day):02d}"
+
+    return ""
 
 
 def clean_text(value: str | None) -> str:

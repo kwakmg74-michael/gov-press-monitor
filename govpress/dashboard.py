@@ -146,6 +146,15 @@ def _tabs(db_path) -> list[dict]:
 
 
 DEFAULT_OUTPUT = "dashboard.html"
+PUBLISH_DIR = "publish"
+
+# 자동 수집이 도는 시각. 작업 스케줄러(자동수집_등록용.xml)와 맞춰 둔다.
+# 한쪽만 고치면 화면에 적힌 안내와 실제 동작이 어긋난다.
+UPDATE_TIMES = ("오전 10시", "오후 2시", "오후 5시")
+
+# 검색엔진에 뜨지 않게 한다. 사무실에서 돌려 보는 자료 모음이지
+# 인터넷에서 찾아지라고 만든 페이지가 아니다.
+_ROBOTS = "User-agent: *\nDisallow: /\n"
 
 _TEMPLATE = r"""<!doctype html>
 <html lang="ko">
@@ -205,7 +214,28 @@ _TEMPLATE = r"""<!doctype html>
   }
   .wrap { max-width: 980px; margin: 0 auto; padding: 32px 20px 80px; }
 
-  header { margin-bottom: 20px; }
+  header {
+    margin-bottom: 20px;
+    display: flex; justify-content: space-between;
+    align-items: flex-start; gap: 16px; flex-wrap: wrap;
+  }
+  .head-right {
+    display: flex; flex-direction: column;
+    align-items: flex-end; gap: 7px;
+    text-align: right;
+    flex-shrink: 0;  /* 가운데 요약이 길어도 안내 문구가 눌리지 않게 */
+  }
+  .auto-note {
+    font-size: 12px; color: var(--muted);
+    margin: 0; line-height: 1.5;
+  }
+  .auto-note b { color: var(--text); font-weight: 600; }
+  #refresh { font-size: 12.5px; padding: 6px 12px; }
+  #refresh:hover { border-color: var(--accent); color: var(--accent); }
+  /* 좁은 화면에서는 아래로 흐르게 두고 왼쪽 정렬로 되돌린다 */
+  @media (max-width: 620px) {
+    .head-right { align-items: flex-start; text-align: left; }
+  }
   h1 { font-size: 22px; margin: 0 0 6px; letter-spacing: -0.01em; }
   .meta { color: var(--muted); font-size: 13px; margin: 0; }
   .meta b { color: var(--text); font-weight: 600; }
@@ -397,6 +427,13 @@ _TEMPLATE = r"""<!doctype html>
       <b>__TOTAL__건</b> · __AGENCY_COUNT__개 기관 · __RANGE__
       <br>마지막 수집 __LAST_RUN__ <span id="sourceNote"></span>
     </p>
+    <div class="head-right">
+      <p class="auto-note"><b>__UPDATE_TIMES__</b>에<br>자동으로 업데이트됩니다</p>
+      <button id="refresh" type="button"
+              title="이 페이지를 다시 불러옵니다. 마지막 수집 이후 새로 올라온 것이 있으면 반영됩니다.">
+        새로고침
+      </button>
+    </div>
   </header>
 
   <nav class="tabs" id="tabs" role="tablist"></nav>
@@ -457,6 +494,14 @@ _TEMPLATE = r"""<!doctype html>
   var deptTitleEl = document.getElementById('deptTitle');
   var deptSummaryEl = document.getElementById('deptSummary');
   var sourceNoteEl = document.getElementById('sourceNote');
+
+  // 이 화면은 만들어 둔 파일이라, 수집이 새로 돌았는지 보려면 다시 받아야 한다.
+  // 버튼이 수집을 시키는 것은 아니다 - 올라와 있는 최신 화면을 가져올 뿐이다.
+  document.getElementById('refresh').addEventListener('click', function () {
+    this.textContent = '불러오는 중...';
+    this.disabled = true;
+    location.reload();
+  });
   var panelEl = document.querySelector('.panel');
 
   var active = 0;
@@ -711,9 +756,27 @@ def render(db_path: str = storage.DEFAULT_DB, output: str | Path = DEFAULT_OUTPU
         .replace("__AGENCY_COUNT__", str(agency_count))
         .replace("__RANGE__", html.escape(date_range))
         .replace("__LAST_RUN__", html.escape(last_run))
+        .replace("__UPDATE_TIMES__", html.escape(", ".join(UPDATE_TIMES)))
         .replace("__DATA__", json.dumps(tabs, ensure_ascii=False).replace("</", "<\\/"))
     )
 
     path = Path(output)
     path.write_text(document, encoding="utf-8")
     return path
+
+
+def publish(db_path, folder=PUBLISH_DIR) -> Path:
+    """인터넷에 올릴 폴더를 만든다.
+
+    웹 호스팅은 폴더를 통째로 받고 `index.html`을 첫 화면으로 연다.
+    그래서 대시보드를 그 이름으로 넣어 준다 — 파일 하나짜리 사이트다.
+
+    이렇게 올려 두면 보는 사람은 설치할 게 없다. 주소만 열면 되고,
+    기관을 추가해도 다음 수집·게시 때 저절로 반영된다.
+    """
+    out = Path(folder)
+    out.mkdir(parents=True, exist_ok=True)
+
+    render(db_path, out / "index.html")
+    (out / "robots.txt").write_text(_ROBOTS, encoding="utf-8")
+    return out

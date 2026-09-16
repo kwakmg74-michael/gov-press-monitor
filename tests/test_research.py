@@ -16,7 +16,15 @@ CASES = {
     "건축공간연구원": "research_auri.html",
     "KB경영연구소": "research_kbfg.html",
     "한국법제연구원": "research_klri.html",
+    "한국조세재정연구원": "research_kipf.html",
 }
+
+# KDI는 게시판마다 모양이 달라 따로 본다.
+KDI_LIST = "research_kdi_list.html"
+KDI_VIEW = "research_kdi_view.html"
+KDI_FOCUS_VIEW = "research_kdi_focus_view.html"
+KDI_ISSUE = "research_kdi_issue.html"
+KDI_OUTLOOK = "research_kdi_outlook.html"
 
 
 @pytest.fixture(scope="module")
@@ -150,6 +158,153 @@ def test_법제연구원_상세주소를_경로로_만든다(parsed):
     )
 
 
+# --- 한국조세재정연구원 ------------------------------------------------------
+
+def test_조세재정연구원_발간월을_그_달_1일로_읽는다(parsed):
+    """여기는 '2026-09'까지만 적는다. 날짜가 없으면 대시보드가 걸러 낸다."""
+    articles = parsed["한국조세재정연구원"]
+    assert articles[0].published_at == "2026-09-01"
+    assert all(a.published_at.endswith("-01") for a in articles)
+
+
+def test_조세재정연구원_저자를_읽는다(parsed):
+    assert parsed["한국조세재정연구원"][0].summary == "박주철"
+
+
+def test_조세재정연구원_라벨을_값으로_읽지_않는다(parsed):
+    """칸마다 <strong>저자</strong><span>박주철</span> 꼴이다."""
+    for article in parsed["한국조세재정연구원"]:
+        assert article.summary not in ("저자", "발간월")
+        assert not article.title.startswith("저자")
+
+
+def test_조세재정연구원_상세주소를_GET용으로_만든다(parsed):
+    assert parsed["한국조세재정연구원"][0].link == (
+        "https://www.kipf.re.kr/kor/Publication/All/kiPublish/ALL/view.do"
+        "?serialNo=527650"
+    )
+
+
+# --- 한국개발연구원(KDI) -----------------------------------------------------
+
+def _kdi(board: str):
+    return next(s for s in research.boards_of("한국개발연구원") if s.board == board)
+
+
+def _parse(board: str, fixture: str):
+    site = _kdi(board)
+    html = (FIXTURES / fixture).read_text(encoding="utf-8")
+    return site, boards.to_articles(site.parser(html, site), site)
+
+
+def test_KDI_목록은_날짜를_비워_둔다():
+    """이 목록에는 발간일이 아예 없다. 상세를 열어야 알 수 있다."""
+    _, articles = _parse("연구보고서", KDI_LIST)
+    assert len(articles) == 3
+    assert all(a.published_at == "" for a in articles)
+    assert all(a.title and a.link.startswith("https://") for a in articles)
+
+
+def test_KDI_제목과_저자를_뽑고_상세주소를_만든다():
+    _, articles = _parse("연구보고서", KDI_LIST)
+    assert articles[0].title == "불평등에 관한 연구: 소득과 자산을 중심으로"
+    assert articles[0].summary == "이승희"
+    assert articles[0].link == (
+        "https://www.kdi.re.kr/research/reportView?pub_no=19257"
+    )
+
+
+def test_KDI_연관주제_태그를_제목으로_읽지_않는다():
+    """카드마다 #거시경제모형 같은 링크가 여럿 붙어 있다."""
+    _, articles = _parse("연구보고서", KDI_LIST)
+    for article in articles:
+        assert not article.title.startswith("#")
+        assert "topicList" not in article.link
+
+
+def test_KDI_상세에서_발간일을_읽는다():
+    html = (FIXTURES / KDI_VIEW).read_text(encoding="utf-8")
+    assert research.kdi_detail_date(html) == "2025-12-31"
+
+
+def test_KDI_FOCUS는_상세_틀이_달라도_발간일을_읽는다():
+    """FOCUS는 div.top_bg-wrap, 연구보고서는 div.tit_top이다.
+
+    한쪽만 보면 FOCUS 열 건이 통째로 버려진다 — 실제로 0건이 나왔었다.
+    """
+    html = (FIXTURES / KDI_FOCUS_VIEW).read_text(encoding="utf-8")
+    assert research.kdi_detail_date(html) == "2026-07-27"
+
+
+def test_KDI_발간일이_없으면_빈값을_준다():
+    assert research.kdi_detail_date("<html><body><p>없음</p></body></html>") == ""
+
+
+def test_KDI_날짜없는_글은_상세를_열어_채운다():
+    """이미 가진 글은 열지 않는다 — 새 글에만 요청이 나가야 한다."""
+    site = _kdi("연구보고서")
+    items = site.parser((FIXTURES / KDI_LIST).read_text(encoding="utf-8"), site)
+    opened: list[str] = []
+
+    class _Fake:
+        def __init__(self, text):
+            self.text = text
+
+        def raise_for_status(self):
+            pass
+
+        @property
+        def apparent_encoding(self):
+            return "utf-8"
+
+    def fake_get(url, **kwargs):
+        opened.append(url)
+        return _Fake((FIXTURES / KDI_VIEW).read_text(encoding="utf-8"))
+
+    known = {(site.source, items[0]["uid"]), (site.source, items[1]["uid"])}
+    filled = boards.fill_missing_dates(
+        items, site, known=known, session=type("S", (), {"get": staticmethod(fake_get)})
+    )
+
+    assert len(opened) == 1, "이미 가진 글까지 열었습니다"
+    assert [f["uid"] for f in filled] == [items[2]["uid"]]
+    assert filled[0]["published_at"] == "2025-12-31"
+
+
+def test_KDI_한번에_여는_수를_묶는다():
+    site = _kdi("연구보고서")
+    items = site.parser((FIXTURES / KDI_LIST).read_text(encoding="utf-8"), site)
+    assert boards.fill_missing_dates(items, site, known=set(), budget=0) == []
+
+
+def test_KDI_정기간행물은_최신호_한_권만_준다():
+    site, articles = _parse("경제동향", KDI_ISSUE)
+    assert len(articles) == 1
+    assert articles[0].title == "KDI 경제동향 2026. 9"
+    assert articles[0].published_at == "2026-09-07"
+    assert articles[0].uid == "20260907"
+    assert articles[0].link.endswith("pub_no=19271")
+
+
+def test_KDI_경제전망은_제목줄에_날짜가_붙어_있다():
+    _, articles = _parse("경제전망", KDI_OUTLOOK)
+    assert len(articles) == 1
+    assert articles[0].published_at == "2026-08-19"
+    assert "2026.08.19" not in articles[0].title
+
+
+def test_KDI_정기간행물은_페이지를_넘기지_않는다():
+    for board in ("경제전망", "경제동향", "나라경제"):
+        site = _kdi(board)
+        assert site.single_request
+        assert site.page_url(3) == site.list_url
+
+
+def test_KDI는_게시판이_여섯이어도_한_기관이다():
+    assert research.agency_names().count("한국개발연구원") == 1
+    assert len(research.boards_of("한국개발연구원")) == 6
+
+
 # --- 목록 구성 --------------------------------------------------------------
 
 def test_빈_HTML은_빈_결과를_준다():
@@ -171,7 +326,7 @@ def test_출처가_다른_분류와_겹치지_않는다():
 def test_분야별로_묶인다():
     grouped = dict((g, [s.name for s in sites]) for g, sites in research.sites_by_group())
     assert grouped["부동산"] == ["국토연구원"]
-    assert grouped["금융"] == ["KB경영연구소"]
+    assert grouped["금융"] == ["KB경영연구소", "한국개발연구원", "한국조세재정연구원"]
     assert grouped["기타"] == ["건축공간연구원", "한국법제연구원"]
 
 

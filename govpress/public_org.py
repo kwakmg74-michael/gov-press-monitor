@@ -19,7 +19,7 @@ from bs4 import BeautifulSoup
 
 from . import boards
 from .boards import Site
-from .models import PUBLIC, clean_text
+from .models import PUBLIC, clean_text, normalize_date
 
 CATEGORY = PUBLIC
 PREFIX = "public"
@@ -268,6 +268,158 @@ def parse_sh(html: str, site: Site) -> list[dict]:
     )
 
 
+# --- 한국인터넷진흥원 --------------------------------------------------------
+
+_KISA_RE = re.compile(r"postSeq=(\d+)")
+
+
+def parse_kisa(html: str, site: Site) -> list[dict]:
+    """한국인터넷진흥원 보도자료.
+
+    구조 (2026-09 확인):
+        table.tbl_board tbody tr
+          번호 / 제목(a) / 등록일 / 조회수 / 첨부 — 담당부서 없음.
+
+    상세 링크가 href에 그대로 있다. 다만 `page`가 붙어 오므로 떼어 낸다.
+    """
+    return _rows(
+        html,
+        site,
+        'a[href*="postSeq="]',
+        _re_uid(_KISA_RE),
+        lambda a, uid: boards.keep_params(a.get("href", ""), site, ("postSeq",)),
+    )
+
+
+# --- 한국주택금융공사 / 경기주택도시공사 --------------------------------------
+
+_ARTICLE_NO_RE = re.compile(r"articleNo=(\d+)")
+
+
+def parse_article_board(html: str, site: Site) -> list[dict]:
+    """전자정부 표준 게시판(`articleNo` 계열).
+
+    구조 (2026-09 확인, 한국주택금융공사·경기주택도시공사):
+        번호 / 제목(a) / 등록일 / 조회수 / 첨부 — 담당부서 없음.
+
+    상세 링크가 `?mode=view&articleNo=600580&article.offset=0` 형태의
+    쿼리만 있는 상대 주소다. `article.offset`은 목록에서 몇 번째였는지일
+    뿐이라 떼어 내고, 글 번호만 남긴다.
+
+    페이지 넘김도 번호가 아니라 `article.offset`(2쪽 = 10)이다.
+    """
+    def link(anchor, uid: str) -> str:
+        base = site.list_url.split("?")[0]
+        return f"{base}?mode=view&articleNo={uid}"
+
+    return _rows(
+        html,
+        site,
+        'a[href*="articleNo="]',
+        _re_uid(_ARTICLE_NO_RE),
+        link,
+    )
+
+
+# --- 한국토지주택공사 --------------------------------------------------------
+
+_GO_VIEW_RE = re.compile(r"goView\('(\d+)'\)")
+
+
+def parse_gallery(html: str, site: Site) -> list[dict]:
+    """사진형 목록(`gallery.es` 계열).
+
+    구조 (2026-09 확인, 한국토지주택공사):
+        a[onclick=goView('12118')]
+          strong.title  제목 (앞에 숨은 '새글' 라벨)
+          span.date / span.date2  "등록일 2026-09-11"
+
+    표가 아니라 카드다. 게다가 맨 위 3건은 큰 카드로 한 번 더 나오므로
+    같은 글을 두 번 줍지 않도록 글 번호로 걸러 낸다.
+
+    날짜 칸 안에는 `<strong class="label">등록일</strong>`이 들어 있는데,
+    normalize_date가 날짜만 집어내므로 그대로 두어도 된다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+    seen: set[str] = set()
+
+    for anchor in soup.select('a[onclick*="goView"]'):
+        uid = boards.script_uid(anchor, _GO_VIEW_RE)
+        title_el = anchor.select_one("strong.title")
+        if not uid or not title_el or uid in seen:
+            continue
+
+        published = normalize_date(
+            boards.row_text(anchor.select_one("span.date, span.date2"))
+        )
+        if not published:
+            continue
+
+        seen.add(uid)
+        items.append(
+            {
+                "uid": uid,
+                "title": boards.row_text(title_el),
+                "link": boards.keep_params(
+                    anchor.get("href", ""), site, ("mid", "bid", "act", "list_no")
+                ),
+                "department": "",
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
+# --- 한국은행 ----------------------------------------------------------------
+
+_BOK_NTT_RE = re.compile(r"nttId=(\d+)")
+
+
+def parse_bok(html: str, site: Site) -> list[dict]:
+    """한국은행 보도자료.
+
+    구조 (2026-09 확인):
+        li.bbsRowCls
+          span.depart  담당부서   span.hits  조회수   span.date  등록일
+          div.set > a.title  제목
+
+    보도자료 화면(`newsData/list.do`)은 껍데기만 내려오고, 목록은
+    `newsData/listCont.do`가 따로 그려 준다. 그래서 수집 주소로는
+    **listCont.do 쪽**을 쓴다. 사람이 보는 주소와 다르지만 내용은 같다.
+
+    각 칸 앞에 `<span class="sr-only">담당부서</span>` 같은 읽기 전용
+    라벨이 숨어 있는데, 군더더기 제거 규칙(`.sr-only`)이 걷어 낸다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+
+    for row in soup.select("li.bbsRowCls"):
+        anchor = row.select_one("a.title")
+        if not anchor:
+            continue
+
+        uid = boards.script_uid(anchor, _BOK_NTT_RE)
+        published = normalize_date(boards.row_text(row.select_one("span.date")))
+        if not (uid and published):
+            continue
+
+        items.append(
+            {
+                "uid": uid,
+                "title": boards.row_text(anchor),
+                "link": boards.keep_params(
+                    anchor.get("href", ""), site, ("nttId", "menuNo")
+                ),
+                "department": boards.row_text(row.select_one("span.depart")),
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
 # --- 사이트 목록 -------------------------------------------------------------
 #
 # 실제 목록 HTML을 확인하고 파서 테스트를 통과한 것만 넣는다.
@@ -326,18 +478,49 @@ SITES: tuple[Site, ...] = (
         "page",
         parse_kca,
     ),
+    _site(
+        "한국토지주택공사",
+        "부동산",
+        "https://www.lh.or.kr/gallery.es?mid=a10502000000&bid=0003",
+        "nPage",
+        parse_gallery,
+    ),
+    _site(
+        "경기주택도시공사",
+        "부동산",
+        "https://www.gh.or.kr/gh/press-release.do",
+        "article.offset",
+        parse_article_board,
+        page_mode="offset",
+    ),
+    _site(
+        "한국주택금융공사",
+        "금융",
+        "https://www.hf.go.kr/ko/sub05/sub05_04_05.do",
+        "article.offset",
+        parse_article_board,
+        page_mode="offset",
+    ),
+    _site(
+        "한국인터넷진흥원",
+        "기타",
+        "https://www.kisa.or.kr/402",
+        "page",
+        parse_kisa,
+    ),
+    _site(
+        "한국은행",
+        "금융",
+        "https://www.bok.or.kr/portal/singl/newsData/listCont.do"
+        "?menuNo=201263&depth2=200038&depth3=201263&targetDepth=3"
+        "&searchCnd=1&sort=1&pageUnit=10",
+        "pageIndex",
+        parse_bok,
+    ),
 )
 
 # 목록에는 있지만 아직 게시판 구조를 확인하지 못한 곳.
-PENDING: tuple[str, ...] = (
-    "한국인터넷진흥원",
-    "한국자산관리공사",
-    "한국저작권보호원",
-    "한국저작권위원회",
-    "한국주택금융공사",
-    "한국지식재산보호원",
-    "한국토지주택공사",
-)
+PENDING: tuple[str, ...] = ()
 
 
 def sites_by_group():
@@ -356,6 +539,9 @@ def boards_of(name: str) -> list[Site]:
     return boards.boards_of(SITES, name)
 
 
-def collect(sites=None, pages: int = 3, delay: float = 0.7, on_progress=None):
+def collect(sites=None, pages: int = 3, delay: float = 0.7, on_progress=None,
+            known=None):
     targets = list(sites) if sites else list(SITES)
-    return boards.collect(targets, pages=pages, delay=delay, on_progress=on_progress)
+    return boards.collect(
+        targets, pages=pages, delay=delay, on_progress=on_progress, known=known
+    )

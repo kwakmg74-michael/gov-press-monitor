@@ -253,6 +253,181 @@ def parse_klri_cards(html: str, site: Site) -> list[dict]:
     return items
 
 
+# --- 한국조세재정연구원 ------------------------------------------------------
+
+_KIPF_RE = re.compile(r"fn_search_detail\('(\d+)'\)")
+
+
+def parse_kipf_cards(html: str, site: Site) -> list[dict]:
+    """한국조세재정연구원 연구발간자료.
+
+    구조 (2026-09 확인):
+        a.link[onclick=fn_search_detail('527650')]
+          strong.tit  제목
+          ul.list_ul > li  '저자 박주철' / '발간월 2026-09'
+
+    여기는 **발간월까지만** 적는다(2026-09). 날짜가 없으면 대시보드가
+    그 글을 걸러 내므로, 그 달의 1일로 본다. 목록이 발간 순서대로
+    내려오니 같은 달 안의 앞뒤는 어차피 목록 순서가 말해 준다.
+
+    상세는 원래 숨은 양식을 POST로 보내지만, 같은 주소에 `serialNo`를
+    실어 GET으로 요청해도 열린다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    base = site.list_url.rsplit("/", 1)[0]
+    items: list[dict] = []
+
+    for anchor in soup.select('a[onclick*="fn_search_detail"]'):
+        title_el = anchor.select_one("strong.tit")
+        uid = boards.script_uid(anchor, _KIPF_RE)
+        if not (title_el and uid):
+            continue
+
+        published, author = "", ""
+        for row in anchor.select("ul.list_ul li"):
+            label = boards.row_text(row.select_one("strong"))
+            value = boards.row_text(row.select_one("span"))
+            if label == "발간월":
+                published = normalize_date(f"{value}-01")
+            elif label == "저자":
+                author = value
+        if not published:
+            continue
+
+        items.append(
+            {
+                "uid": uid,
+                "title": boards.row_text(title_el),
+                "link": f"{base}/view.do?serialNo={uid}",
+                "department": author,
+                "published_at": published,
+            }
+        )
+
+    return items
+
+
+# --- 한국개발연구원(KDI) -----------------------------------------------------
+
+_KDI_PUB_RE = re.compile(r"pub_no=(\d+)")
+_KDI_PREVIEW_RE = re.compile(r"preView\?pub_no=(\d+)")
+
+
+def parse_kdi_list(html: str, site: Site) -> list[dict]:
+    """KDI 발간물 목록(연구보고서·KDI FOCUS·기타보고서).
+
+    구조 (2026-09 확인):
+        li
+          a[href*=View?pub_no=]
+            div.rpt_tit > b(종류) + strong(제목)
+          div.rpt_other > p > span(저자) span(쪽수)
+
+    **목록에 발간일이 없다.** 제목·저자·쪽수만 적혀 있다. 날짜가 없으면
+    저장 단계에서 버려지므로, 여기서는 날짜를 비워 두고 `detail_date`가
+    새 글만 하나씩 열어 채우게 한다(`boards.fill_missing_dates`).
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    items: list[dict] = []
+
+    for card in soup.select("li"):
+        anchor = card.select_one('a[href*="pub_no="]')
+        title_el = card.select_one("div.rpt_tit strong")
+        if not (anchor and title_el):
+            continue
+
+        uid = boards.script_uid(anchor, _KDI_PUB_RE)
+        if not uid:
+            continue
+
+        author = card.select_one("div.rpt_other p span")
+        items.append(
+            {
+                "uid": uid,
+                "title": boards.row_text(title_el),
+                "link": urljoin(site.list_url, anchor.get("href", "")),
+                "department": boards.row_text(author),
+                "published_at": "",  # 상세에서 채운다
+            }
+        )
+
+    return items
+
+
+# 상세 화면이 게시판마다 다르다. 발간일이 있는 자리를 순서대로 짚어 본다.
+_KDI_DATE_SELECTORS = (
+    "div.tit_top p",                  # 연구보고서·기타보고서
+    "div.top_bg-wrap strong.title span",  # KDI FOCUS
+)
+
+
+def kdi_detail_date(html: str) -> str:
+    """KDI 상세에서 발간일을 읽는다.
+
+    같은 기관인데도 화면 틀이 둘이다. 연구보고서는 `div.tit_top`,
+    KDI FOCUS는 `div.top_bg-wrap`에 제목과 발간일이 들어 있다.
+
+    자리를 하나만 보면 FOCUS 쪽은 날짜를 못 찾아 **열 건이 통째로
+    버려진다** — 실제로 그렇게 0건이 나왔다. 그래서 둘 다 짚어 본다.
+    화면 아래쪽 '추천 발간물'에도 날짜가 많아서, 아무 날짜나 줍지 않고
+    제목 옆자리만 본다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+    for selector in _KDI_DATE_SELECTORS:
+        published = normalize_date(boards.row_text(soup.select_one(selector)))
+        if published:
+            return published
+    return ""
+
+
+def parse_kdi_issue(html: str, site: Site) -> list[dict]:
+    """KDI 정기간행물(경제전망·경제동향·나라경제).
+
+    이쪽은 목록이 아니라 **최신호 한 권을 바로 펼쳐 보여 주는 화면**이다.
+    연도·월을 골라야 지난 호로 갈 수 있으니 페이지를 넘길 것도 없다.
+    그래서 한 번 받아 그 호 하나만 집어낸다.
+
+    구조가 두 갈래다 (2026-09 확인):
+        div.post-top > div.tit (제목) + div.tit-info > div.date (발간일)
+        div.page_top-wrap > h2 (제목) > p (발간일)       ← 경제전망
+
+    호마다 발간일이 다르므로 발간일을 글 번호로 쓴다. 같은 호를 두 번
+    저장하는 일이 없고, 새 호가 나오면 새 글로 들어온다.
+    """
+    soup = BeautifulSoup(html, "html.parser")
+
+    top = soup.select_one("div.post-top")
+    if top:
+        title = boards.row_text(top.select_one("div.tit"))
+        published = normalize_date(boards.row_text(top.select_one("div.tit-info .date")))
+    else:
+        heading = soup.select_one(".page_top-wrap h2")
+        if not heading:
+            return []
+        date_el = heading.select_one("p")
+        published = normalize_date(boards.row_text(date_el))
+        if date_el:
+            date_el.decompose()
+        title = boards.row_text(heading)
+
+    if not (title and published):
+        return []
+
+    # '원문 미리보기' 버튼에 이 호의 번호가 들어 있다. 아래쪽 추천 목록에도
+    # pub_no가 잔뜩 있으므로, 미리보기 주소만 골라 본다.
+    preview = _KDI_PREVIEW_RE.search(html)
+    link = f"{site.list_url}?pub_no={preview.group(1)}" if preview else site.list_url
+
+    return [
+        {
+            "uid": published.replace("-", ""),
+            "title": title,
+            "link": link,
+            "department": "",
+            "published_at": published,
+        }
+    ]
+
+
 # --- 사이트 목록 -------------------------------------------------------------
 #
 # 실제 목록 HTML을 확인하고 파서 테스트를 통과한 것만 넣는다.
@@ -296,15 +471,71 @@ SITES: tuple[Site, ...] = (
         "nPage",
         parse_publication_cards,
     ),
+    _site(
+        "한국조세재정연구원",
+        "금융",
+        "https://www.kipf.re.kr/kor/Publication/All/kiPublish/ALL/list.do",
+        "pageIndex",
+        parse_kipf_cards,
+    ),
+    _site(
+        "한국개발연구원",
+        "금융",
+        "https://www.kdi.re.kr/research/reportList",
+        "pg",
+        parse_kdi_list,
+        board="연구보고서",
+        detail_date=kdi_detail_date,
+    ),
+    _site(
+        "한국개발연구원",
+        "금융",
+        "https://www.kdi.re.kr/research/focusList",
+        "pg",
+        parse_kdi_list,
+        board="KDI FOCUS",
+        detail_date=kdi_detail_date,
+    ),
+    _site(
+        "한국개발연구원",
+        "금융",
+        "https://www.kdi.re.kr/research/etcReportList",
+        "pg",
+        parse_kdi_list,
+        board="기타보고서",
+        detail_date=kdi_detail_date,
+    ),
+    _site(
+        "한국개발연구원",
+        "금융",
+        "https://www.kdi.re.kr/research/economy",
+        "pg",
+        parse_kdi_issue,
+        board="경제전망",
+        page_mode="single",
+    ),
+    _site(
+        "한국개발연구원",
+        "금융",
+        "https://www.kdi.re.kr/research/monTrends",
+        "pg",
+        parse_kdi_issue,
+        board="경제동향",
+        page_mode="single",
+    ),
+    _site(
+        "한국개발연구원",
+        "금융",
+        "https://www.kdi.re.kr/research/monCountry",
+        "pg",
+        parse_kdi_issue,
+        board="나라경제",
+        page_mode="single",
+    ),
 )
 
 # 목록에는 있지만 아직 게시판 구조를 확인하지 못한 곳.
-PENDING: tuple[str, ...] = (
-    "한국조세재정연구원",
-    "한국행정연구원",
-    "한국개발연구원",
-    "한국지식재산연구원",
-)
+PENDING: tuple[str, ...] = ("한국행정연구원",)
 
 
 def sites_by_group():
@@ -323,6 +554,9 @@ def boards_of(name: str) -> list[Site]:
     return boards.boards_of(SITES, name)
 
 
-def collect(sites=None, pages: int = 3, delay: float = 0.7, on_progress=None):
+def collect(sites=None, pages: int = 3, delay: float = 0.7, on_progress=None,
+            known=None):
     targets = list(sites) if sites else list(SITES)
-    return boards.collect(targets, pages=pages, delay=delay, on_progress=on_progress)
+    return boards.collect(
+        targets, pages=pages, delay=delay, on_progress=on_progress, known=known
+    )

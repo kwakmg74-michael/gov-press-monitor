@@ -4,3 +4,9 @@ __pycache__/
 articles.db
 preview.db
 dashboard.html
+publish/
+수집기록.txt
+
+# Local Netlify folder
+.netlify
+tests/fixtures/raw/
