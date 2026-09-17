@@ -371,3 +371,17 @@ def test_화면에_없는_분류는_건수에_세지_않는다(tmp_path):
 
     total = re.search(r"<b>([\d,]+)건</b>", html_text).group(1)
     assert int(total.replace(",", "")) == shown
+
+
+def test_바로가기는_이름만_내놓는다(tmp_path):
+    """마흔 곳이 넘는다. 설명까지 깔면 화면을 다 먹는다."""
+    html_text = render(tmp_path)
+    assert 'class="link-chip"' in html_text
+    assert 'class="link-card"' not in html_text, "카드 방식이 남아 있습니다"
+
+
+def test_설명은_풍선말로_남는다(tmp_path):
+    """이름만 보이더라도 무엇을 내는 곳인지 알 길은 있어야 한다."""
+    html_text = render(tmp_path)
+    assert "site.note + ' — ' + domainOf(site.url)" in html_text
+    assert "title=" in html_text

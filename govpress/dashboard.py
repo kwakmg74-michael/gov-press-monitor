@@ -515,38 +515,30 @@ _TEMPLATE = r"""<!doctype html>
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
 
-  /* 목록 대신 바로가기만 놓는 탭(연구소) */
+  /* 목록 대신 바로가기만 놓는 탭(연구·업계) */
   .links-note {
     font-size: 13px; color: var(--muted);
     padding: 4px 2px 14px; line-height: 1.6;
   }
-  .links > .group-label { padding-top: 10px; }
-  .link-grid {
-    display: grid; gap: 8px; margin-bottom: 6px;
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  .links > .group-label { padding-top: 12px; }
+  /* 이름만 죽 늘어놓는다. 마흔 곳이 넘어서 카드로 깔면 화면을 다 먹는다.
+     설명과 주소는 마우스를 올리면 나오는 풍선말로 옮겼다. */
+  .link-chips {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    margin-bottom: 4px;
   }
-  .link-card {
-    display: block; text-decoration: none;
+  .link-chip {
+    display: inline-block; text-decoration: none;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 10px;
-    padding: 13px 15px;
+    border-radius: 999px;
+    padding: 5px 13px;
+    font-size: 13.5px; color: var(--text);
+    white-space: nowrap;
   }
-  .link-card:hover { border-color: var(--accent); }
-  .link-card .nm {
-    display: block;
-    color: var(--text); font-size: 15px; font-weight: 600;
-    letter-spacing: -0.005em; margin-bottom: 3px;
-  }
-  .link-card:hover .nm { color: var(--accent); }
-  .link-card .nm::after { content: " ↗"; color: var(--muted); font-weight: 400; }
-  .link-card .note { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
-  .link-card .what {
-    display: inline-block; margin-top: 7px;
-    font-size: 11.5px; font-weight: 600;
-    color: var(--accent); background: var(--accent-soft);
-    padding: 2px 8px; border-radius: 999px;
-  }
+  .link-chip:hover { border-color: var(--accent); color: var(--accent); }
+  .link-chip::after { content: " ↗"; color: var(--muted); font-size: 11px; }
+  .link-chip:hover::after { color: var(--accent); }
   mark { background: var(--accent-soft); color: inherit; padding: 0 1px; border-radius: 2px; }
   .empty { padding: 48px 8px; text-align: center; color: var(--muted); }
   footer { margin-top: 40px; font-size: 12px; color: var(--muted); }
@@ -710,13 +702,13 @@ _TEMPLATE = r"""<!doctype html>
     });
 
     linksEl.innerHTML = groups.map(function (group) {
-      var cards = group.sites.map(function (site) {
-        return '<a class="link-card" href="' + esc(site.url) + '"'
-          + ' target="_blank" rel="noopener noreferrer">'
-          + '<span class="nm">' + esc(site.name) + '</span>'
-          + '<span class="note">' + esc(site.note) + '</span>'
-          + '<span class="what">' + esc(domainOf(site.url)) + '</span>'
-          + '</a>';
+      var chips = group.sites.map(function (site) {
+        /* 이름만 내놓고, 설명과 주소는 풍선말로 넘긴다. */
+        var tip = site.note + ' — ' + domainOf(site.url);
+        return '<a class="link-chip" href="' + esc(site.url) + '"'
+          + ' target="_blank" rel="noopener noreferrer"'
+          + ' title="' + esc(tip) + '">'
+          + esc(site.name) + '</a>';
       }).join('');
 
       /* 묶음이 하나뿐이면 제목이 오히려 군더더기다. 목록 탭과 같은 규칙. */
@@ -724,7 +716,7 @@ _TEMPLATE = r"""<!doctype html>
         ? '<div class="group-label">' + esc(group.name)
             + ' <span class="n">' + group.sites.length + '곳</span></div>'
         : '';
-      return heading + '<div class="link-grid">' + cards + '</div>';
+      return heading + '<div class="link-chips">' + chips + '</div>';
     }).join('');
   }
 

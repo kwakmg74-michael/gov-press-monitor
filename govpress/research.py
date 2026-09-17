@@ -659,10 +659,6 @@ LINKS: tuple[dict[str, str], ...] = (
     {"name": "IBK투자증권", "group": "증권사",
      "note": "리서치센터 보고서. 시장 전망과 산업 분석",
      "url": "https://www.ibks.com"},
-    {"name": "이지스자산운용", "group": "증권사",
-     "note": "부동산 자산운용. 오피스·물류 시장 보고서",
-     "url": "https://www.igisam.com"},
-
     # --- 업계 ---
     {"name": "CBRE코리아", "group": "업계",
      "note": "글로벌 상업용 부동산 서비스. 오피스·물류 시장 보고서",
@@ -673,6 +669,9 @@ LINKS: tuple[dict[str, str], ...] = (
     {"name": "쿠쉬먼앤드웨이크필드", "group": "업계",
      "note": "글로벌 상업용 부동산 서비스. 시장 보고서",
      "url": "https://www.cushmanwakefield.com/ko-kr/south-korea"},
+    {"name": "이지스자산운용", "group": "업계",
+     "note": "부동산 자산운용. 오피스·물류 시장 보고서",
+     "url": "https://www.igisam.com"},
     {"name": "젠스타메이트", "group": "업계",
      "note": "국내 상업용 부동산 종합 서비스. 시장 자료",
      "url": "https://www.genstarmate.com"},
