@@ -13,7 +13,7 @@ from __future__ import annotations
 
 import html
 import json
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 
 from . import agencies, local_gov, models, public_org, research, storage
@@ -115,15 +115,58 @@ def _roster_size(category: str) -> int:
     return 0
 
 
+# 화면에 담는 기간. 이보다 오래된 것은 DB에 그대로 두고 화면에서만 뺀다.
+KEEP_YEARS = 3
+
+# 한 건에 딸린 설명을 이만큼만 싣는다.
+#
+# korea.kr에서 오는 정부기관 보도자료는 **본문 전체**가 딸려 온다 — 평균
+# 1,000자, 긴 것은 1만 자가 넘는다. 그대로 실으면 화면 파일이 3MB를
+# 넘어서(전체의 95%가 이 본문이다) 휴대폰에서 열기 버거워진다.
+#
+# 보도자료는 첫 문단에 누가·무엇을 했는지가 들어가므로, 목록에서 훑고
+# 검색하는 데는 앞부분이면 족하다. 본문 전체는 제목을 눌러 원문에서 본다.
+SUMMARY_LIMIT = 200
+
+
+def cutoff_date(today: date | None = None) -> str:
+    """이 날짜보다 오래된 것은 화면에 싣지 않는다.
+
+    2월 29일이 있는 해를 빼면 존재하지 않는 날짜가 되므로 하루 물린다.
+    """
+    today = today or date.today()
+    try:
+        first = today.replace(year=today.year - KEEP_YEARS)
+    except ValueError:  # 2월 29일
+        first = today.replace(year=today.year - KEEP_YEARS, day=28)
+    return first.isoformat()
+
+
+def shorten(text: str | None, limit: int = SUMMARY_LIMIT) -> str:
+    """긴 설명을 앞부분만 남긴다. 잘렸다는 것을 말줄임표로 알린다."""
+    value = (text or "").strip()
+    if len(value) <= limit:
+        return value
+    return value[:limit].rstrip() + "…"
+
+
+def keep_recent(rows, today: date | None = None) -> list:
+    """최근 KEEP_YEARS년치만 남긴다. 날짜가 없는 건 남겨 둔다."""
+    first = cutoff_date(today)
+    return [r for r in rows if not r["published_at"] or r["published_at"] >= first]
+
+
 def _tabs(db_path) -> list[dict]:
     """상단 탭 하나하나의 데이터. 아직 수집기가 없는 분류도 자리를 지킨다."""
     tabs = []
     for category in models.CATEGORIES:
-        rows = [
-            r
-            for r in storage.list_articles(db_path, category=category)
-            if not agencies.is_excluded(r["agency"])
-        ]
+        rows = keep_recent(
+            [
+                r
+                for r in storage.list_articles(db_path, category=category)
+                if not agencies.is_excluded(r["agency"])
+            ]
+        )
         tabs.append(
             {
                 "category": category,
@@ -135,7 +178,7 @@ def _tabs(db_path) -> list[dict]:
                         "agency": r["agency"],
                         "link": r["link"],
                         "published_at": r["published_at"],
-                        "summary": r["summary"],
+                        "summary": shorten(r["summary"]),
                     }
                     for r in rows
                 ],
@@ -146,7 +189,10 @@ def _tabs(db_path) -> list[dict]:
 
 
 DEFAULT_OUTPUT = "dashboard.html"
-PUBLISH_DIR = "publish"
+
+# 게시용 폴더. GitHub Pages가 "main 가지의 docs 폴더"를 그대로 사이트로
+# 띄워 주기 때문에 이 이름이어야 한다. 폴더 이름을 바꾸면 주소가 죽는다.
+PUBLISH_DIR = "docs"
 
 # 자동 수집이 도는 시각. 작업 스케줄러(자동수집_등록용.xml)와 맞춰 둔다.
 # 한쪽만 고치면 화면에 적힌 안내와 실제 동작이 어긋난다.
@@ -230,6 +276,13 @@ _TEMPLATE = r"""<!doctype html>
     margin: 0; line-height: 1.5;
   }
   .auto-note b { color: var(--text); font-weight: 600; }
+  /* 담는 기간 안내. 요약 옆에 작게 붙인다 */
+  .keep-note {
+    display: inline-block; margin-left: 4px;
+    padding: 1px 7px; border-radius: 999px;
+    border: 1px solid var(--line);
+    font-size: 11.5px; color: var(--muted); cursor: help;
+  }
   #refresh { font-size: 12.5px; padding: 6px 12px; }
   #refresh:hover { border-color: var(--accent); color: var(--accent); }
   /* 좁은 화면에서는 아래로 흐르게 두고 왼쪽 정렬로 되돌린다 */
@@ -425,6 +478,7 @@ _TEMPLATE = r"""<!doctype html>
     <h1>보도자료 모니터</h1>
     <p class="meta">
       <b>__TOTAL__건</b> · __AGENCY_COUNT__개 기관 · __RANGE__
+      <span class="keep-note" title="더 오래된 자료도 모아 두었지만, 화면이 무거워지지 않도록 최근 것만 싣습니다.">최근 __KEEP_YEARS__년치</span>
       <br>마지막 수집 __LAST_RUN__ <span id="sourceNote"></span>
     </p>
     <div class="head-right">
@@ -757,6 +811,7 @@ def render(db_path: str = storage.DEFAULT_DB, output: str | Path = DEFAULT_OUTPU
         .replace("__RANGE__", html.escape(date_range))
         .replace("__LAST_RUN__", html.escape(last_run))
         .replace("__UPDATE_TIMES__", html.escape(", ".join(UPDATE_TIMES)))
+        .replace("__KEEP_YEARS__", str(KEEP_YEARS))
         .replace("__DATA__", json.dumps(tabs, ensure_ascii=False).replace("</", "<\\/"))
     )
 
@@ -773,10 +828,18 @@ def publish(db_path, folder=PUBLISH_DIR) -> Path:
 
     이렇게 올려 두면 보는 사람은 설치할 게 없다. 주소만 열면 되고,
     기관을 추가해도 다음 수집·게시 때 저절로 반영된다.
+
+    지금은 GitHub Pages로 띄운다. 이 폴더를 git에 올리면 그대로 사이트가
+    된다 — 따로 올리는 도구도, 계정 한도도 없다.
+
+    `.nojekyll`을 같이 둔다. GitHub Pages는 기본적으로 Jekyll이라는 도구를
+    한 번 거치는데, 그게 밑줄로 시작하는 파일을 빼먹는다. 지금은 해당
+    사항이 없지만, 들어가는 파일이 늘었을 때 조용히 빠지는 편이 더 나쁘다.
     """
     out = Path(folder)
     out.mkdir(parents=True, exist_ok=True)
 
     render(db_path, out / "index.html")
     (out / "robots.txt").write_text(_ROBOTS, encoding="utf-8")
+    (out / ".nojekyll").write_text("", encoding="utf-8")
     return out

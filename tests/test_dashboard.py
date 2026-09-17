@@ -196,3 +196,77 @@ def test_기관_날짜_부서가_한_줄에_들어간다(tmp_path):
     order = html.index('class="meta-row"')
     for cls in ('class="badge"', 'class="date"', 'class="dept"'):
         assert html.index(cls, order) > order
+
+
+# --- 화면에 담는 범위 --------------------------------------------------------
+#
+# 화면 파일 하나에 전부 담는 구조라, 담는 양이 곧 여는 속도다.
+# 휴대폰으로 여는 사람이 있으므로 여기를 느슨하게 두면 안 된다.
+
+def test_오래된_것은_화면에서_뺀다():
+    from datetime import date
+
+    today = date(2026, 9, 17)
+    rows = [
+        {"published_at": "2026-09-01"},
+        {"published_at": "2023-09-17"},  # 딱 경계 — 남는다
+        {"published_at": "2023-09-16"},  # 하루 차이로 빠진다
+        {"published_at": "2019-01-03"},
+    ]
+    kept = [r["published_at"] for r in dashboard.keep_recent(rows, today)]
+    assert kept == ["2026-09-01", "2023-09-17"]
+
+
+def test_날짜가_없으면_남겨_둔다():
+    from datetime import date
+
+    rows = [{"published_at": ""}, {"published_at": None}]
+    assert len(dashboard.keep_recent(rows, date(2026, 9, 17))) == 2
+
+
+def test_윤년_2월29일에도_날짜를_만들_수_있다():
+    from datetime import date
+
+    assert dashboard.cutoff_date(date(2028, 2, 29)) == "2025-02-28"
+
+
+def test_긴_설명은_앞부분만_싣는다():
+    """korea.kr 보도자료는 본문 전체가 딸려 온다. 평균 1,000자다."""
+    body = "가" * 5000
+    short = dashboard.shorten(body)
+    assert len(short) == dashboard.SUMMARY_LIMIT + 1  # 말줄임표 한 글자
+    assert short.endswith("…")
+
+
+def test_짧은_설명은_그대로_둔다():
+    """지자체·공공기관은 여기에 담당부서가 들어온다. 건드리면 안 된다."""
+    assert dashboard.shorten("홍보담당관") == "홍보담당관"
+    assert dashboard.shorten(None) == ""
+
+
+def test_화면에_담는_기간을_적어_둔다(tmp_path):
+    """보는 사람이 '왜 예전 게 없지' 하지 않도록."""
+    assert f"최근 {dashboard.KEEP_YEARS}년치" in render(tmp_path)
+
+
+def test_본문이_통째로_실리지_않는다(tmp_path):
+    for tab in read_tabs(render(tmp_path)):
+        for article in tab["articles"]:
+            assert len(article["summary"]) <= dashboard.SUMMARY_LIMIT + 1
+
+
+# --- 게시 폴더 --------------------------------------------------------------
+
+def test_게시하면_첫화면과_검색차단과_지킬해제가_생긴다(tmp_path):
+    out = dashboard.publish(build_db(tmp_path), tmp_path / "docs")
+    assert (out / "index.html").exists()
+    assert "Disallow: /" in (out / "robots.txt").read_text(encoding="utf-8")
+    assert (out / ".nojekyll").exists(), "Jekyll이 파일을 빼먹을 수 있습니다"
+
+
+def test_게시_폴더_이름은_docs다():
+    """GitHub Pages가 'main 가지의 docs 폴더'를 사이트로 띄운다.
+
+    이름을 바꾸면 친구들이 보던 주소가 그대로 죽는다.
+    """
+    assert dashboard.PUBLISH_DIR == "docs"
