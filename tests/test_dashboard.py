@@ -296,19 +296,46 @@ def test_바로가기마다_이름과_설명과_주소가_있다(tmp_path):
         assert site["url"].startswith("https://")
 
 
-def test_바로가기는_기관_홈페이지_그_자체로_간다(tmp_path):
-    """게시판 주소는 개편 한 번에 죽는다. 홈페이지 주소가 오래 간다."""
+def test_바로가기는_속페이지가_아니라_홈페이지로_간다(tmp_path):
+    """게시판 주소는 개편 한 번에 죽는다. 홈페이지 주소가 오래 간다.
+
+    한국어 페이지가 따로 있거나(쿠쉬먼앤드웨이크필드) 연구원이 본사와
+    다른 주소를 쓰는 곳(주택금융연구원)만 예외로 한 칸 더 들어간다.
+    """
     for site in _research_tab(tmp_path)["links"]:
-        tail = site["url"].split("//", 1)[1]
-        assert "/" not in tail, f"{site['name']}이 속 페이지를 가리킵니다"
-        assert "?" not in tail
+        tail = site["url"].split("//", 1)[1].rstrip("/")
+        assert "?" not in tail, f"{site['name']}에 검색 조건이 붙어 있습니다"
+        assert tail.count("/") <= 2, f"{site['name']}이 너무 깊이 들어갑니다"
 
 
 def test_바로가기도_묶음을_따른다(tmp_path):
     from govpress import research
 
     groups = {s["group"] for s in _research_tab(tmp_path)["links"]}
-    assert groups <= set(research.GROUP_ORDER)
+    assert groups <= set(research.LINK_GROUP_ORDER)
+
+
+def test_바로가기가_묶음_순서대로_나온다(tmp_path):
+    from govpress import research
+
+    order = list(research.LINK_GROUP_ORDER)
+    seen = [order.index(s["group"]) for s in _research_tab(tmp_path)["links"]]
+    assert seen == sorted(seen), "묶음이 뒤섞여 나옵니다"
+
+
+def test_한글_이름이_영문보다_먼저_온다(tmp_path):
+    """국내 기관을 찾으러 오는 화면이다. KB·OECD가 위로 올라오면 안 된다."""
+    links = [s for s in _research_tab(tmp_path)["links"] if s["group"] == "연구소"]
+    korean = [i for i, s in enumerate(links) if s["name"][:1] >= "가"]
+    latin = [i for i, s in enumerate(links) if s["name"][:1] < "가"]
+    assert max(korean) < min(latin)
+
+
+def test_탭_이름과_묶음_이름이_겹치지_않는다(tmp_path):
+    """탭도 '연구소', 그 안의 묶음도 '연구소'면 무슨 말인지 알 수 없다."""
+    tab = _research_tab(tmp_path)
+    assert tab["label"] != tab["category"]
+    assert tab["label"] not in {s["group"] for s in tab["links"]}
 
 
 def test_같은_기관을_두_번_넣지_않는다(tmp_path):

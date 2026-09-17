@@ -149,6 +149,12 @@ def cutoff_date(today: date | None = None) -> str:
 # 가는 길만 놓아 둔다. 수집기 자체는 `research.SITES`에 그대로 있다.
 LINK_ONLY: dict[str, str] = {models.RESEARCH: "research"}
 
+# 탭에 적는 이름. 저장할 때 쓰는 분류 이름과 화면에 적는 이름을 갈라 둔다.
+#
+# '연구소' 칸에 증권사·업계·협회가 함께 들어오면서, 탭 이름과 그 안의
+# 묶음 이름이 둘 다 '연구소'가 되어 버렸다. 그래서 탭만 다르게 부른다.
+TAB_LABELS: dict[str, str] = {models.RESEARCH: "연구·업계"}
+
 
 def _link_tab(category: str) -> dict:
     """목록 대신 기관 바로가기만 담은 탭.
@@ -157,14 +163,23 @@ def _link_tab(category: str) -> dict:
     감춘다 — 눌러도 반응이 없는 칸이 하나 있으면 나머지 칸도 못 믿게 된다.
     """
     module = _MODULES[category]
+    order = list(module.LINK_GROUP_ORDER)
+
+    def place(link) -> tuple:
+        group = order.index(link["group"]) if link["group"] in order else len(order)
+        # 한글 이름을 먼저, 그다음 영문. 국내 기관을 찾으러 오는 화면이다.
+        name = link["name"]
+        return (group, 0 if name[:1] >= "가" else 1, name)
+
     return {
         "category": category,
+        "label": TAB_LABELS.get(category, category),
         "kind": "links",
         "count": 0,
         "agencies": len(module.LINKS),
         "articles": [],
         "groups": [],
-        "links": [dict(link) for link in module.LINKS],
+        "links": [dict(link) for link in sorted(module.LINKS, key=place)],
     }
 
 
@@ -200,6 +215,7 @@ def _tabs(db_path) -> list[dict]:
         tabs.append(
             {
                 "category": category,
+                "label": TAB_LABELS.get(category, category),
                 "kind": "list",
                 "count": len(rows),
                 "agencies": _roster_size(category),
@@ -644,7 +660,7 @@ _TEMPLATE = r"""<!doctype html>
     btn.className = 'tab' + (tab.agencies ? '' : ' empty-tab');
     btn.setAttribute('role', 'tab');
     btn.setAttribute('aria-selected', i === 0 ? 'true' : 'false');
-    btn.innerHTML = esc(tab.category) + '<span class="n">' + tab.agencies + '곳</span>';
+    btn.innerHTML = esc(tab.label || tab.category) + '<span class="n">' + tab.agencies + '곳</span>';
     btn.addEventListener('click', function () { selectTab(i); });
     tabsEl.appendChild(btn);
   });
