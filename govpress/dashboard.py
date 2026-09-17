@@ -520,25 +520,35 @@ _TEMPLATE = r"""<!doctype html>
     font-size: 13px; color: var(--muted);
     padding: 4px 2px 14px; line-height: 1.6;
   }
-  .links > .group-label { padding-top: 12px; }
+  .links > .group-label { padding-top: 20px; padding-bottom: 4px; }
   /* 이름만 죽 늘어놓는다. 마흔 곳이 넘어서 카드로 깔면 화면을 다 먹는다.
-     설명과 주소는 마우스를 올리면 나오는 풍선말로 옮겼다. */
+     설명과 주소는 마우스를 올리면 나오는 풍선말로 옮겼다.
+
+     칸 너비를 같게 맞춘 격자로 깐다. 이름 길이대로 흘려 놓으면 줄마다
+     끝이 들쭉날쭉해서 눈이 어지럽다. 같은 자리에서 시작하면 훑기 쉽다. */
   .link-chips {
-    display: flex; flex-wrap: wrap; gap: 6px;
+    display: grid; gap: 10px 10px;
+    grid-template-columns: repeat(auto-fill, minmax(215px, 1fr));
     margin-bottom: 4px;
   }
   .link-chip {
-    display: inline-block; text-decoration: none;
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 5px 13px;
+    border-radius: 8px;
+    padding: 9px 13px;
     font-size: 13.5px; color: var(--text);
-    white-space: nowrap;
+    min-width: 0;
   }
   .link-chip:hover { border-color: var(--accent); color: var(--accent); }
-  .link-chip::after { content: " ↗"; color: var(--muted); font-size: 11px; }
-  .link-chip:hover::after { color: var(--accent); }
+  /* 이름이 칸보다 길면 잘라 낸다. 전체 이름은 풍선말에 그대로 있다. */
+  .link-chip .t {
+    flex: 1; min-width: 0;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  }
+  .link-chip .go { flex: none; color: var(--muted); font-size: 11px; }
+  .link-chip:hover .go { color: var(--accent); }
   mark { background: var(--accent-soft); color: inherit; padding: 0 1px; border-radius: 2px; }
   .empty { padding: 48px 8px; text-align: center; color: var(--muted); }
   footer { margin-top: 40px; font-size: 12px; color: var(--muted); }
@@ -707,8 +717,9 @@ _TEMPLATE = r"""<!doctype html>
         var tip = site.note + ' — ' + domainOf(site.url);
         return '<a class="link-chip" href="' + esc(site.url) + '"'
           + ' target="_blank" rel="noopener noreferrer"'
-          + ' title="' + esc(tip) + '">'
-          + esc(site.name) + '</a>';
+          + ' title="' + esc(site.name) + ' — ' + esc(tip) + '">'
+          + '<span class="t">' + esc(site.name) + '</span>'
+          + '<span class="go">↗</span></a>';
       }).join('');
 
       /* 묶음이 하나뿐이면 제목이 오히려 군더더기다. 목록 탭과 같은 규칙. */

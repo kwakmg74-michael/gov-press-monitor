@@ -385,3 +385,18 @@ def test_설명은_풍선말로_남는다(tmp_path):
     html_text = render(tmp_path)
     assert "site.note + ' — ' + domainOf(site.url)" in html_text
     assert "title=" in html_text
+
+
+def test_바로가기가_같은_너비로_줄맞춰_깔린다(tmp_path):
+    """이름 길이대로 흘려 놓으면 줄마다 끝이 들쭉날쭉해 눈이 어지럽다."""
+    html_text = render(tmp_path)
+    block = html_text[html_text.index(".link-chips {"):]
+    block = block[: block.index("}")]
+    assert "grid" in block and "repeat(auto-fill" in block
+    assert "flex-wrap" not in block, "다시 흘려 놓는 방식으로 돌아갔습니다"
+
+
+def test_이름이_길면_잘리되_풍선말에는_온전히_남는다(tmp_path):
+    html_text = render(tmp_path)
+    assert "text-overflow: ellipsis" in html_text
+    assert "esc(site.name) + ' — ' + esc(tip)" in html_text

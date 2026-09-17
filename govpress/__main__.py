@@ -249,8 +249,10 @@ def _publish(args) -> int:
     folder = dashboard.publish(args.db, args.folder).resolve()
     print(f"게시용 폴더 생성: {folder}")
     print()
-    print("이 폴더를 통째로 웹 호스팅에 올리면 주소 하나로 공유됩니다.")
-    print("Netlify라면 Deploys 화면에 이 폴더를 끌어다 놓으면 됩니다.")
+    print("이 폴더가 그대로 웹사이트가 됩니다. git에 올리면 반영됩니다:")
+    print("  git add docs && git commit -m \"화면 갱신\" && git push")
+    print()
+    print("자동 수집(자동수집.bat)은 이 과정을 알아서 합니다.")
     if args.open:
         _open_folder(folder)
     return 0
