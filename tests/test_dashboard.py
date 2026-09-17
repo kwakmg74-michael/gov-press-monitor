@@ -416,9 +416,18 @@ def test_첫_묶음_위에는_빈_공간을_두지_않는다(tmp_path):
 
 
 def test_묶음_제목이_크고_진하다(tmp_path):
-    """이름만 늘어놓은 화면에서는 이 줄이 유일한 이정표다."""
+    """네 탭 모두 이 줄이 '여기서부터 다른 묶음'이라는 유일한 표시다."""
     html_text = render(tmp_path)
-    block = html_text[html_text.index(".links > .group-label {"):]
+    block = html_text[html_text.index("  .group-label {"):]
     block = block[: block.index("}")]
     assert int(re.search(r"font-size:\s*(\d+)px", block).group(1)) >= 15
     assert int(re.search(r"font-weight:\s*(\d+)", block).group(1)) >= 700
+    assert "var(--text)" in block, "묶음 제목이 흐린 색입니다"
+
+
+def test_묶음_옆_개수는_작고_흐리다(tmp_path):
+    """제목이 묻히면 안 된다."""
+    html_text = render(tmp_path)
+    block = html_text[html_text.index("  .group-label .n {"):]
+    block = block[: block.index("}")]
+    assert "var(--muted)" in block
