@@ -400,3 +400,25 @@ def test_이름이_길면_잘리되_풍선말에는_온전히_남는다(tmp_path
     html_text = render(tmp_path)
     assert "text-overflow: ellipsis" in html_text
     assert "esc(site.name) + ' — ' + esc(tip)" in html_text
+
+
+def test_묶음_사이를_충분히_띄운다(tmp_path):
+    """이름만 늘어놓다 보니 어디서 갈리는지가 여백으로만 보인다."""
+    html_text = render(tmp_path)
+    block = html_text[html_text.index(".links > .group-label {"):]
+    block = block[: block.index("}")]
+    margin = int(re.search(r"margin-top:\s*(\d+)px", block).group(1))
+    assert margin >= 30, f"묶음 사이가 {margin}px밖에 안 됩니다"
+
+
+def test_첫_묶음_위에는_빈_공간을_두지_않는다(tmp_path):
+    assert ".links > .group-label:first-child" in render(tmp_path)
+
+
+def test_묶음_제목이_크고_진하다(tmp_path):
+    """이름만 늘어놓은 화면에서는 이 줄이 유일한 이정표다."""
+    html_text = render(tmp_path)
+    block = html_text[html_text.index(".links > .group-label {"):]
+    block = block[: block.index("}")]
+    assert int(re.search(r"font-size:\s*(\d+)px", block).group(1)) >= 15
+    assert int(re.search(r"font-weight:\s*(\d+)", block).group(1)) >= 700

@@ -520,7 +520,17 @@ _TEMPLATE = r"""<!doctype html>
     font-size: 13px; color: var(--muted);
     padding: 4px 2px 14px; line-height: 1.6;
   }
-  .links > .group-label { padding-top: 20px; padding-bottom: 4px; }
+  /* 묶음 사이를 충분히 띄운다. 이름만 늘어놓다 보니 어디서 갈리는지가
+     여백으로만 보인다 — 빠듯하면 마흔 곳이 한 덩어리로 읽힌다. */
+  .links > .group-label {
+    margin-top: 34px; padding-top: 4px; padding-bottom: 8px;
+    /* 목록 탭의 묶음 제목보다 크고 진하게. 여기서는 이 줄이 유일한
+       이정표라, 작게 두면 마흔 곳이 한 덩어리로 읽힌다. */
+    font-size: 15px; font-weight: 800;
+    color: var(--text); letter-spacing: -0.01em;
+  }
+  .links > .group-label .n { font-size: 12px; color: var(--muted); font-weight: 500; }
+  .links > .group-label:first-child { margin-top: 4px; }
   /* 이름만 죽 늘어놓는다. 마흔 곳이 넘어서 카드로 깔면 화면을 다 먹는다.
      설명과 주소는 마우스를 올리면 나오는 풍선말로 옮겼다.
 
