@@ -431,3 +431,46 @@ def test_묶음_옆_개수는_작고_흐리다(tmp_path):
     block = html_text[html_text.index("  .group-label .n {"):]
     block = block[: block.index("}")]
     assert "var(--muted)" in block
+
+
+# --- 서비스 문의 --------------------------------------------------------------
+#
+# GitHub Pages에는 서버가 없어서 페이지 혼자서는 메일을 못 보낸다.
+# 폼 내용을 받아 메일로 넘겨 주는 곳을 하나 거친다.
+
+def test_열쇠가_없으면_문의_버튼을_내놓지_않는다(tmp_path):
+    """눌러도 아무 일이 없는 버튼은 없느니만 못하다."""
+    assert dashboard.INQUIRY_KEY == "" or dashboard.INQUIRY_KEY
+    html_text = render(tmp_path)
+    assert 'id="askBtn"' in html_text and "hidden" in html_text
+    assert "if (ASK_KEY && askBox" in html_text
+
+
+def test_받는_이메일_주소가_페이지에_드러나지_않는다(tmp_path):
+    """공개된 페이지다. 주소를 박아 두면 스팸 수집에 걸린다."""
+    assert "kwakmg74" not in render(tmp_path)
+
+
+def test_문의_칸은_제목_내용_회신이메일_셋이다(tmp_path):
+    html_text = render(tmp_path)
+    for field in ('id="askTitle"', 'id="askBody"', 'id="askMail"'):
+        assert field in html_text
+    assert 'type="email"' in html_text
+
+
+def test_봇_미끼_칸이_있다(tmp_path):
+    """공개 폼은 결국 봇이 찾아온다."""
+    html_text = render(tmp_path)
+    assert 'name="botcheck"' in html_text
+    assert "#askForm .hp" in html_text
+
+
+def test_회신_주소로_답장이_가게_한다(tmp_path):
+    """받은 메일에서 그냥 '답장'을 눌러도 문의한 분에게 가야 한다."""
+    assert "replyto: mail" in render(tmp_path)
+
+
+def test_보내는_중에는_두_번_눌리지_않는다(tmp_path):
+    html_text = render(tmp_path)
+    assert "askSend.disabled = true" in html_text
+    assert "보내는 중" in html_text

@@ -245,6 +245,21 @@ PUBLISH_DIR = "docs"
 # 한쪽만 고치면 화면에 적힌 안내와 실제 동작이 어긋난다.
 UPDATE_TIMES = ("오전 10시", "오후 2시", "오후 5시")
 
+# 서비스 문의를 받을 곳.
+#
+# GitHub Pages에는 서버가 없어서 페이지 혼자서는 메일을 못 보낸다. 그래서
+# 폼 내용을 받아 메일로 넘겨 주는 곳(web3forms.com)을 하나 거친다.
+#
+# 이 열쇠는 감출 것이 아니다 — 어차피 페이지 소스에 실려 나가고, 그쪽에서도
+# 공개용으로 발급해 준다. 열쇠로 할 수 있는 일은 **아래 주소로 메일을 보내는
+# 것뿐**이라, 새어 나가도 남의 손에 들어갈 것이 없다. 대신 받는 주소가
+# 페이지에 드러나지 않아서 스팸 수집을 피할 수 있다.
+#
+# 열쇠를 비워 두면 문의 버튼이 아예 나오지 않는다 — 눌러도 아무 일이
+# 없는 버튼을 내놓느니 없는 편이 낫다.
+INQUIRY_KEY = "e527548b-8026-4e73-8e9a-b371e1510902"
+INQUIRY_ENDPOINT = "https://api.web3forms.com/submit"
+
 # 검색엔진에 뜨지 않게 한다. 사무실에서 돌려 보는 자료 모음이지
 # 인터넷에서 찾아지라고 만든 페이지가 아니다.
 _ROBOTS = "User-agent: *\nDisallow: /\n"
@@ -330,8 +345,42 @@ _TEMPLATE = r"""<!doctype html>
     border: 1px solid var(--line);
     font-size: 11.5px; color: var(--muted); cursor: help;
   }
-  #refresh { font-size: 12.5px; padding: 6px 12px; }
-  #refresh:hover { border-color: var(--accent); color: var(--accent); }
+  .head-buttons { display: flex; gap: 6px; }
+  #refresh, #askBtn { font-size: 12.5px; padding: 6px 12px; }
+  #refresh:hover, #askBtn:hover { border-color: var(--accent); color: var(--accent); }
+
+  /* --- 서비스 문의 --- */
+  #askBox {
+    width: min(460px, calc(100vw - 32px));
+    padding: 0; border: 1px solid var(--border); border-radius: 12px;
+    background: var(--surface); color: var(--text);
+  }
+  #askBox::backdrop { background: rgba(0, 0, 0, 0.45); }
+  #askForm { display: flex; flex-direction: column; padding: 22px 22px 18px; }
+  #askForm h2 { margin: 0 0 4px; font-size: 17px; letter-spacing: -0.01em; }
+  .ask-lead { margin: 0 0 16px; font-size: 13px; color: var(--muted); line-height: 1.6; }
+  #askForm label {
+    font-size: 12px; font-weight: 700; color: var(--muted);
+    margin-bottom: 5px;
+  }
+  #askForm input[type="text"], #askForm input[type="email"], #askForm textarea {
+    font: inherit; font-size: 14px;
+    width: 100%; box-sizing: border-box;
+    padding: 9px 11px; margin-bottom: 14px;
+    border: 1px solid var(--border); border-radius: 8px;
+    background: var(--bg); color: var(--text);
+  }
+  #askForm textarea { resize: vertical; line-height: 1.6; }
+  /* 봇 미끼. 화면에서 지우되 읽어 주는 프로그램에도 안 걸리게 한다. */
+  #askForm .hp { position: absolute; left: -9999px; opacity: 0; }
+  .ask-msg { margin: 0 0 12px; font-size: 13px; min-height: 19px; line-height: 1.5; }
+  .ask-msg.bad { color: var(--danger); }
+  .ask-msg.good { color: var(--accent); }
+  .ask-buttons { display: flex; justify-content: flex-end; gap: 8px; }
+  .ask-buttons button { font-size: 13.5px; padding: 8px 18px; }
+  #askSend { border-color: var(--accent); color: var(--accent); font-weight: 600; }
+  #askSend:hover { background: var(--accent-soft); }
+  #askSend[disabled] { opacity: 0.5; cursor: default; }
   /* 좁은 화면에서는 아래로 흐르게 두고 왼쪽 정렬로 되돌린다 */
   @media (max-width: 620px) {
     .head-right { align-items: flex-start; text-align: left; }
@@ -573,10 +622,16 @@ _TEMPLATE = r"""<!doctype html>
     </p>
     <div class="head-right">
       <p class="auto-note"><b>__UPDATE_TIMES__</b>에<br>자동으로 업데이트됩니다</p>
-      <button id="refresh" type="button"
-              title="이 페이지를 다시 불러옵니다. 마지막 수집 이후 새로 올라온 것이 있으면 반영됩니다.">
-        새로고침
-      </button>
+      <div class="head-buttons">
+        <button id="refresh" type="button"
+                title="이 페이지를 다시 불러옵니다. 마지막 수집 이후 새로 올라온 것이 있으면 반영됩니다.">
+          새로고침
+        </button>
+        <button id="askBtn" type="button" hidden
+                title="빠진 기관, 잘못 나오는 자료, 있었으면 하는 기능을 알려 주세요.">
+          서비스 문의
+        </button>
+      </div>
     </div>
   </header>
 
@@ -618,6 +673,35 @@ _TEMPLATE = r"""<!doctype html>
   <div class="links" id="links" hidden></div>
 
   <footer id="footNote">제목을 누르면 해당 보도자료 원문이 새 탭에서 열립니다.</footer>
+
+  <dialog id="askBox">
+    <form id="askForm" method="dialog">
+      <h2>서비스 문의</h2>
+      <p class="ask-lead">빠진 기관, 잘못 나오는 자료, 있었으면 하는 기능 — 무엇이든 좋습니다.</p>
+
+      <label for="askTitle">제목</label>
+      <input type="text" id="askTitle" name="제목" maxlength="100" required
+             placeholder="예: 서울시 자치구를 더 넣어 주세요">
+
+      <label for="askBody">내용</label>
+      <textarea id="askBody" name="내용" rows="6" maxlength="2000" required
+                placeholder="어떤 점이 불편하신지, 무엇이 있었으면 하는지 적어 주세요."></textarea>
+
+      <label for="askMail">회신 이메일</label>
+      <input type="email" id="askMail" name="회신이메일" maxlength="120" required
+             placeholder="답을 받으실 주소">
+
+      <!-- 봇이 자동으로 채우는 미끼. 사람 눈에는 안 보인다. -->
+      <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off">
+
+      <p class="ask-msg" id="askMsg" role="status" aria-live="polite"></p>
+
+      <div class="ask-buttons">
+        <button type="button" id="askCancel" class="ghost">닫기</button>
+        <button type="submit" id="askSend">보내기</button>
+      </div>
+    </form>
+  </dialog>
 </div>
 
 <script id="data" type="application/json">__DATA__</script>
@@ -929,6 +1013,95 @@ _TEMPLATE = r"""<!doctype html>
 
   [qEl, fromEl, toEl].forEach(function (el) { el.addEventListener('input', render); });
 
+  /* ---------- 서비스 문의 ---------- */
+  /*
+    GitHub Pages에는 서버가 없어서 페이지 혼자서는 메일을 못 보낸다.
+    폼 내용을 받아 메일로 넘겨 주는 곳을 하나 거친다.
+
+    열쇠가 비어 있으면 버튼을 아예 내놓지 않는다 — 눌러도 아무 일이
+    없는 버튼은 없느니만 못하다.
+  */
+  var ASK_KEY = '__INQUIRY_KEY__';
+  var ASK_URL = '__INQUIRY_ENDPOINT__';
+
+  var askBtn = document.getElementById('askBtn');
+  var askBox = document.getElementById('askBox');
+  var askForm = document.getElementById('askForm');
+  var askMsg = document.getElementById('askMsg');
+  var askSend = document.getElementById('askSend');
+
+  if (ASK_KEY && askBox && typeof askBox.showModal === 'function') {
+    askBtn.hidden = false;
+
+    askBtn.addEventListener('click', function () {
+      say('', '');
+      askSend.disabled = false;
+      askBox.showModal();
+      document.getElementById('askTitle').focus();
+    });
+
+    document.getElementById('askCancel').addEventListener('click', function () {
+      askBox.close();
+    });
+
+    /* 바깥을 눌러도 닫힌다. */
+    askBox.addEventListener('click', function (e) {
+      if (e.target === askBox) askBox.close();
+    });
+
+    askForm.addEventListener('submit', function (e) {
+      e.preventDefault();  /* method="dialog"라 두면 그냥 닫혀 버린다 */
+      send();
+    });
+  }
+
+  function say(text, kind) {
+    askMsg.textContent = text;
+    askMsg.className = 'ask-msg' + (kind ? ' ' + kind : '');
+  }
+
+  function send() {
+    var title = document.getElementById('askTitle').value.trim();
+    var body = document.getElementById('askBody').value.trim();
+    var mail = document.getElementById('askMail').value.trim();
+
+    if (!title || !body || !mail) { say('빈 칸을 채워 주세요.', 'bad'); return; }
+    if (mail.indexOf('@') < 1) { say('회신 이메일을 다시 봐 주세요.', 'bad'); return; }
+
+    askSend.disabled = true;
+    say('보내는 중…', '');
+
+    fetch(ASK_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        access_key: ASK_KEY,
+        subject: '[보도자료 모니터] ' + title,
+        from_name: '보도자료 모니터',
+        /* 받은 메일에서 바로 '답장'을 누르면 이 주소로 가게 한다 */
+        replyto: mail,
+        제목: title,
+        내용: body,
+        회신이메일: mail,
+        botcheck: askForm.botcheck.checked
+      })
+    }).then(function (res) {
+      return res.json().catch(function () { return { success: res.ok }; });
+    }).then(function (data) {
+      if (data && data.success) {
+        say('보냈습니다. 읽고 회신드리겠습니다.', 'good');
+        askForm.reset();
+        setTimeout(function () { askBox.close(); }, 1600);
+      } else {
+        askSend.disabled = false;
+        say('보내지 못했습니다. 잠시 뒤 다시 시도해 주세요.', 'bad');
+      }
+    }).catch(function () {
+      askSend.disabled = false;
+      say('보내지 못했습니다. 인터넷 연결을 확인해 주세요.', 'bad');
+    });
+  }
+
   /* 데이터가 있는 첫 탭을 연다. */
   var firstWithData = TABS.findIndex(function (t) { return t.count > 0; });
   selectTab(firstWithData >= 0 ? firstWithData : 0);
@@ -964,6 +1137,8 @@ def render(db_path: str = storage.DEFAULT_DB, output: str | Path = DEFAULT_OUTPU
         .replace("__LAST_RUN__", html.escape(last_run))
         .replace("__UPDATE_TIMES__", html.escape(", ".join(UPDATE_TIMES)))
         .replace("__KEEP_YEARS__", str(KEEP_YEARS))
+        .replace("__INQUIRY_KEY__", html.escape(INQUIRY_KEY))
+        .replace("__INQUIRY_ENDPOINT__", html.escape(INQUIRY_ENDPOINT))
         .replace("__DATA__", json.dumps(tabs, ensure_ascii=False).replace("</", "<\\/"))
     )
 
