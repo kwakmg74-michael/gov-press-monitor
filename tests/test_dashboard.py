@@ -74,7 +74,8 @@ def test_탭_숫자는_기사가_아니라_기관_수다(tmp_path):
     assert tabs["정부기관"]["agencies"] == len(agencies.MINISTRIES)
     assert tabs["지자체"]["agencies"] == len(local_gov.agency_names())
     assert tabs["공공기관"]["agencies"] == len(public_org.agency_names())
-    assert tabs["연구소"]["agencies"] == len(research.agency_names())
+    # 연구소는 긁지 않고 바로가기만 놓으므로, 세는 기준도 그 목록이다
+    assert tabs["연구소"]["agencies"] == len(research.LINKS)
 
     # 기사가 하나도 없는 fixture에서도 기관 수는 그대로 나온다
     assert tabs["지자체"]["count"] == 0
@@ -270,3 +271,76 @@ def test_게시_폴더_이름은_docs다():
     이름을 바꾸면 친구들이 보던 주소가 그대로 죽는다.
     """
     assert dashboard.PUBLISH_DIR == "docs"
+
+
+# --- 연구소: 목록 대신 바로가기 ------------------------------------------------
+#
+# 여섯 곳을 합쳐 한 달 22건이라 매일 훑을 칸이 아닌데, 게시판 구조는 제일
+# 까다로웠다. 그래서 화면에서는 가는 길만 놓는다.
+
+def _research_tab(tmp_path) -> dict:
+    tabs = read_tabs(render(tmp_path))
+    return next(t for t in tabs if t["category"] == models.RESEARCH)
+
+
+def test_연구소는_기사_대신_바로가기를_담는다(tmp_path):
+    tab = _research_tab(tmp_path)
+    assert tab["kind"] == "links"
+    assert tab["articles"] == []
+    assert len(tab["links"]) >= 6
+
+
+def test_바로가기마다_이름과_설명과_주소가_있다(tmp_path):
+    for site in _research_tab(tmp_path)["links"]:
+        assert site["name"] and site["note"] and site["group"]
+        assert site["url"].startswith("https://")
+
+
+def test_바로가기는_기관_홈페이지_그_자체로_간다(tmp_path):
+    """게시판 주소는 개편 한 번에 죽는다. 홈페이지 주소가 오래 간다."""
+    for site in _research_tab(tmp_path)["links"]:
+        tail = site["url"].split("//", 1)[1]
+        assert "/" not in tail, f"{site['name']}이 속 페이지를 가리킵니다"
+        assert "?" not in tail
+
+
+def test_바로가기도_묶음을_따른다(tmp_path):
+    from govpress import research
+
+    groups = {s["group"] for s in _research_tab(tmp_path)["links"]}
+    assert groups <= set(research.GROUP_ORDER)
+
+
+def test_같은_기관을_두_번_넣지_않는다(tmp_path):
+    links = _research_tab(tmp_path)["links"]
+    assert len({s["name"] for s in links}) == len(links)
+    assert len({s["url"] for s in links}) == len(links)
+
+
+def test_못_붙였던_기관도_바로가기에는_넣는다(tmp_path):
+    """긁지 않으니 파서가 필요 없다. 한국행정연구원이 그런 경우다."""
+    names = [s["name"] for s in _research_tab(tmp_path)["links"]]
+    assert "한국행정연구원" in names
+
+
+def test_탭_숫자가_바로가기_개수와_같다(tmp_path):
+    tab = _research_tab(tmp_path)
+    assert tab["agencies"] == len(tab["links"])
+
+
+def test_수집기는_지우지_않고_남겨_둔다():
+    """생각이 바뀌면 화면만 되돌리면 되도록."""
+    from govpress import research
+
+    assert len(research.SITES) >= 6
+
+
+def test_화면에_없는_분류는_건수에_세지_않는다(tmp_path):
+    """연구소를 화면에서 뺐으면 위쪽 '몇 건'에서도 빠져야 한다."""
+    html_text = render(tmp_path)
+    tabs = read_tabs(html_text)
+    shown = sum(t["count"] for t in tabs)
+    import re
+
+    total = re.search(r"<b>([\d,]+)건</b>", html_text).group(1)
+    assert int(total.replace(",", "")) == shown

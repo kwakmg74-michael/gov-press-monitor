@@ -142,6 +142,32 @@ def cutoff_date(today: date | None = None) -> str:
     return first.isoformat()
 
 
+# 목록을 긁지 않고 바로가기만 놓는 분류.
+#
+# 연구소는 여섯 곳을 합쳐 한 달 22건이라 매일 훑을 칸이 아닌데, 게시판
+# 구조는 제일 까다로웠다. 들이는 품에 견줘 나오는 게 적어서 화면에서는
+# 가는 길만 놓아 둔다. 수집기 자체는 `research.SITES`에 그대로 있다.
+LINK_ONLY: dict[str, str] = {models.RESEARCH: "research"}
+
+
+def _link_tab(category: str) -> dict:
+    """목록 대신 기관 바로가기만 담은 탭.
+
+    검색·기간·기관 고르기는 이 탭에서 아무 일도 하지 않으므로 화면에서
+    감춘다 — 눌러도 반응이 없는 칸이 하나 있으면 나머지 칸도 못 믿게 된다.
+    """
+    module = _MODULES[category]
+    return {
+        "category": category,
+        "kind": "links",
+        "count": 0,
+        "agencies": len(module.LINKS),
+        "articles": [],
+        "groups": [],
+        "links": [dict(link) for link in module.LINKS],
+    }
+
+
 def shorten(text: str | None, limit: int = SUMMARY_LIMIT) -> str:
     """긴 설명을 앞부분만 남긴다. 잘렸다는 것을 말줄임표로 알린다."""
     value = (text or "").strip()
@@ -160,6 +186,10 @@ def _tabs(db_path) -> list[dict]:
     """상단 탭 하나하나의 데이터. 아직 수집기가 없는 분류도 자리를 지킨다."""
     tabs = []
     for category in models.CATEGORIES:
+        if category in LINK_ONLY:
+            tabs.append(_link_tab(category))
+            continue
+
         rows = keep_recent(
             [
                 r
@@ -170,6 +200,7 @@ def _tabs(db_path) -> list[dict]:
         tabs.append(
             {
                 "category": category,
+                "kind": "list",
                 "count": len(rows),
                 "agencies": _roster_size(category),
                 "articles": [
@@ -467,6 +498,39 @@ _TEMPLATE = r"""<!doctype html>
     min-width: 0;
     overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
   }
+
+  /* 목록 대신 바로가기만 놓는 탭(연구소) */
+  .links-note {
+    font-size: 13px; color: var(--muted);
+    padding: 4px 2px 14px; line-height: 1.6;
+  }
+  .links > .group-label { padding-top: 10px; }
+  .link-grid {
+    display: grid; gap: 8px; margin-bottom: 6px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  }
+  .link-card {
+    display: block; text-decoration: none;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 13px 15px;
+  }
+  .link-card:hover { border-color: var(--accent); }
+  .link-card .nm {
+    display: block;
+    color: var(--text); font-size: 15px; font-weight: 600;
+    letter-spacing: -0.005em; margin-bottom: 3px;
+  }
+  .link-card:hover .nm { color: var(--accent); }
+  .link-card .nm::after { content: " ↗"; color: var(--muted); font-weight: 400; }
+  .link-card .note { display: block; font-size: 12.5px; color: var(--muted); line-height: 1.5; }
+  .link-card .what {
+    display: inline-block; margin-top: 7px;
+    font-size: 11.5px; font-weight: 600;
+    color: var(--accent); background: var(--accent-soft);
+    padding: 2px 8px; border-radius: 999px;
+  }
   mark { background: var(--accent-soft); color: inherit; padding: 0 1px; border-radius: 2px; }
   .empty { padding: 48px 8px; text-align: center; color: var(--muted); }
   footer { margin-top: 40px; font-size: 12px; color: var(--muted); }
@@ -524,7 +588,10 @@ _TEMPLATE = r"""<!doctype html>
   <div class="count" id="count"></div>
   <ol class="list" id="list"></ol>
 
-  <footer>제목을 누르면 해당 보도자료 원문이 새 탭에서 열립니다.</footer>
+  <p class="links-note" id="linksNote" hidden></p>
+  <div class="links" id="links" hidden></div>
+
+  <footer id="footNote">제목을 누르면 해당 보도자료 원문이 새 탭에서 열립니다.</footer>
 </div>
 
 <script id="data" type="application/json">__DATA__</script>
@@ -557,6 +624,9 @@ _TEMPLATE = r"""<!doctype html>
     location.reload();
   });
   var panelEl = document.querySelector('.panel');
+  var linksEl = document.getElementById('links');
+  var linksNoteEl = document.getElementById('linksNote');
+  var footNoteEl = document.getElementById('footNote');
 
   var active = 0;
 
@@ -587,9 +657,64 @@ _TEMPLATE = r"""<!doctype html>
     var tab = TABS[i];
     deptTitleEl.textContent = tab.category === '정부기관' ? '정부부처' : '기관';
     sourceNoteEl.textContent = SOURCE_NOTES[tab.category] || '';
-    panelEl.hidden = !tab.count;
+
+    /* 바로가기만 있는 탭에서는 검색·기간·기관 칸을 통째로 감춘다.
+       눌러도 아무 일이 없는 칸이 하나 있으면 나머지 칸도 못 믿게 된다. */
+    var linksOnly = tab.kind === 'links';
+    panelEl.hidden = linksOnly || !tab.count;
+    countEl.hidden = linksOnly;
+    listEl.hidden = linksOnly;
+    linksEl.hidden = !linksOnly;
+    linksNoteEl.hidden = !linksOnly;
+    footNoteEl.textContent = linksOnly
+      ? '기관을 누르면 그 기관 홈페이지가 새 탭에서 열립니다.'
+      : '제목을 누르면 해당 보도자료 원문이 새 탭에서 열립니다.';
+
+    if (linksOnly) {
+      drawLinks(tab);
+      return;
+    }
+
     buildDepts(tab);
     render();
+  }
+
+  /* ---------- 바로가기 ---------- */
+
+  function drawLinks(tab) {
+    linksNoteEl.textContent =
+      '연구보고서는 한 달에 스무 건 남짓이라 모아 두기보다 바로 찾아가는 편이 낫습니다. '
+      + '기관 홈페이지가 새 탭에서 열립니다.';
+
+    var groups = [];
+    (tab.links || []).forEach(function (site) {
+      var found = groups.filter(function (g) { return g.name === site.group; })[0];
+      if (!found) { found = { name: site.group, sites: [] }; groups.push(found); }
+      found.sites.push(site);
+    });
+
+    linksEl.innerHTML = groups.map(function (group) {
+      var cards = group.sites.map(function (site) {
+        return '<a class="link-card" href="' + esc(site.url) + '"'
+          + ' target="_blank" rel="noopener noreferrer">'
+          + '<span class="nm">' + esc(site.name) + '</span>'
+          + '<span class="note">' + esc(site.note) + '</span>'
+          + '<span class="what">' + esc(domainOf(site.url)) + '</span>'
+          + '</a>';
+      }).join('');
+
+      /* 묶음이 하나뿐이면 제목이 오히려 군더더기다. 목록 탭과 같은 규칙. */
+      var heading = groups.length > 1
+        ? '<div class="group-label">' + esc(group.name)
+            + ' <span class="n">' + group.sites.length + '곳</span></div>'
+        : '';
+      return heading + '<div class="link-grid">' + cards + '</div>';
+    }).join('');
+  }
+
+  /* 주소에서 www. 를 뗀 도메인. 어디로 가는지 미리 보여 준다. */
+  function domainOf(url) {
+    return String(url).replace(/^https?:\/\//, '').replace(/^www\./, '').replace(/\/.*$/, '');
   }
 
   /* ---------- 기관 체크박스 ---------- */

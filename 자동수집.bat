@@ -29,9 +29,9 @@ echo. >> "%LOG%"
 echo --- 공공기관 --- >> "%LOG%"
 python -m govpress collect-public --pages 3 >> "%LOG%" 2>&1
 
-echo. >> "%LOG%"
-echo --- 연구소 --- >> "%LOG%"
-python -m govpress collect-research --pages 3 >> "%LOG%" 2>&1
+rem 연구소는 긁지 않는다. 화면에서 바로가기로만 보여 주기 때문이다.
+rem 여섯 곳을 합쳐 한 달 22건이라 매일 세 번 두드릴 까닭이 없다.
+rem 다시 모으고 싶으면: python -m govpress collect-research --pages 3
 
 echo. >> "%LOG%"
 echo --- 화면 만들기 --- >> "%LOG%"
