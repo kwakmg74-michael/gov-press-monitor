@@ -10,12 +10,16 @@
 from __future__ import annotations
 
 import argparse
+import subprocess
 import sys
 import unicodedata
 import webbrowser
 from collections import defaultdict
+from datetime import datetime
 
-from . import agencies, dashboard, korea_kr, local_gov, public_org, research, storage
+from . import (
+    agencies, daily, dashboard, korea_kr, local_gov, public_org, research, storage,
+)
 from .models import InvalidDate, parse_date_range
 
 
@@ -258,6 +262,105 @@ def _publish(args) -> int:
     return 0
 
 
+def _daily(args) -> int:
+    """하루 세 번 도는 한 판. 자동수집.bat 이 부른다.
+
+    화면과 수집기록.txt 에 똑같이 적는다. 창을 보고 있으면 어디까지
+    갔는지 보이고, 안 보고 있었어도 나중에 읽을 수 있다.
+    """
+    root = daily.project_root()
+    log_path = root / daily.LOG_NAME
+
+    with open(log_path, "a", encoding="utf-8") as fp:
+        both = daily.Tee(sys.stdout, fp)
+        was_out, was_err = sys.stdout, sys.stderr
+        sys.stdout = sys.stderr = both
+        try:
+            return _daily_steps(args, root)
+        finally:
+            sys.stdout, sys.stderr = was_out, was_err
+
+
+def _daily_steps(args, root) -> int:
+    started = datetime.now()
+    daily.banner(f"{started:%Y-%m-%d %H:%M}  자동 수집 시작")
+
+    def step(title, work) -> None:
+        """한 곳이 자빠져도 나머지는 마저 돈다.
+
+        예전에는 정부기관에서 죽으면 지자체도 공공기관도 화면도 없었다.
+        """
+        print()
+        print(f"--- {title} ---")
+        try:
+            work()
+        except Exception as exc:  # noqa: BLE001 — 무슨 일이 나도 다음으로 간다
+            print(f"  [!] {title}에서 멈췄습니다: {exc}")
+
+    step("정부기관", lambda: _collect(argparse.Namespace(
+        db=args.db, dept=None, days=args.days, date_from=None, date_to=None,
+        keyword="", max_pages=50,
+    )))
+    step("지자체", lambda: _collect_local(argparse.Namespace(
+        db=args.db, only=None, pages=args.pages)))
+    step("공공기관", lambda: _collect_public(argparse.Namespace(
+        db=args.db, only=None, pages=args.pages)))
+
+    step("화면 만들기", lambda: print(
+        f"게시용 폴더 생성: {dashboard.publish(args.db, dashboard.PUBLISH_DIR).resolve()}"))
+
+    code = 0
+    print()
+    print("--- 인터넷에 올리기 ---")
+    try:
+        code = daily.push(
+            [dashboard.PUBLISH_DIR],
+            f"보도자료 화면 갱신 {started:%Y-%m-%d %H:%M}",
+            cwd=root,
+        )
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [!] 올리다가 멈췄습니다: {exc}")
+        code = 1
+
+    걸린분 = round((datetime.now() - started).total_seconds() / 60)
+    print()
+    print(f" {datetime.now():%Y-%m-%d %H:%M}  끝 ({걸린분}분)")
+    return code
+
+
+# 손으로 고친 것을 올릴 때 함께 담는 것들. 통째로 담지 않는 까닭은
+# 작업 중이던 것이 딸려 올라가면 안 되기 때문이다.
+RELEASE_PATHS = (
+    "govpress", "tests", "tools", "docs",
+    ".gitignore", "자동수집.bat", "올리기.bat",
+)
+
+
+def _release(args) -> int:
+    """올리기.bat 이 부른다. 테스트가 깨지면 올리지 않는다."""
+    root = daily.project_root()
+
+    print()
+    print("[1/3] 테스트")
+    done = subprocess.run([sys.executable, "-m", "pytest", "-q"], cwd=str(root))
+    if done.returncode:
+        print()
+        print(" [!] 테스트가 깨졌습니다. 올리지 않고 멈춥니다.")
+        print("     무엇이 틀렸는지 위에 나와 있습니다.")
+        return 1
+
+    print()
+    print("[2/3] 화면 만들기")
+    if not (storage.stats(args.db) or {}).get("total"):
+        print(" [!] DB가 비어 있습니다. 먼저 수집부터 하세요.")
+        return 1
+    print(f"게시용 폴더 생성: {dashboard.publish(args.db, dashboard.PUBLISH_DIR).resolve()}")
+
+    print()
+    print("[3/3] 올리기")
+    return daily.push(RELEASE_PATHS, args.message or "화면·설정 수정", cwd=root)
+
+
 def _open_folder(path) -> None:
     """탐색기(또는 파인더)로 폴더를 연다. 끌어다 놓기 좋게."""
     import subprocess
@@ -321,6 +424,13 @@ def main(argv=None) -> int:
     pub.add_argument("--folder", default=dashboard.PUBLISH_DIR)
     pub.add_argument("--open", action="store_true", help="만든 뒤 폴더 열기")
 
+    day = sub.add_parser("daily", help="하루치 한 판 — 수집·화면·올리기 (자동수집.bat)")
+    day.add_argument("--days", type=int, default=7, help="정부기관을 최근 며칠분 볼지 (기본 7)")
+    day.add_argument("--pages", type=int, default=3, help="지자체·공공기관을 몇 페이지씩 볼지 (기본 3)")
+
+    rel = sub.add_parser("release", help="테스트하고 코드까지 올리기 (올리기.bat)")
+    rel.add_argument("message", nargs="?", default="", help="무엇을 고쳤는지 한 줄")
+
     run = sub.add_parser("run", help="수집 후 대시보드까지 한 번에")
     _add_collect_options(run)
     run.add_argument("--output", default=dashboard.DEFAULT_OUTPUT)
@@ -348,6 +458,10 @@ def main(argv=None) -> int:
         return _dashboard(args)
     if args.command == "publish":
         return _publish(args)
+    if args.command == "daily":
+        return _daily(args)
+    if args.command == "release":
+        return _release(args)
     if args.command == "run":
         code = _collect(args)
         if code != 0:

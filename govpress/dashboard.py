@@ -126,7 +126,29 @@ KEEP_YEARS = 3
 #
 # 보도자료는 첫 문단에 누가·무엇을 했는지가 들어가므로, 목록에서 훑고
 # 검색하는 데는 앞부분이면 족하다. 본문 전체는 제목을 눌러 원문에서 본다.
-SUMMARY_LIMIT = 200
+#
+# 3개월치를 메우고 나니 8천 건이 넘어, 200자로는 화면이 5.7MB가 됐다.
+# 그중 3.2MB가 이 요약이다. 120자로 줄여 1.2MB를 덜었다. 검색이 닿는
+# 범위가 그만큼 좁아지지만, 리드 문장은 대개 여기 안에 들어온다.
+SUMMARY_LIMIT = 120
+
+# 한 번에 그리는 줄 수.
+#
+# 거르지 않으면 정부기관 한 탭이 8천 줄이다. 그걸 통째로 그리면 화면이
+# 멎은 것처럼 몇 초를 먹는다 — 파일이 무거운 것보다 이쪽이 더 답답하다.
+# 처음 이만큼만 그리고, 더 보겠다면 그때 잇는다.
+PAGE_ROWS = 300
+
+# 아무 조건 없이 열었을 때 보여 주는 기간.
+#
+# 이건 '오늘 뭐 나왔나'를 훑는 화면이다. 석 달치를 통째로 펼쳐 놓으면
+# 정작 어제 것을 찾기가 어렵다. 그래서 처음에는 최근 며칠만 깔고,
+# 더 보겠다면 열흘씩 거슬러 올라간다.
+#
+# 다만 **검색어를 넣거나 기간을 직접 정하면 이 제한은 풀린다.** 안 그러면
+# "1월부터 9월까지 수출입"을 찾았는데 9월 것만 나오는 꼴이 된다 —
+# 실제로 그렇게 헤맨 적이 있다.
+RECENT_DAYS = 10
 
 
 def cutoff_date(today: date | None = None) -> str:
@@ -345,6 +367,35 @@ _TEMPLATE = r"""<!doctype html>
     border: 1px solid var(--line);
     font-size: 11.5px; color: var(--muted); cursor: help;
   }
+  /* hidden 을 붙인 것은 무조건 감춘다.
+     브라우저 기본 규칙(display:none)보다 우리가 쓴 .stale{display:flex}가
+     세서, 감췄다고 생각한 것이 그대로 보이는 일이 있었다. */
+  [hidden] { display: none !important; }
+
+  /* 화면이 낡았을 때 위에 뜨는 띠 */
+  .stale {
+    position: sticky; top: 0; z-index: 20;
+    display: flex; align-items: center; justify-content: center;
+    gap: 12px; flex-wrap: wrap;
+    padding: 10px 16px;
+    background: var(--accent); color: #fff;
+    font-size: 13.5px; line-height: 1.5;
+  }
+  .stale b { font-weight: 700; }
+  .stale button {
+    flex: none; font-size: 13px; padding: 5px 14px;
+    background: #fff; border-color: #fff; color: var(--accent);
+    font-weight: 700;
+  }
+  .stale button:hover { background: var(--accent-soft); }
+
+  #searchBtn {
+    flex: none; font-size: 13px; padding: 8px 18px; font-weight: 600;
+    border-color: var(--accent); color: var(--accent);
+  }
+  #searchBtn:hover { background: var(--accent-soft); }
+  #resetBtn { flex: none; font-size: 13px; padding: 8px 14px; }
+
   .head-buttons { display: flex; gap: 6px; }
   #refresh, #askBtn { font-size: 12.5px; padding: 6px 12px; }
   #refresh:hover, #askBtn:hover { border-color: var(--accent); color: var(--accent); }
@@ -522,6 +573,9 @@ _TEMPLATE = r"""<!doctype html>
   .chip.zero .n { opacity: 0.55; }
 
   .count { font-size: 13px; color: var(--muted); padding: 4px 2px 12px; }
+  .more-wrap { padding: 14px 2px 4px; text-align: center; }
+  #moreBtn { font-size: 13.5px; padding: 9px 26px; }
+  #moreBtn:hover { border-color: var(--accent); color: var(--accent); }
 
   ol.list { list-style: none; margin: 0; padding: 0; }
   .day {
@@ -612,6 +666,10 @@ _TEMPLATE = r"""<!doctype html>
 </style>
 </head>
 <body>
+<div class="stale" id="staleBar" hidden>
+  <span>새 보도자료가 올라왔습니다. 보고 계신 화면은 <b id="staleWhen"></b> 기준입니다.</span>
+  <button type="button" id="staleReload">최신으로 보기</button>
+</div>
 <div class="wrap">
   <header>
     <h1>보도자료 모니터</h1>
@@ -641,6 +699,9 @@ _TEMPLATE = r"""<!doctype html>
     <div class="field">
       <span class="label">검색어</span>
       <input type="search" id="q" placeholder="제목·요약·기관에서 찾기 (예: 부동산, 재개발)" autocomplete="off">
+      <button type="button" id="searchBtn">검색</button>
+      <button type="button" id="resetBtn" class="ghost"
+              title="검색어·기간·기관 선택을 모두 비웁니다.">초기화</button>
     </div>
 
     <div class="field">
@@ -668,6 +729,9 @@ _TEMPLATE = r"""<!doctype html>
 
   <div class="count" id="count"></div>
   <ol class="list" id="list"></ol>
+  <div class="more-wrap" id="moreWrap" hidden>
+    <button type="button" id="moreBtn"></button>
+  </div>
 
   <p class="links-note" id="linksNote" hidden></p>
   <div class="links" id="links" hidden></div>
@@ -728,12 +792,71 @@ _TEMPLATE = r"""<!doctype html>
 
   // 이 화면은 만들어 둔 파일이라, 수집이 새로 돌았는지 보려면 다시 받아야 한다.
   // 버튼이 수집을 시키는 것은 아니다 - 올라와 있는 최신 화면을 가져올 뿐이다.
+  /*
+    그냥 location.reload()를 하면 브라우저가 가지고 있던 예전 화면을 그대로
+    다시 내놓는 일이 있다. 주소 끝에 지금 시각을 붙여 아예 다른 주소로
+    가게 해서, 반드시 새로 받아 오게 한다.
+  */
+  function reloadFresh() {
+    location.replace(location.pathname + '?t=' + Date.now());
+  }
+
   document.getElementById('refresh').addEventListener('click', function () {
     this.textContent = '불러오는 중...';
     this.disabled = true;
-    location.reload();
+    reloadFresh();
   });
+
+  /* ---------- 화면이 낡았는지 ---------- */
+  /*
+    이 화면은 만들어질 때의 내용을 그대로 담은 파일 하나다. 탭을 열어 둔
+    채로 며칠이 지나도 저절로 바뀌지 않아서, 옛날 목록을 최신인 줄 알고
+    보게 된다. 실제로 그런 일이 있었다 — 닷새 전 화면을 보고 "업데이트가
+    안 된다"고 여기신 것이다.
+
+    그래서 곁에 둔 작은 표식 파일(stamp.txt)만 이따금 확인한다. 거기 적힌
+    수집 시각이 이 화면의 것과 다르면 새 자료가 올라온 것이다.
+    5MB짜리 화면을 다시 받는 대신 스무 글자만 받아 본다.
+  */
+  var MY_STAMP = '__LAST_RUN__';
+  var staleBar = document.getElementById('staleBar');
+
+  function checkStale() {
+    /* 파일을 직접 열어 본 경우(file://)에는 확인할 방법이 없다 */
+    if (location.protocol === 'file:' || !window.fetch) return;
+
+    fetch('stamp.txt?t=' + Date.now(), { cache: 'no-store' })
+      .then(function (res) { return res.ok ? res.text() : null; })
+      .then(function (text) {
+        if (!text) return;
+        if (text.trim() !== MY_STAMP.trim()) {
+          document.getElementById('staleWhen').textContent = MY_STAMP;
+          staleBar.hidden = false;
+        }
+      })
+      .catch(function () { /* 인터넷이 끊겼거나 표식이 없다. 조용히 넘어간다 */ });
+  }
+
+  document.getElementById('staleReload').addEventListener('click', reloadFresh);
+
+  /* 탭으로 돌아올 때와 30분마다 확인한다 */
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) checkStale();
+  });
+  setInterval(checkStale, 30 * 60 * 1000);
+  checkStale();
   var panelEl = document.querySelector('.panel');
+  var moreWrapEl = document.getElementById('moreWrap');
+  var moreBtnEl = document.getElementById('moreBtn');
+
+  /* 지금 몇 줄까지 그려 두었는지. 조건이 바뀌면 처음으로 되돌린다. */
+  var PAGE_ROWS = __PAGE_ROWS__;
+  var shown = PAGE_ROWS;
+
+  /* 아무 조건 없이 열었을 때 보여 주는 기간(일). '더 보기'로 늘어난다. */
+  var RECENT_DAYS = __RECENT_DAYS__;
+  var recentDays = RECENT_DAYS;
+  var moreMode = '';
   var linksEl = document.getElementById('links');
   var linksNoteEl = document.getElementById('linksNote');
   var footNoteEl = document.getElementById('footNote');
@@ -774,6 +897,9 @@ _TEMPLATE = r"""<!doctype html>
     panelEl.hidden = linksOnly || !tab.count;
     countEl.hidden = linksOnly;
     listEl.hidden = linksOnly;
+    /* 바로가기 탭에서는 '더 보기'도 할 일이 없다. 이 탭은 render()를
+       거치지 않고 빠져나가므로 여기서 직접 감춰야 한다. */
+    if (linksOnly) moreWrapEl.hidden = true;
     linksEl.hidden = !linksOnly;
     linksNoteEl.hidden = !linksOnly;
     footNoteEl.textContent = linksOnly
@@ -786,7 +912,7 @@ _TEMPLATE = r"""<!doctype html>
     }
 
     buildDepts(tab);
-    render();
+    renderFromTop();
   }
 
   /* ---------- 바로가기 ---------- */
@@ -876,7 +1002,7 @@ _TEMPLATE = r"""<!doctype html>
 
   function setAll(checked) {
     [].forEach.call(deptsEl.querySelectorAll('input'), function (c) { c.checked = checked; });
-    render();
+    renderFromTop();
   }
 
   document.getElementById('checkAll').addEventListener('click', function (e) {
@@ -885,7 +1011,7 @@ _TEMPLATE = r"""<!doctype html>
   document.getElementById('checkNone').addEventListener('click', function (e) {
     e.preventDefault(); setAll(false);
   });
-  deptsEl.addEventListener('change', render);
+  deptsEl.addEventListener('change', renderFromTop);
 
   /* ---------- 날짜 ---------- */
 
@@ -910,6 +1036,13 @@ _TEMPLATE = r"""<!doctype html>
 
   function fmt(iso) { return iso.slice(2).replace(/-/g, '.'); }
 
+  /* n일 전 날짜. 오늘이 0이다. */
+  function daysAgo(n) {
+    var d = new Date();
+    d.setDate(d.getDate() - n);
+    return toISO(d);
+  }
+
   [].forEach.call(document.querySelectorAll('button[data-days]'), function (btn) {
     btn.addEventListener('click', function () {
       var days = parseInt(btn.dataset.days, 10);
@@ -921,7 +1054,7 @@ _TEMPLATE = r"""<!doctype html>
         fromEl.value = fmt(toISO(start));
         toEl.value = fmt(toISO(end));
       }
-      render();
+      renderFromTop();
     });
   });
 
@@ -970,16 +1103,40 @@ _TEMPLATE = r"""<!doctype html>
       ? (picked.length <= 3 ? picked.join(', ') : picked.length + '곳 선택')
       : '전체';
 
+    /*
+       검색어도 기간도 없으면 '오늘 뭐 나왔나'를 보러 온 것이다. 그때만
+       최근 며칠로 자른다. 검색을 시작하면 제한을 풀어야 한다 — 안 그러면
+       "1월부터 9월까지 수출입"을 찾았는데 최근 것만 나온다.
+    */
+    var browsing = !lower && !from && !to;
+    var since = browsing ? daysAgo(recentDays - 1) : '';
+
     var rows = articles.filter(function (a) {
       if (picked.length && !pickedSet[a.agency]) return false;
+      if (since && a.published_at < since) return false;
       if (from && a.published_at < from) return false;
       if (to && a.published_at > to) return false;
       if (!lower) return true;
       return (a.title + ' ' + a.summary + ' ' + a.agency).toLowerCase().indexOf(lower) !== -1;
     });
 
+    /* 최근 며칠로 자르느라 빠진 것이 있는가 */
+    var olderLeft = 0;
+    if (since) {
+      olderLeft = articles.filter(function (a) {
+        if (picked.length && !pickedSet[a.agency]) return false;
+        return a.published_at < since;
+      }).length;
+    }
+
+    var scope = since ? '최근 ' + recentDays + '일 · ' : '';
     countEl.textContent = rows.length
-      ? rows.length + '건 표시 중 (' + esc(tab.category) + ' 전체 ' + articles.length + '건)'
+      ? scope
+        + (rows.length > shown
+            ? shown.toLocaleString() + '건 보이는 중 · 조건에 맞는 것 '
+              + rows.length.toLocaleString() + '건'
+            : rows.length.toLocaleString() + '건')
+        + ' (' + esc(tab.category) + ' 전체 ' + articles.length.toLocaleString() + '건)'
       : '';
 
     if (!rows.length) {
@@ -989,6 +1146,30 @@ _TEMPLATE = r"""<!doctype html>
       listEl.innerHTML = '<li class="empty">' + hint + '</li>';
       return;
     }
+
+    /*
+       거르지 않으면 정부기관 한 탭이 8천 줄이다. 통째로 그리면 화면이
+       몇 초 멎는다. 앞에서부터 shown개만 그리고 나머지는 '더 보기'로 잇는다.
+    */
+    /*
+       '더 보기'가 하는 일이 상황에 따라 다르다.
+
+       - 최근 며칠만 깔아 둔 상태면 → 열흘 더 거슬러 올라간다
+       - 이미 다 펼쳐졌는데 줄 수가 많아 잘렸으면 → 줄을 더 그린다
+    */
+    moreMode = '';
+    if (rows.length > shown) {
+      moreMode = 'rows';
+      moreBtnEl.textContent = '더 보기 (남은 '
+        + (rows.length - shown).toLocaleString() + '건)';
+    } else if (olderLeft) {
+      moreMode = 'days';
+      moreBtnEl.textContent = '이전 ' + RECENT_DAYS + '일 더 보기 (예전 것 '
+        + olderLeft.toLocaleString() + '건)';
+    }
+    moreWrapEl.hidden = !moreMode;
+
+    rows = rows.slice(0, shown);
 
     var out = '';
     var currentDay = null;
@@ -1011,7 +1192,57 @@ _TEMPLATE = r"""<!doctype html>
     listEl.innerHTML = out;
   }
 
-  [qEl, fromEl, toEl].forEach(function (el) { el.addEventListener('input', render); });
+  /* 조건이 달라지면 다시 앞에서부터 보여 준다. 스무 번 '더 보기'를 누른
+     상태로 검색어를 바꾸면, 엉뚱하게 많은 줄을 그리게 된다. */
+  function renderFromTop() {
+    shown = PAGE_ROWS;
+    recentDays = RECENT_DAYS;
+    render();
+  }
+
+  moreBtnEl.addEventListener('click', function () {
+    if (moreMode === 'days') {
+      recentDays += RECENT_DAYS;
+    } else {
+      shown += PAGE_ROWS;
+    }
+    render();
+    /* 이어 붙인 첫 줄이 눈에 들어오게 */
+    moreWrapEl.scrollIntoView({ block: 'nearest' });
+  });
+
+  /* 치는 대로 바로 걸러 준다. 버튼을 누를 필요는 없다. */
+  [qEl, fromEl, toEl].forEach(function (el) {
+    el.addEventListener('input', renderFromTop);
+  });
+
+  /*
+    그래도 '검색' 버튼을 둔다. 치는 대로 걸러지는 줄 모르면 "누를 데가
+    없네" 하고 멈추게 되고, 날짜를 한 글자씩 칠 때는 중간중간 결과가
+    튀어서 제대로 걸린 건지 헷갈린다. 버튼과 엔터가 "이제 됐다"는
+    매듭이 되어 준다.
+
+    '초기화'는 진짜로 하는 일이 있다 — 검색어·기간·기관을 한 번에 비운다.
+    지금까지는 기관만 '해제'로 풀 수 있었다.
+  */
+  document.getElementById('searchBtn').addEventListener('click', function () {
+    renderFromTop();
+    qEl.blur();  /* 휴대폰 자판을 내려 결과가 바로 보이게 */
+  });
+
+  qEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); renderFromTop(); qEl.blur(); }
+  });
+
+  document.getElementById('resetBtn').addEventListener('click', function () {
+    qEl.value = '';
+    fromEl.value = '';
+    toEl.value = '';
+    fromEl.classList.remove('invalid');
+    toEl.classList.remove('invalid');
+    setAll(true);   /* 기관은 '전체 선택'이 아무것도 안 거른 상태다 */
+    qEl.focus();
+  });
 
   /* ---------- 서비스 문의 ---------- */
   /*
@@ -1113,6 +1344,23 @@ _TEMPLATE = r"""<!doctype html>
 """
 
 
+# 게시 폴더에 같이 두는 아주 작은 파일. 안에는 마지막 수집 시각 한 줄뿐이다.
+#
+# 화면은 만들어질 때의 내용을 그대로 담은 파일 하나라, 탭을 열어 둔 채로
+# 며칠이 지나도 저절로 바뀌지 않는다. 그래서 이 파일만 이따금 확인해
+# 시각이 달라졌으면 "새 자료가 있다"고 알려 준다. 5MB짜리 화면을 다시
+# 받아 보는 대신 스무 글자만 받아 보는 셈이다.
+STAMP_FILE = "stamp.txt"
+
+
+def last_run_at(db_path) -> str:
+    """마지막으로 수집한 시각. 화면과 stamp 파일이 같은 값을 쓴다."""
+    stamp = (storage.stats(db_path) or {}).get("last_run") or ""
+    if stamp:
+        return stamp.replace("T", " ")
+    return datetime.now().strftime("%Y-%m-%d %H:%M")
+
+
 def render(db_path: str = storage.DEFAULT_DB, output: str | Path = DEFAULT_OUTPUT) -> Path:
     """DB를 읽어 대시보드 HTML 파일을 만든다. 만들어진 경로를 돌려준다."""
     tabs = _tabs(db_path)
@@ -1127,8 +1375,7 @@ def render(db_path: str = storage.DEFAULT_DB, output: str | Path = DEFAULT_OUTPU
         first_day, last_day = min(days), max(days)
         date_range = first_day if first_day == last_day else f"{first_day} ~ {last_day}"
 
-    last_run = info.get("last_run") or ""
-    last_run = last_run.replace("T", " ") if last_run else datetime.now().strftime("%Y-%m-%d %H:%M")
+    last_run = last_run_at(db_path)
 
     document = (
         _TEMPLATE.replace("__TOTAL__", f"{total:,}")
@@ -1137,6 +1384,8 @@ def render(db_path: str = storage.DEFAULT_DB, output: str | Path = DEFAULT_OUTPU
         .replace("__LAST_RUN__", html.escape(last_run))
         .replace("__UPDATE_TIMES__", html.escape(", ".join(UPDATE_TIMES)))
         .replace("__KEEP_YEARS__", str(KEEP_YEARS))
+        .replace("__PAGE_ROWS__", str(PAGE_ROWS))
+        .replace("__RECENT_DAYS__", str(RECENT_DAYS))
         .replace("__INQUIRY_KEY__", html.escape(INQUIRY_KEY))
         .replace("__INQUIRY_ENDPOINT__", html.escape(INQUIRY_ENDPOINT))
         .replace("__DATA__", json.dumps(tabs, ensure_ascii=False).replace("</", "<\\/"))
@@ -1169,4 +1418,6 @@ def publish(db_path, folder=PUBLISH_DIR) -> Path:
     render(db_path, out / "index.html")
     (out / "robots.txt").write_text(_ROBOTS, encoding="utf-8")
     (out / ".nojekyll").write_text("", encoding="utf-8")
+    # 화면이 낡았는지 알아보는 데 쓰는 표식. 내용은 마지막 수집 시각뿐이다.
+    (out / STAMP_FILE).write_text(last_run_at(db_path), encoding="utf-8")
     return out

@@ -474,3 +474,166 @@ def test_보내는_중에는_두_번_눌리지_않는다(tmp_path):
     html_text = render(tmp_path)
     assert "askSend.disabled = true" in html_text
     assert "보내는 중" in html_text
+
+
+# --- 화면이 낡았는지 알리기 ----------------------------------------------------
+#
+# 2026-09-28에 실제로 겪은 일이다. 닷새 전에 열어 둔 탭을 보고
+# "업데이트가 안 된다"고 여기셨다. 서버에는 최신 화면이 올라가 있었다.
+#
+# 이 화면은 만들어질 때의 내용을 그대로 담은 파일 하나라, 탭을 열어 둔
+# 채로는 저절로 바뀌지 않는다. 그래서 곁에 작은 표식을 두고 견준다.
+
+def test_게시하면_표식_파일이_같이_생긴다(tmp_path):
+    out = dashboard.publish(build_db(tmp_path), tmp_path / "docs")
+    stamp = out / dashboard.STAMP_FILE
+    assert stamp.exists()
+    assert stamp.read_text(encoding="utf-8").strip()
+
+
+def test_표식과_화면의_수집시각이_같다(tmp_path):
+    """둘이 어긋나면 늘 '낡았다'고 뜨거나, 낡아도 조용하다."""
+    db = build_db(tmp_path)
+    out = dashboard.publish(db, tmp_path / "docs")
+    stamp = (out / dashboard.STAMP_FILE).read_text(encoding="utf-8").strip()
+    page = (out / "index.html").read_text(encoding="utf-8")
+    assert f"var MY_STAMP = '{stamp}'" in page
+    assert f"마지막 수집 {stamp}" in page
+
+
+def test_표식은_가볍다(tmp_path):
+    """수시로 받아 보는 파일이다. 화면은 5MB가 넘는다."""
+    out = dashboard.publish(build_db(tmp_path), tmp_path / "docs")
+    assert (out / dashboard.STAMP_FILE).stat().st_size < 100
+
+
+def test_낡았으면_알리는_장치가_들어_있다(tmp_path):
+    html_text = render(tmp_path)
+    assert 'id="staleBar"' in html_text
+    assert "visibilitychange" in html_text
+    assert "cache: 'no-store'" in html_text
+
+
+def test_새로고침은_예전_화면을_다시_내놓지_않는다(tmp_path):
+    """location.reload()는 브라우저가 가진 사본을 그대로 줄 때가 있다."""
+    html_text = render(tmp_path)
+    assert "location.replace(location.pathname + '?t=' + Date.now())" in html_text
+
+
+def test_파일로_열었을_때는_확인을_건너뛴다(tmp_path):
+    """file:// 에서는 곁의 파일을 읽을 수 없다. 오류만 나고 소용이 없다."""
+    assert "location.protocol === 'file:'" in render(tmp_path)
+
+
+# --- 한 번에 그리는 줄 수 -----------------------------------------------------
+#
+# 3개월치를 메우고 나니 정부기관 한 탭이 8천 줄이 됐다. 통째로 그리면
+# 화면이 멎은 것처럼 몇 초를 먹는다 — 파일이 무거운 것보다 더 답답하다.
+
+def test_한_번에_그리는_줄_수를_묶어_둔다(tmp_path):
+    html_text = render(tmp_path)
+    assert f"var PAGE_ROWS = {dashboard.PAGE_ROWS};" in html_text
+    assert "rows.slice(0, shown)" in html_text
+
+
+def test_남은_것은_더_보기로_잇는다(tmp_path):
+    html_text = render(tmp_path)
+    assert 'id="moreBtn"' in html_text
+    assert "shown += PAGE_ROWS" in html_text
+
+
+def test_조건이_바뀌면_다시_앞에서부터_보여_준다(tmp_path):
+    """'더 보기'를 스무 번 누른 채 검색어를 바꾸면 엉뚱하게 많이 그린다."""
+    html_text = render(tmp_path)
+    assert "shown = PAGE_ROWS;" in html_text
+    assert "recentDays = RECENT_DAYS;" in html_text
+    for trigger in ("deptsEl.addEventListener('change', renderFromTop)",
+                    "el.addEventListener('input', renderFromTop)"):
+        assert trigger in html_text
+
+
+def test_요약이_화면_무게를_좌우한다(tmp_path):
+    """정부기관 본문이 전체의 60%였다. 여기를 줄이는 것이 가장 크다."""
+    assert dashboard.SUMMARY_LIMIT <= 120
+    body = "가" * 5000
+    assert len(dashboard.shorten(body)) == dashboard.SUMMARY_LIMIT + 1
+
+
+# --- 처음에는 최근 열흘만 ------------------------------------------------------
+#
+# 3개월치를 메우고 나니 목록을 열면 8천 줄이 기다린다. 오늘 뭐가 나왔는지
+# 보려고 여는 화면인데, 몇 달 전 것까지 섞여 있으면 그게 안 보인다.
+# 그래서 처음에는 최근 열흘만 깔고, 나머지는 '더 보기'로 넘긴다.
+#
+# 단, 검색어나 기간을 직접 넣었으면 이 제한을 즉시 푼다. 안 그러면
+# '수출입 / 26.01.01~26.09.18' 을 넣었는데 9월만 나오던 그 혼란이 그대로
+# 되돌아온다.
+
+def test_처음_깔리는_기간을_묶어_둔다(tmp_path):
+    html_text = render(tmp_path)
+    assert dashboard.RECENT_DAYS == 10
+    assert f"var RECENT_DAYS = {dashboard.RECENT_DAYS};" in html_text
+    assert "var recentDays = RECENT_DAYS;" in html_text
+
+
+def test_그냥_열면_최근_며칠로_자른다(tmp_path):
+    html_text = render(tmp_path)
+    assert "var browsing = !lower && !from && !to;" in html_text
+    assert "var since = browsing ? daysAgo(recentDays - 1) : '';" in html_text
+    assert "if (since && a.published_at < since) return false;" in html_text
+
+
+def test_검색어나_기간을_넣으면_제한이_풀린다(tmp_path):
+    """이것이 이 기능의 핵심이다. 여기가 깨지면 '9월만 나온다'로 돌아간다."""
+    html_text = render(tmp_path)
+    browsing = re.search(r"var browsing = ([^;]+);", html_text).group(1)
+    for 조건 in ("!lower", "!from", "!to"):
+        assert 조건 in browsing
+
+
+def test_열흘_기준은_오늘부터_거꾸로_센다(tmp_path):
+    """열흘이라 하면 오늘까지 열흘이다. 아흐레를 물러야 열흘치가 된다."""
+    html_text = render(tmp_path)
+    assert "daysAgo(recentDays - 1)" in html_text
+    assert "d.setDate(d.getDate() - n)" in html_text
+
+
+def test_더_보기가_줄과_기간_둘_다_맡는다(tmp_path):
+    """줄 수 때문에 잘린 것과 기간 때문에 빠진 것은 다른 일이다."""
+    html_text = render(tmp_path)
+    assert "moreMode = 'rows'" in html_text
+    assert "moreMode = 'days'" in html_text
+    assert "if (moreMode === 'days')" in html_text
+    assert "recentDays += RECENT_DAYS" in html_text
+
+
+def test_예전_것이_몇_건_남았는지_알려_준다(tmp_path):
+    """'더 보기'가 무엇을 데려오는지 모르면 누르지 않는다."""
+    html_text = render(tmp_path)
+    assert "'이전 ' + RECENT_DAYS + '일 더 보기 (예전 것 '" in html_text
+    assert "olderLeft" in html_text
+
+
+def test_지금_며칠치를_보고_있는지_적어_준다(tmp_path):
+    """빠진 것이 있다는 사실이 화면에 드러나야 한다."""
+    html_text = render(tmp_path)
+    assert "var scope = since ? '최근 ' + recentDays + '일 · ' : '';" in html_text
+
+
+def test_예전_것_셀_때도_고른_기관만_센다(tmp_path):
+    """관세청만 골라 놓고 '예전 것 7,866건'이라 하면 말이 안 된다."""
+    html_text = render(tmp_path)
+    older = re.search(r"olderLeft = articles\.filter\((.*?)\)\.length;", html_text, re.S).group(1)
+    assert "pickedSet[a.agency]" in older
+
+
+def test_더_보기_칸은_필요없을_때_숨는다(tmp_path):
+    html_text = render(tmp_path)
+    assert "moreWrapEl.hidden = !moreMode;" in html_text
+    # 목록이 없는 탭(연구·업계)에서도 남아 있지 않아야 한다
+    assert html_text.count("moreWrapEl.hidden = true;") >= 1
+
+
+def test_숨김이_다른_규칙에_밀리지_않는다(tmp_path):
+    """.stale { display: flex } 가 [hidden] 을 눌러 이긴 일이 있었다."""
+    assert "[hidden] { display: none !important; }" in render(tmp_path)

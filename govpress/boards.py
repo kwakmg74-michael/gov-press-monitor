@@ -329,7 +329,15 @@ def to_articles(items: list[dict], site: Site) -> list[Article]:
     ]
 
 
-def get(url: str, session=None, timeout: int = 25):
+# 연결까지 10초, 그 뒤 한 조각을 기다리는 데 20초.
+#
+# 숫자 하나로 주면 "연결 20초 + 읽기 20초"처럼 따로 세어, 한 요청이
+# 생각보다 오래 붙들 수 있다. 응답이 아예 없는 곳에서 빨리 손을 떼려면
+# 연결 쪽을 짧게 잡는 편이 낫다.
+TIMEOUT = (10, 20)
+
+
+def get(url: str, session=None, timeout=TIMEOUT):
     """한 번 받아 온다. TLS 악수에 실패하면 구형 설정으로 다시 시도한다.
 
     한 번 실패한 호스트는 기억해 두어, 다음부터는 곧바로 구형 설정으로
@@ -364,7 +372,7 @@ def fill_missing_dates(
     known: set[tuple[str, str]] | None = None,
     budget: int = 20,
     session=None,
-    timeout: int = 25,
+    timeout=TIMEOUT,
 ) -> list[dict]:
     """목록에 날짜가 없는 글은 상세를 한 번 열어 발간일을 읽는다.
 
@@ -409,7 +417,7 @@ def fetch_page(
     site: Site,
     page: int,
     session=None,
-    timeout: int = 25,
+    timeout=TIMEOUT,
     known: set[tuple[str, str]] | None = None,
 ) -> list[Article]:
     """한 페이지를 받아 파싱한다."""
@@ -429,33 +437,69 @@ def tls_note(site: Site) -> str:
     return ""
 
 
+# 한 번 수집에 쓸 수 있는 시간. 이만큼 지나면 남은 기관을 건너뛴다.
+#
+# 2026-09-30에 지자체 한 곳에서 물려 한 시간 반을 서 있었다. 작업
+# 스케줄러가 1시간 만에 통째로 죽이는 바람에 **화면 만들기와 올리기가
+# 아예 실행되지 않았고**, 보는 사람에게는 어제 화면이 그대로 남았다.
+#
+# 한 곳이 늦는 것보다 그날 갱신을 통째로 놓치는 편이 훨씬 나쁘다.
+# 그래서 시간이 차면 받은 데까지만 들고 나온다.
+TIME_BUDGET = 10 * 60
+
+
 def collect(
     sites,
     pages: int = 3,
     delay: float = 0.7,
     on_progress=None,
     known: set[tuple[str, str]] | None = None,
+    budget_seconds: float = TIME_BUDGET,
 ) -> list[Article]:
     """보도자료를 모은다.
 
     이 게시판들은 기간 검색 파라미터가 제각각이라 서버에서 거르지 않고,
     최근 `pages`페이지를 받아 온 뒤 대시보드에서 기간으로 좁힌다.
+
+    `budget_seconds`가 차면 남은 기관은 건너뛴다. 그날 갱신을 통째로
+    놓치느니 몇 곳을 다음 차례로 미루는 편이 낫다.
     """
     collected: dict[tuple[str, str], Article] = {}
     session = requests.Session()
+    deadline = time.monotonic() + budget_seconds if budget_seconds else None
+    skipped: list[str] = []
 
     for site in sites:
+        if deadline and time.monotonic() >= deadline:
+            skipped.append(site.label)
+            continue
         # "size" 방식은 한 번의 요청에 원하는 만큼 담아 오므로 반복하지 않는다.
         # 그대로 두면 30건 → 60건 → 90건을 겹쳐 받아 같은 글을 계속 다시 읽는다.
         last_page = 1 if site.single_request else pages
         for page in range(1, last_page + 1):
+            # 한 기관이 여러 쪽이면 그 안에서도 시간을 본다.
+            if deadline and page > 1 and time.monotonic() >= deadline:
+                break
             request_page = pages if site.single_request else page
             try:
                 items = fetch_page(site, request_page, session=session, known=known)
             except Exception as exc:
-                if on_progress:
-                    on_progress(site.label, page, 0, f"실패: {exc}", "")
-                break
+                # 한 번은 새 연결로 다시 해 본다.
+                #
+                # 성남시처럼 구형 TLS로 붙는 곳은 가끔 연결이 통째로
+                # 어긋난다(2026-09-28에 'access violation'까지 났다).
+                # 끊긴 연결을 계속 쓰면 그 뒤로도 줄줄이 실패하므로,
+                # 아예 새 연결을 하나 열어 다시 청한다.
+                #
+                # 그래도 안 되면 이 기관만 접고 다음 기관으로 넘어간다 —
+                # 한 곳 때문에 나머지 일흔 곳을 못 받으면 안 된다.
+                time.sleep(2)
+                try:
+                    items = fetch_page(site, request_page, known=known)
+                except Exception:
+                    if on_progress:
+                        on_progress(site.label, page, 0, f"실패: {exc}", "")
+                    break
 
             fresh = [a for a in items if (a.source, a.uid) not in collected]
             for article in fresh:
@@ -468,6 +512,12 @@ def collect(
                 break
 
             time.sleep(delay)
+
+    if skipped and on_progress:
+        on_progress(
+            "시간 초과", 0, 0,
+            f"{len(skipped)}곳을 다음 차례로 미룹니다: {', '.join(skipped)}", "",
+        )
 
     return sorted(
         collected.values(),
