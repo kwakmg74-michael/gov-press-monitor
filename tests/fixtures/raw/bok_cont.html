@@ -1,0 +1,472 @@
+
+
+
+
+
+
+
+
+<script>
+//@@@@@@
+  $(function() {
+    if (false){
+      $('.date-set').show();
+    }else{
+      $('.date-set').hide();
+    }
+
+    $(".select1 select").on("change", function(){
+      var result = $(".select1 option:selected").val()
+      if(result == 5){
+        $('.date-set').show();
+      }else{
+        $('.date-set').hide();
+      }
+    });
+  });
+
+  // 콘텐츠 서비스
+  $(function () {
+    // 달력 언어설정
+    if (typeof $.fn.datepicker != 'undefined') {
+      $.fn.datepicker.dates.ko = {
+        days: ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일'],
+        daysShort: ['일', '월', '화', '수', '목', '금', '토'],
+        daysMin: ['일', '월', '화', '수', '목', '금', '토'],
+        months: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        monthsShort: ['1월', '2월', '3월', '4월', '5월', '6월', '7월', '8월', '9월', '10월', '11월', '12월'],
+        today: '오늘',
+        clear: '삭제',
+        format: 'yyyy-mm-dd',
+        titleFormat: 'yyyy년mm월',
+        weekStart: 0,
+      };
+    }
+    inputdate = $('input.sdate,input.edate,input.date');
+    inputdate.attr('autocomplete', 'off');
+    function formatDate(num) {
+      if (!num) return "";
+      var formatNum = '';
+      // 공백제거
+      num = num.replace(/\s/gi, "");
+      try {
+        if (num.length == 8) {
+          formatNum = num.replace(/(\d{4})(\d{2})(\d{2})/, '$1-$2-$3');
+        }
+      } catch (e) {
+        formatNum = num;
+        console.log(e);
+      }
+      formatNum = formatNum == '' ? num : formatNum
+      return formatNum;
+    }
+    // 날짜형태 변환
+    $(inputdate).on('keyup', function (event) {
+      if(event.target.value.indexOf('-') === -1 && event.target.value.length == 8){
+        event.target.value = formatDate(event.target.value)
+      }
+    });
+    // 달력
+    if (typeof $.fn.datepicker != 'undefined') {
+      inputdate
+              .datepicker({
+                format: 'yyyy-mm-dd',
+                language: 'ko',
+                todayHighlight: true,
+                autoclose: true,
+                templates: {
+                  leftArrow: '<i class=datepicker-prev role=img aria-label=이전></i>',
+                  rightArrow: '<i class=datepicker-next role=img aria-label=다음></i>'
+                }
+              })
+              .attr('placeholder', '연도 - 월 - 일')
+      $('.month')
+              .datepicker({
+                format: 'yyyy-mm',
+                language: 'ko',
+                todayHighlight: true,
+                autoclose: true,
+                templates: {
+                  leftArrow: '<i class=datepicker-prev role=img aria-label=이전></i>',
+                  rightArrow: '<i class=datepicker-next role=img aria-label=다음></i>'
+                },
+                startView: 2,
+                minViewMode: 1
+              })
+              .attr('placeholder', '연도 - 월')
+              .attr('autocomplete', 'off')
+    }
+    $('input.sdate').attr('title', '검색기간 시작일 연도 - 월 - 일');
+    $('input.edate').attr('title', '검색기간 종료일 연도 - 월 - 일');
+    $('input.month').attr('title', '검색기간 연도 - 월');
+    $('input.smonth').attr('title', '검색기간 시작월 연도 - 월');
+    $('input.emonth').attr('title', '검색기간 종료월 연도 - 월');
+    $('input.date').each(function () {
+      var title = $(this).attr('title') + ' 연도 - 월 - 일'
+      $(this).attr('title', title)
+    });
+    // 달력
+    if(!isMobile() && typeof $.fn.datepicker != "undefined"){
+      $('input.sdate,input.edate,input.date')
+              .datepicker({
+                format: "yyyy-mm-dd",
+                language: "ko",
+                todayHighlight: true,
+                autoclose:true
+              })
+              .attr('placeholder','연도 - 월 - 일')
+    }
+
+    // 탭 활성화
+    $(".js-tab button").on('click', function(){
+      var $parent = $(this).closest(".js-tab");
+      var index = $(this).parent().index();
+      $(this)
+              .attr("aria-pressed", true).parent().addClass("on").attr('title','선택됨')
+              .siblings().removeClass("on").find("button").attr("aria-pressed", false).removeAttr('title')
+      $parent
+              .siblings(".tab-content").find(".con").hide().eq(index).show();
+    });
+
+    // 탭 활성화
+    $('.tab-list').each(function (index, element) {
+      $(this).find('button')
+              .on('click', function (e) {
+                e.preventDefault();
+                $(this).attr('aria-selected', true).attr('title','선택됨').siblings().attr('aria-selected', false).removeAttr('title')
+                _id = $(this).attr('id')
+                $('[aria-labelledby="' + _id + '"]').show().siblings().hide()
+              })
+    });
+
+
+    // 이미지맵 반응형
+    if(typeof $.fn.rwdImageMaps != "undefined"){
+      $('img[usemap]').rwdImageMaps();
+    }
+    // 한글파라미터 인코딩
+    $('.linkencode area').each(function (e) {
+      _href = encodeURIComponent($(this).attr('href').split('searchWrd=')[1])
+      $(this).attr('href', $(this).attr('href').split('searchWrd=')[0] + 'searchWrd=' + _href)
+    })
+  });
+
+</script>
+  <div class="sh-BxSet">
+    <p class="count-total">총 <strong>13,567</strong>건의 게시물이 있습니다.</p>
+    <div class="sh-select">
+      <div class="select-set select1">
+        <select name="date"  id="date" title="개월 선택">
+          <option value="">전체 기간</option>
+          <option value="1">1개월</option>
+          <option value="2">3개월</option>
+          <option value="3">6개월</option>
+          <option value="4">1년</option>
+          <option value="5">직접선택</option>
+        </select>
+      </div>
+      <div class="date-set" style="display: none;">
+        <input id="sdate" name="sdate" class="sdate" title="검색기간 시작일" value="" type="text" autocomplete="off">
+        <span class="dash">~</span>
+        <input id="edate" name="edate" class="edate" title="검색기간 종료일" value="" type="text" autocomplete="off">
+      </div>
+      <div class="select-set select2">
+        <select name="sort" id="sort" title="정렬순서 선택">
+          <option value="1"selected="selected">최신순</option>
+          <option value="2">조회순</option>
+        </select>
+      </div>
+      <div class="select-set select3">
+        <select name="pageUnit" id="pageUnit" title="개수 선택">
+          <option value="10" selected="selected">10개</option>
+          <option value="20" >20개</option>
+          <option value="30" >30개</option>
+          <option value="40" >40개</option>
+          <option value="50" >50개</option>
+          <option value="100" >100개</option>
+
+        </select>
+      </div>
+        <button type="button" class="submit" aria-label="검색"  id="confirmBtn" onclick="return false;"></button>
+    </div>
+  </div>
+
+  <div class="bd-line">
+    <ul>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>위탁운용팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>1264</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.16</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/B0000502/view.do?nttId=11064797&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=201265&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              [보도자료] 한국은행, 국내 운용사 대상 외화자산 위탁운용 포트폴리오 재편
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>의사팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>2168</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.15</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/P0000559/view.do?nttId=11064779&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=200690&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              금융통화위원회 의사록(2026년 제16차)(2026.8.27)
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>지역연구지원팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>1108</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.15</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/B0000502/view.do?nttId=11064689&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=201265&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              [보도자료] 2026년 BOK 지역경제 심포지엄 개최
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>화폐박물관팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>1353</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.15</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/B0000502/view.do?nttId=11064761&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=201265&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              「2027년 한국은행 신진작가 공모」실시
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>금융통계팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>1571</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.15</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/B0000501/view.do?nttId=11064733&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=201264&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              2026년 7월 통화 및 유동성
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>물가통계팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>2271</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.15</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/B0000501/view.do?nttId=11064729&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=201264&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              2026년 8월 수출입물가지수 및 무역지수(잠정)
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>통계기획팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>6304</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.11</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/B0000501/view.do?nttId=11064675&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=201264&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              「2026 한국은행-한국통계학회 공동포럼」 개최
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>정책협력팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>9546</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.10</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/P0000559/view.do?nttId=11064612&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=200690&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              「통화신용정책보고서」(2026년 9월)
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>기업통계팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>9014</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.09</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/B0000501/view.do?nttId=11064577&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=201264&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              2026년 2/4분기 기업경영분석
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+        <li class="bbsRowCls">
+			<span class="i">
+				<span class="t1">
+				
+				보도자료
+				
+				
+				</span>
+			</span>
+			<span class="dataInfo">
+				<span class="depart"><span class="sr-only">담당부서</span>시장총괄팀</span>
+				<span class="hits"><span class="sr-only">조회수</span>5674</span>
+				<span class="date"><span class="sr-only">등록일</span>2026.09.09</span>
+			</span>
+          <div class="set">
+            <a href="/portal/bbs/B0000502/view.do?nttId=11064574&depth2=200038&depth3=201263&searchCnd=1&searchKwd=&sort=1&pageUnit=10&depth=201263&pageIndex=1&programType=newsData&menuNo=201265&oldMenuNo=201263" class="title">
+              <!-- <span class="ti-announcement"><span class="sr-only">공지사항</span></span>   -->
+              2026년 8월 금융시장 동향
+            </a>
+
+
+
+          </div>
+
+        </li>
+      
+      
+    </ul>
+  </div>
+
+  <div class="paginationSet">
+      <div class='paginationSet'><ul class='pagination pagination-centered'><li class='i first disabled'><span class='s'><span>처음 <span class='t'>목록</span></span></span></li><li class='i prev disabled'><span class='s'><span>이전 <span class='t'>목록</span></span></span></li><li class='active'><span><em title='현재목록'><span>1</span></em></span></li><li><a href='javascript:fnSearch(2)'><span>2</span></a></li><li><a href='javascript:fnSearch(3)'><span>3</span></a></li><li><a href='javascript:fnSearch(4)'><span>4</span></a></li><li><a href='javascript:fnSearch(5)'><span>5</span></a></li><li><a href='javascript:fnSearch(6)'><span>6</span></a></li><li><a href='javascript:fnSearch(7)'><span>7</span></a></li><li><a href='javascript:fnSearch(8)'><span>8</span></a></li><li><a href='javascript:fnSearch(9)'><span>9</span></a></li><li><a href='javascript:fnSearch(10)'><span>10</span></a></li><li class='i next'><a title='다음 목록' href='javascript:fnSearch(11)'><span class='s'><span>다음 <span class='t'>목록</span></span></span></a></li><li class='i end'><a title='마지막 목록' href='javascript:fnSearch(1357)'><span class='s'><span>끝 <span class='t'>목록</span></span></span></a></li></ul></div>
+  </div>
+
+
+<script>
+$(".bbsRowCls").click(function() {
+	location.href= $(this).find("a").attr("href");
+	return false;
+});
+</script>
+

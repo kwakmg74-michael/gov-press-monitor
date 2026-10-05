@@ -7,6 +7,5 @@ dashboard.html
 publish/
 수집기록.txt
 
-# Local Netlify folder
-.netlify
-tests/fixtures/raw/
+# PC마다 다른 파이썬 경로. 서버는 가상환경, pc1은 그냥 python.
+python-path.txt

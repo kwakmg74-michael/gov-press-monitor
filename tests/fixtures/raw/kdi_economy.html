@@ -1,0 +1,2329 @@
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	
+
+
+
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#f5821f">
+<meta name="copyright" content="KDI 한국개발연구원">
+<link rel="shortcut icon" type="image/x-icon" href="../res/img/favicon.ico">
+<link rel="apple-touch-icon-precomposed" sizes="100x100" href="../res/img/favicon.png">
+<link rel="stylesheet" href="../res/font/font.css?20260908">
+<link rel="stylesheet" href="../res/css/style.css?20260908">
+<script type="text/javascript" src="../res/lib/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="../res/lib/jQuery.easing.js"></script>
+<script type="text/javascript" src="../res/lib/jQuery.slick.js"></script>
+<script type="text/javascript" src="../res/js/kdi_full.js?20260908"></script>
+<script type="text/javascript" src="../res/js/kdi_contents.js?20260908"></script>
+<script src="//developers.kakao.com/sdk/js/kakao.js"></script>
+<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+<script type="text/javascript" src="../res/dev_js/social.js"></script>
+<script type="text/javascript">
+	var msg = '';
+	$(function(){
+		if ( msg != "" ) alert(msg);
+	});
+</script>
+
+<!-- <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-65433011-1', 'auto');
+  ga('require', 'linkid', 'linkid.js'); // 향상된 기능 추가
+  ga('require', 'displayfeatures');		// 인구통계 수집 추가코드
+
+  var metricValue = '123'; // 이메일오픈 추적
+  ga('set', 'metric1', metricValue);
+  ga('send', 'pageview');
+</script>  -->
+
+<!-- Global site tag (gtag.js) - Google Ads: 767066534 -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=AW-767066534"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-767066534');
+</script>  -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-65433011-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-65433011-1');
+  gtag('config', 'AW-767066534');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T4ZXZC5');</script>
+<!-- End Google Tag Manager -->
+
+<!-- 20190115 Facebook Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '582166628785358');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=582166628785358&ev=PageView&noscript=1"
+/></noscript>
+	<meta name="title" content="KDI 경제전망 | 수정,  2026년 8월 - KDI 한국개발연구원 - 연구 - 경제전망 - 경제전망">
+	<meta name="language" content="kr">
+	<meta name="description" content="">
+	<meta property="og:title" content="KDI 경제전망 | 수정,  2026년 8월 - KDI 한국개발연구원 - 연구 - 경제전망 - 경제전망">
+	<meta property="og:image" content="http://www.kdi.re.kr/res/KDI_OG_IMAGE.jpg">
+	<meta property="og:description" content="">
+	<title>KDI 경제전망 | 수정,  2026년 8월 - KDI 한국개발연구원 - 연구 - 경제전망 - 경제전망</title>
+	<script type="text/javascript" src="../res/dev_js/common.js"></script>
+<script type="text/javascript">
+	function dateChg(no) {
+		location.href = '/research/economy?pub_no=' + no;
+	}
+	
+	function playMovie(id, yn) {
+		
+		if ( yn == 'Y' ) {
+			if ( $(id).find('iframe') ) {
+				var src = $(id).find('iframe').attr('src') + '?autoplay=1&mute=1';
+				$(id).find('iframe').attr('src', src );
+			}
+		} else {
+			if ( $(id).find('iframe') ) {
+				var src = $(id).find('iframe').attr('src').replaceAll('?autoplay=1&mute=1','');
+				$(id).find('iframe').attr('src', src );
+			}
+		}
+		
+	}
+</script>
+</head>
+<body>
+
+<script type="text/javascript">
+_linkedin_partner_id = "7029785";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+</script><script type="text/javascript">
+(function(l) {
+if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+window.lintrk.q=[]}
+var s = document.getElementsByTagName("script")[0];
+var b = document.createElement("script");
+b.type = "text/javascript";b.async = true;
+b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+<noscript>
+<img height="1" width="1" style="display:none;" alt="" src="https://px.ads.linkedin.com/collect/?pid=7029785&fmt=gif" />
+</noscript>
+        <!-- Channel Plugin Scripts -->
+		<script>
+		  (function() {
+		    var w = window;
+		    if (w.ChannelIO) {
+		      return (window.console.error || window.console.log || function(){})('ChannelIO script included twice.');
+		    }
+		    var ch = function() {
+		      ch.c(arguments);
+		    };
+		    ch.q = [];
+		    ch.c = function(args) {
+		      ch.q.push(args);
+		    };
+		    w.ChannelIO = ch;
+		    function l() {
+		      if (w.ChannelIOInitialized) {
+		        return;
+		      }
+		      w.ChannelIOInitialized = true;
+		      var s = document.createElement('script');
+		      s.type = 'text/javascript';
+		      s.async = true;
+		      s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+		      s.charset = 'UTF-8';
+		      var x = document.getElementsByTagName('script')[0];
+		      x.parentNode.insertBefore(s, x);
+		    }
+		    if (document.readyState === 'complete') {
+		      l();
+		    } else if (window.attachEvent) {
+		      window.attachEvent('onload', l);
+		    } else {
+		      window.addEventListener('DOMContentLoaded', l, false);
+		      window.addEventListener('load', l, false);
+		    }
+		  })();
+		  ChannelIO('boot', {
+		    "pluginKey": "9d365c6a-5805-4bb8-bcf9-ae50ea56746a"
+		  });
+		</script>
+		<!-- End Channel Plugin -->
+<div id="skipNav"><a href="#contents">본문 바로가기</a></div>
+<header>
+    <div class="top_nav-wrap">
+     
+        <div class="top_guide">
+            <h1><a href="/"><img src="../res/img/KDI_logo.png" alt="KDI 한국개발연구원"></a></h1>
+            <nav>
+                <ul>
+                	
+							<li><button type="button">연구</button>
+		                        <div class="gnb_downslide">
+		                            <div class="gnb_guide">
+		                                <div class="gnb_left">
+		                                    <h2><b>연구</b>
+		                                    	
+		                                    			<p>KDI는<br>"미래를 여는 연구"를 통해<br>정책 대안을 제시합니다.</p>
+		                                    		
+		                                    </h2>
+		                                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="/research/reportList">연구 보고서</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/focusList">KDI FOCUS</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/economy">경제전망</a>
+					
+						<ul>
+							
+									<li><a href="/research/analysisList">현안분석</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monTrends">KDI 경제동향</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monNorth">KDI 북한경제리뷰</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/jep">KDI JEP</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/etcReportList">기타 보고서</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monCountry">나라경제</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monEb">Economic Bulletin</a>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/research/topicList">연구 주제</a>
+						
+							<ul>
+								
+										<li><a href="/research/topicList?cd=A">거시</a></li>
+									
+										<li><a href="/research/topicList?cd=B">금융</a></li>
+									
+										<li><a href="/research/topicList?cd=C">법경제</a></li>
+									
+										<li><a href="/research/topicList?cd=D">규제</a></li>
+									
+										<li><a href="/research/topicList?cd=E">노동</a></li>
+									
+										<li><a href="/research/topicList?cd=F">교육</a></li>
+									
+										<li><a href="/research/topicList?cd=G">산업</a></li>
+									
+										<li><a href="/research/topicList?cd=H">국제경제</a></li>
+									
+										<li><a href="/research/topicList?cd=I">재정</a></li>
+									
+										<li><a href="/research/topicList?cd=J">복지</a></li>
+									
+										<li><a href="/research/topicList?cd=K">북한경제</a></li>
+									
+										<li><a href="/research/topicList?cd=L">공공투자</a></li>
+									
+										<li><a href="/research/topicList?cd=M">국토인프라</a></li>
+									
+										<li><a href="/research/topicList?cd=N">국제개발협력</a></li>
+									
+										<li><a href="/research/topicList?cd=O">경제교육</a></li>
+									
+										<li><a href="/research/topicList?cd=P">경제정보</a></li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+<!-- 		<div class="cover"> -->
+<!-- 	        <button type="button" onclick="kdifn.gnbCover(this)" title="클릭하면 메뉴가 열립니다"> -->
+<!-- 	            <img src="../res/img/gnb_cover01.jpg" alt="KDI"> -->
+<!-- 	            <strong>연구주제</strong> -->
+<!--                 <p>보고서를 연구 주제별로 <br>확인할 수 있습니다.</p> -->
+<!-- 	        </button> -->
+<!-- 	    </div> -->
+    </div>
+</div>
+		                                    	
+		                                </div>
+		                                <div class="gnb_right">
+		                                    <div class="menu_other">
+		                                    	
+			                                    			<a href="https://www.kdi.re.kr/research/topicList" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_1-001.png" alt="표지">
+					                                            <strong>연구 주제</strong>
+<p>KDI의 발간물을 다양한 연구 주제로 분류하여 제공합니다.</p>
+					                                        </a>
+					                                    
+					                                        <a href="https://www.kdi.re.kr/share/researchList" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_2-001.png" alt="표지">
+					                                            <strong>연구과제 제안</strong>
+<p>KDI의 역할에 걸맞은 연구가 추진될 수 있도록 연구 과제를 제안해 주세요.</p>
+					                                        </a>
+				                                        
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </li>
+                		
+							<li><button type="button">소통</button>
+		                        <div class="gnb_downslide">
+		                            <div class="gnb_guide">
+		                                <div class="gnb_left">
+		                                    <h2><b>소통</b>
+		                                    	
+		                                    			<p>KDI는<br>한걸음 더 가까이<br>여러분께 다가섭니다.</p>
+		                                    		
+		                                    </h2>
+		                                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="#">세미나</a>
+					
+						<ul>
+							
+									<li><a href="/share/conferList">콘퍼런스</a></li>
+								
+									<li><a href="/share/seminarList">전문가 세미나</a></li>
+								
+									<li><a href="/share/seminarMov">세미나 영상</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/share/noticeList">공지사항</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/centerList">연구원 동정</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressList">보도자료</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressContriList">언론기고</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressRelease">언론보도</a>
+					
+						<ul>
+							
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/share/kdiansList">매거진 KDlans</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/recruitList">채용</a>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/share/multiMov">소통 콘텐츠</a>
+						
+							<ul>
+								
+										<li><a href="/share/multiMov">멀티콘텐츠</a></li>
+									
+										<li><a href="/share/socialBox">소셜박스</a></li>
+									
+										<li><a href="/share/userGuide?ug_cd=007004">KDI 이용가이드</a></li>
+									
+										<li><a href="/share/researchList">연구과제 제안</a></li>
+									
+										<li><a href="/share/absurdityCenter">부조리신고센터</a></li>
+									
+										<li><a href="/share/qnaList">Q&A</a></li>
+									
+										<li><a href="/share/newsletter">뉴스레터</a></li>
+									
+										<li><a href="/share/openAPI">KDI Open API</a></li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+	</div>
+</div>
+		                                    	
+		                                </div>
+		                                <div class="gnb_right">
+		                                    <div class="menu_other">
+		                                    	
+			                                    			<a href="https://www.kdi.re.kr/share/kdiansList" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_1-002.png" alt="표지">
+					                                            <strong>매거진 KDIans</strong>
+<p>2026 SUMMER VOL.69</p>
+					                                        </a>
+					                                    
+					                                        <a href="/share/newsletter" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_2-002.png" alt="표지">
+					                                            <strong>뉴스레터</strong>
+<p>KDI의 소식과 경제정책정보를<br>뉴스레터로 받아보세요.</p>
+					                                        </a>
+				                                        
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </li>
+                		
+							<li><button type="button">소개</button>
+		                        <div class="gnb_downslide">
+		                            <div class="gnb_guide">
+		                                <div class="gnb_left">
+		                                    <h2><b>소개</b>
+		                                    	
+		                                    			<p>since 1971<br>한국개발연구원의<br>과거, 현재 그리고 미래</p>
+		                                    		
+		                                    </h2>
+		                                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="/introduce/greetings">원장 소개</a>
+					
+						<ul>
+							
+									<li><a href="/introduce/greetings">인사말</a></li>
+								
+									<li><a href="/introduce/history">원장약력</a></li>
+								
+									<li><a href="/introduce/target">경영목표</a></li>
+								
+									<li><a href="/introduce/historyLedger">역대원장</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/introduce/org">조직도</a>
+					
+				</li>
+			
+				<li>
+					<a href="/introduce/expert">연구진</a>
+					
+				</li>
+			
+				<li>
+					<a href="#">홍보</a>
+					
+						<ul>
+							
+									<li><a href="/introduce/historyList">연혁</a></li>
+								
+									<li><a href="/introduce/pmVision">VISION HALL</a></li>
+								
+									<li><a href="/introduce/pmCi">기관 상징</a></li>
+								
+									<li><a href="/introduce/pmBrochure">브로슈어</a></li>
+								
+						</ul>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/introduce/macroFinancial">부서 안내</a>
+						
+							<ul class="s">
+								
+										<li class="">
+											<a href="/introduce/macroFinancial">거시ㆍ금융정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/industryMarket">산업ㆍ시장정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/financeSocial">재정ㆍ사회정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/economicOutlook">경제전망실</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/regCenter">규제연구실</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/globalEconomy">글로벌·북한경제연구실</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/eiec">경제교육·정보센터</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/pimac">공공투자관리센터</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/interCenter">국제개발협력센터</a>
+										</li>
+									
+										<li class="">
+											<a href="https://www.gkedc.go.kr/">글로벌지식협력단지</a>
+										</li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+<!-- 		<div class="cover"> -->
+<!-- 	        <button type="button" onclick="kdifn.gnbCover(this)" title="클릭하면 메뉴가 열립니다"> -->
+<!-- 	            <img src="../res/img/gnb_cover02.jpg" alt="KDI"> -->
+<!-- 	            <strong>연구분야</strong> -->
+<!--                 <p>KDI의 연구 분야, 센터 등을 <br>안내해 드립니다.</p> -->
+<!-- 	        </button> -->
+<!-- 	    </div> -->
+    </div>
+</div>
+		                                    	
+		                                </div>
+		                                <div class="gnb_right">
+		                                    <div class="menu_other">
+		                                    	
+			                                    			<a href="https://www.kdi.re.kr/introduce/pmVision" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_1-003.jpg" alt="표지">
+					                                            <strong>KDI Vision Hall</strong>
+
+<p>개원 50주년을 맞이해 2021년 3월 개관했습니다.</p>
+					                                        </a>
+					                                    
+					                                        <a href="/introduce/historyList" target="" class="item">
+					                                            <img src="/kdidata/menu/menu_img_2-003.jpg" alt="표지">
+					                                            <strong>연혁</strong>
+
+<p>KDI의 시대별 주요 연구 성과를 소개합니다.</p>
+					                                        </a>
+				                                       
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </li>
+                		
+                </ul>
+            </nav>
+            
+            <div class="other_link">
+            	<ul>
+		            
+		            		<li><button type="button">정보공개</button>
+		            			<div class="gnb_downslide">
+		            				<div class="gnb_guide">
+		            					<div class="gnb_left">
+			            					<h2><b>정보<br>공개</b>
+			                                    <p>한국개발연구원의<br> 정보공개제도를 안내해 <br>드립니다.</p>
+			                                </h2>
+			                                
+<div class="menu_each">
+	<ul class="one_list">
+		
+				<li>
+					<a href="/disclosure/humanScene">인권경영</a>
+					
+						<ul>
+							
+									<li><a href="/disclosure/humanScene">인권경영헌장</a></li>
+								
+									<li><a href="/disclosure/humanPropel">인권경영 추진체계</a></li>
+								
+									<li><a href="/disclosure/humanPlan">인권경영 활동/교육</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/openPolicy">정보공개</a>
+					
+						<ul>
+							
+									<li><a href="/disclosure/openPolicy">정보공개제도 안내</a></li>
+								
+									<li><a href="/disclosure/openDictionary">사전정보공표</a></li>
+								
+									<li><a href="/disclosure/businessList">해외출장 보고</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/publicData">공공데이터 개방</a>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/realName">사업실명제</a>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/operationOpen">경영공시</a>
+					
+				</li>
+			
+	</ul>
+</div>
+		            					</div>
+		            				</div>
+		            			</div>
+		            		</li>
+		            	
+		            <li><a href="/eng/">ENG</a></li>
+            	</ul>
+	            <button type="button" class="search">검색</button>
+	            <button type="button" class="allview">전체 메뉴 보기</button>
+            </div>
+        </div>
+    </div>
+    <!-- sitemap -->
+    <div class="site_map-wrap">
+        <div class="site_top">
+            <h3><a href="/"><img src="../res/img/KDI_logo.png" alt="KDI 한국개발연구원"></a></h3>
+            <h4>SITEMAP</h4>
+            <button type="button">CLOSE</button>
+        </div>
+        <div class="site_mid">
+            <div class="center_guide">
+                <!-- 각 메뉴에 뎁스에 맞게 on 처리 해주세요 -->
+                <div class="site_area on">
+                    <h5><button type="button">연구</button></h5>
+                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="/research/reportList">연구 보고서</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/focusList">KDI FOCUS</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/economy">경제전망</a>
+					
+						<ul>
+							
+									<li><a href="/research/analysisList">현안분석</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monTrends">KDI 경제동향</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monNorth">KDI 북한경제리뷰</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/jep">KDI JEP</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/etcReportList">기타 보고서</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monCountry">나라경제</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monEb">Economic Bulletin</a>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/research/topicList">연구 주제</a>
+						
+							<ul>
+								
+										<li><a href="/research/topicList?cd=A">거시</a></li>
+									
+										<li><a href="/research/topicList?cd=B">금융</a></li>
+									
+										<li><a href="/research/topicList?cd=C">법경제</a></li>
+									
+										<li><a href="/research/topicList?cd=D">규제</a></li>
+									
+										<li><a href="/research/topicList?cd=E">노동</a></li>
+									
+										<li><a href="/research/topicList?cd=F">교육</a></li>
+									
+										<li><a href="/research/topicList?cd=G">산업</a></li>
+									
+										<li><a href="/research/topicList?cd=H">국제경제</a></li>
+									
+										<li><a href="/research/topicList?cd=I">재정</a></li>
+									
+										<li><a href="/research/topicList?cd=J">복지</a></li>
+									
+										<li><a href="/research/topicList?cd=K">북한경제</a></li>
+									
+										<li><a href="/research/topicList?cd=L">공공투자</a></li>
+									
+										<li><a href="/research/topicList?cd=M">국토인프라</a></li>
+									
+										<li><a href="/research/topicList?cd=N">국제개발협력</a></li>
+									
+										<li><a href="/research/topicList?cd=O">경제교육</a></li>
+									
+										<li><a href="/research/topicList?cd=P">경제정보</a></li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+<!-- 		<div class="cover"> -->
+<!-- 	        <button type="button" onclick="kdifn.gnbCover(this)" title="클릭하면 메뉴가 열립니다"> -->
+<!-- 	            <img src="../res/img/gnb_cover01.jpg" alt="KDI"> -->
+<!-- 	            <strong>연구주제</strong> -->
+<!--                 <p>보고서를 연구 주제별로 <br>확인할 수 있습니다.</p> -->
+<!-- 	        </button> -->
+<!-- 	    </div> -->
+    </div>
+</div>
+                </div>
+                <div class="site_area ">
+                    <h5><button type="button">소통</button></h5>
+                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="#">세미나</a>
+					
+						<ul>
+							
+									<li><a href="/share/conferList">콘퍼런스</a></li>
+								
+									<li><a href="/share/seminarList">전문가 세미나</a></li>
+								
+									<li><a href="/share/seminarMov">세미나 영상</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/share/noticeList">공지사항</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/centerList">연구원 동정</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressList">보도자료</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressContriList">언론기고</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressRelease">언론보도</a>
+					
+						<ul>
+							
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/share/kdiansList">매거진 KDlans</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/recruitList">채용</a>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/share/multiMov">소통 콘텐츠</a>
+						
+							<ul>
+								
+										<li><a href="/share/multiMov">멀티콘텐츠</a></li>
+									
+										<li><a href="/share/socialBox">소셜박스</a></li>
+									
+										<li><a href="/share/userGuide?ug_cd=007004">KDI 이용가이드</a></li>
+									
+										<li><a href="/share/researchList">연구과제 제안</a></li>
+									
+										<li><a href="/share/absurdityCenter">부조리신고센터</a></li>
+									
+										<li><a href="/share/qnaList">Q&A</a></li>
+									
+										<li><a href="/share/newsletter">뉴스레터</a></li>
+									
+										<li><a href="/share/openAPI">KDI Open API</a></li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+	</div>
+</div>
+                </div>
+                <div class="site_area ">
+                    <h5><button type="button">소개</button></h5>
+                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="/introduce/greetings">원장 소개</a>
+					
+						<ul>
+							
+									<li><a href="/introduce/greetings">인사말</a></li>
+								
+									<li><a href="/introduce/history">원장약력</a></li>
+								
+									<li><a href="/introduce/target">경영목표</a></li>
+								
+									<li><a href="/introduce/historyLedger">역대원장</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/introduce/org">조직도</a>
+					
+				</li>
+			
+				<li>
+					<a href="/introduce/expert">연구진</a>
+					
+				</li>
+			
+				<li>
+					<a href="#">홍보</a>
+					
+						<ul>
+							
+									<li><a href="/introduce/historyList">연혁</a></li>
+								
+									<li><a href="/introduce/pmVision">VISION HALL</a></li>
+								
+									<li><a href="/introduce/pmCi">기관 상징</a></li>
+								
+									<li><a href="/introduce/pmBrochure">브로슈어</a></li>
+								
+						</ul>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/introduce/macroFinancial">부서 안내</a>
+						
+							<ul class="s">
+								
+										<li class="">
+											<a href="/introduce/macroFinancial">거시ㆍ금융정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/industryMarket">산업ㆍ시장정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/financeSocial">재정ㆍ사회정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/economicOutlook">경제전망실</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/regCenter">규제연구실</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/globalEconomy">글로벌·북한경제연구실</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/eiec">경제교육·정보센터</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/pimac">공공투자관리센터</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/interCenter">국제개발협력센터</a>
+										</li>
+									
+										<li class="">
+											<a href="https://www.gkedc.go.kr/">글로벌지식협력단지</a>
+										</li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+<!-- 		<div class="cover"> -->
+<!-- 	        <button type="button" onclick="kdifn.gnbCover(this)" title="클릭하면 메뉴가 열립니다"> -->
+<!-- 	            <img src="../res/img/gnb_cover02.jpg" alt="KDI"> -->
+<!-- 	            <strong>연구분야</strong> -->
+<!--                 <p>KDI의 연구 분야, 센터 등을 <br>안내해 드립니다.</p> -->
+<!-- 	        </button> -->
+<!-- 	    </div> -->
+    </div>
+</div>
+                </div>
+                <div class="site_area ">
+                    <h5><button type="button">정보공개</button></h5>
+                    
+<div class="menu_each">
+	<ul class="one_list">
+		
+				<li>
+					<a href="/disclosure/humanScene">인권경영</a>
+					
+						<ul>
+							
+									<li><a href="/disclosure/humanScene">인권경영헌장</a></li>
+								
+									<li><a href="/disclosure/humanPropel">인권경영 추진체계</a></li>
+								
+									<li><a href="/disclosure/humanPlan">인권경영 활동/교육</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/openPolicy">정보공개</a>
+					
+						<ul>
+							
+									<li><a href="/disclosure/openPolicy">정보공개제도 안내</a></li>
+								
+									<li><a href="/disclosure/openDictionary">사전정보공표</a></li>
+								
+									<li><a href="/disclosure/businessList">해외출장 보고</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/publicData">공공데이터 개방</a>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/realName">사업실명제</a>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/operationOpen">경영공시</a>
+					
+				</li>
+			
+	</ul>
+</div>
+                </div>
+            </div>
+        </div>
+        <div class="site_btm">
+            <ul>
+                <li><a href="/bookMember/booksLogin">도서회원</a></li>
+                <li><a href="/infomation/location">찾아오시는길</a></li>
+            </ul>
+            <ul>
+                <li><a href="/servicePolicy/charter">고객헌장</a></li>
+                <li><a href="/servicePolicy/privacy">개인정보처리방침</a></li>
+                <li><a href="/servicePolicy/mediaPrivacy">영상정보처리기기 운영ㆍ관리방침</a></li>
+                <li><a href="/servicePolicy/copyright">저작권정책</a></li>
+                <li><a href="/servicePolicy/email">이메일주소 무단수집거부</a></li>
+            </ul>
+        </div>
+    </div>
+    
+<script type="text/javascript" charset="utf-8" src="//epts.kdi.re.kr/resources/jslb/use.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+
+function highlightTextTop(term, obj){
+	let html_ = $(obj).text();
+	html_ = html_.replace(term, "<em>"+term+"</em>");
+	$(obj).html(html_);
+}
+function GlobalsearchTerm() {
+	let termdt = $("#topSearchValue").val();
+	termdt = $.trim(termdt);
+	if (termdt == "") {
+		alert("검색어를 입력해 주세요.");
+		return;
+	}
+	location.href="/kdisearch/search?term=" + encodeURIComponent(termdt);	
+}
+$(function(){
+	fnGetTopWord();
+    $("#topSearchValue").on("keyup",function(key){
+        if(key.keyCode==13) {
+        	GlobalsearchTerm();
+        }
+    });	
+	$("#topSearchValue").autocomplete({
+		source: function(request, response) {
+			var term = $.ui.autocomplete.escapeRegex(request.term);
+			var matcher1 = new RegExp("^" + term, "i");
+			var matcher2 = new RegExp("^.+" + term, "i");
+			function subarray(matcher) {return $.grep(useArray, function(item) {return matcher.test(item);});}
+			response($.merge(subarray(matcher1), subarray(matcher2)));
+		},
+		autoFocus: false
+	}).data("ui-autocomplete")._renderItem = function (ul, item) {
+	  	var $a = $("<a></a>").text(item.label);
+	  	highlightTextTop(this.term, $a);
+	  	return $("<li></li>").append($a).appendTo(ul);
+	};
+	$("#topSearchValue").keyup(function (){
+			$("#topSearchValue").autocomplete({
+				source: function(request, response) {
+					var term = $.ui.autocomplete.escapeRegex(request.term);
+					var matcher1 = new RegExp("^" + term, "i");
+					var matcher2 = new RegExp("^.+" + term, "i");
+					function subarray(matcher) {return $.grep(useArray, function(item) {return matcher.test(item);});}
+					var resultarr = $.merge(subarray(matcher1), subarray(matcher2));
+					response(resultarr.slice(0, 10));
+				},
+				autoFocus: false,
+				delay: 300
+			}).data("ui-autocomplete")._renderItem = function (ul, item) {
+			  	var $a = $("<a></a>").text(item.label);
+			  	highlightTextTop(this.term, $a);
+			  	return $("<li></li>").append($a).appendTo(ul);
+			};
+	});	
+});
+
+function fnGetTopWord(){
+	$.ajax({
+		url: "/kdisearch/getrankword",
+		dataType: "text",
+		success: function(data) {
+			let rankdata = eval(data);
+			if (rankdata != null) {
+				if(rankdata.length > 0){
+		   			$("#topsearchwordWrap").empty();
+		   			if($("#mainsearchwordWrap").length > 0) $("#mainsearchwordWrap").empty();
+		   			let html_ = "";
+		   			let rank = 1;
+		   			for (var k=0; k<rankdata.length; k++) {
+		   				let str = rankdata[k][0];
+		   				if (k <= 2) {
+		   					html_ += "<li class=\"tier\"><a href=\"javascript:thisSearch('"+str+"');\" title=\""+str+"\">"+str+"</a></li>";
+		   				}
+		   				else {
+		   					html_ += "<li><a href=\"javascript:thisSearch('"+str+"');\" title=\""+str+"\">"+str+"</a></li>";
+		   				}
+		   				rank ++;
+		   			}
+		   			$("#topsearchwordWrap").append(html_);
+		   			if($("#mainsearchwordWrap").length > 0){
+			   			let html_ = "";
+			   			let rank = 1;
+			   			for (var k=0; k<rankdata.length; k++) {
+			   				let str = rankdata[k][0];
+			   				if (k <= 2) {
+			   					html_ += "<a href=\"javascript:thisSearch('"+str+"');\" title=\""+str+"\">"+str+"</a>";
+			   				}
+			   				else {
+			   					html_ += "<a href=\"javascript:thisSearch('"+str+"');\" title=\""+str+"\">"+str+"</a>";
+			   				}
+			   				rank ++;
+			   			}	
+			   			$("#mainsearchwordWrap").append(html_);
+		   			}
+				}
+			}
+		}
+	});
+}	
+
+function thisSearch(thisterm) {
+	location.href="/kdisearch/search?term=" + encodeURIComponent(thisterm);
+}
+</script>    
+    <!-- search -->
+    <div id="site_search-wrap">
+    	<div class="site_scroll">
+	        <div class="search_word-inp">
+	            <div class="search_box">
+	                <div class="box_guide">
+	                    <label for="topSearchValue">SEARCH</label>
+	                    <input id="topSearchValue" type="text" placeholder="KDI 통합검색을 이용해 보세요">
+	                    <button type="button" onclick="GlobalsearchTerm()">검색</button>
+	                </div>
+	            </div>
+	            <div class="popular_terms">
+	                <strong>인기 검색어</strong>
+	                <ul id="topsearchwordWrap">
+	                </ul>
+	                <button type="button" onclick="kdifn.commUlOpen(this)">OPEN</button>
+	            </div>
+	        </div>
+	        
+		        <div class="hot_issue-box">
+		            <h3>SPOTLIGHT</h3>
+		            <div class="issue_slide-box">
+		            	
+		            		<div class="item">
+		                        <a href="https://www.kdi.re.kr/research/economy?pub_no=19259" target="_self">
+		                        	
+											<b class="i06">KDI 경제전망</b>
+										
+		                            <strong>KDI 경제전망 | 수정, 2026년 8월</strong>
+		                            <p>우리 경제는 글로벌 반도체경기 호황에 주로 기인하여 2026년 3.2%의 높은 성장률을 기록한 뒤, 2027년에도 2.2% 성장하며 양호한 흐름을 이어갈 전망</p>
+		                            <span>2026.05.13</span>
+		                        </a>
+		                    </div>
+		            	
+		            		<div class="item">
+		                        <a href="/share/noticeView?bd_no=53443" target="_self">
+		                        	
+											<b class="i20">공지사항</b>
+										
+		                            <strong>「지식공유브리프」26년 4호 발간 안내</strong>
+		                            <p>국제개발협력 전문가라면 꼭 알아야 할 최신 트렌드! 지식공유브리프 26년 4호가 발간되었습니다. 지금 확인해 보세요!</p>
+		                            <span>2026.09.01</span>
+		                        </a>
+		                    </div>
+		            	
+		            		<div class="item">
+		                        <a href="/research/focusView?pub_no=19239" target="_self">
+		                        	
+											<b class="i02">KDI FOCUS</b>
+										
+		                            <strong>재생에너지의 효과적 보급확대를 위한 정책 과제</strong>
+		                            <p>재생에너지 보조금 제도 합리화, 전력계통 확충, 자본조달 환경 정비를 통합 추진하여, 재생에너지 보급 속도와 효율성을 동시에 확보해야 함</p>
+		                            <span>2026.07.27</span>
+		                        </a>
+		                    </div>
+		            	
+		            		<div class="item">
+		                        <a href="/share/pressContriView?bd_no=53429" target="_self">
+		                        	
+											<b class="i20">언론기고</b>
+										
+		                            <strong>반도체 호황일 때 키워야 할 제2, 제3의 수출엔진</strong>
+		                            <p>반도체가 끌어올린 韓 경상수지와 성장률, 기업을 넘어 국가의 미래를 가르는 칩워(Chip War) 시대에 우리가 갖춰야 할 초격차 핵심 전략은 무엇일까?</p>
+		                            <span>2026.08.28</span>
+		                        </a>
+		                    </div>
+		            	
+		            </div>
+		        </div>
+	        
+	    </div>
+        <button type="button">닫기</button>
+    </div>
+</header>
+<main>
+<section id="contents">
+	
+<!--
+    상세 뷰 페이지 모바일에서는 라인맵 선택이 노출 안 됩니다.
+    히든 처리로 뷰페이지 접속시 "#contents"에 "view_page-back"
+    className 추가해주세요 PC에서는 영향 없습니다.
+    대시 모바일에서 뒤로 가는 타이틀 버튼이 노출 됩니다
+ -->
+<div class="linemap_guide-box">
+    <a href="javascript:history.back();" class="moveing_back">BACK</a>
+    <div class="comm_linemap true">
+        <a href="/" class="home">HOME</a>
+        <div class="depth">
+        	
+        			<button type="button" onclick="kdifn.lineMapMenu(this)">연구</button>
+        		
+            <ul>
+            	
+            			<li><a class="on" href="/research/reportList">연구</a></li>
+            		
+            			<li><a class="" href="/share/conferList">소통</a></li>
+            		
+            			<li><a class="" href="/introduce/org">소개</a></li>
+            		
+            </ul>
+        </div>
+        <!--
+            여기부터 모바일 메뉴가 노출 됩니다.
+            "sub" 서브 메뉴가 2개일 경우 "comm_linemap"에 "two_depth"
+            className을 추가해주세요 2단으로 50%씩 반반 노출
+            아닐 경우 1단으로 100% 전체 길이로 노출
+         -->
+        <div class="depth sub f">
+        	
+        			<button type="button" onclick="kdifn.lineMapMenu(this)">경제전망</button>
+        		
+            <ul>
+            	
+            			<li><a class="" href="/research/reportList">연구 보고서</a></li>
+            		
+            			<li><a class="" href="/research/focusList">KDI FOCUS</a></li>
+            		
+            			<li><a class="on" href="/research/economy">경제전망</a></li>
+            		
+            			<li><a class="" href="/research/monTrends">KDI 경제동향</a></li>
+            		
+            			<li><a class="" href="/research/monNorth">KDI 북한경제리뷰</a></li>
+            		
+            			<li><a class="" href="/research/jep">KDI JEP</a></li>
+            		
+            			<li><a class="" href="/research/etcReportList">기타 보고서</a></li>
+            		
+            			<li><a class="" href="/research/monCountry">나라경제</a></li>
+            		
+            			<li><a class="" href="/research/monEb">Economic Bulletin</a></li>
+            		
+            			<li><a class="" href="/research/topicList">연구 주제</a></li>
+            		
+            </ul>
+        </div>
+        
+        
+	        <div class="depth sub">
+	        	
+	            <ul>
+	            	
+	            			<li><a class="" href="/research/analysisList">현안분석</a></li>
+	            		
+	            </ul>
+	        </div>
+        
+        <a href="javascript:history.back();" class="back_page">BACK</a>
+    </div>
+</div>
+
+	<div class="page_contents economy_page-move">
+		<div class="page_economy">
+			<div class="page_top-wrap rpt_banner-7">
+				<h2>KDI 경제전망 | 수정,  2026년 8월 <p>2026.08.19</p></h2>
+				<img src="" alt="배경" onerror="this.src='../res/img/page_top_banner7.jpg'">
+			</div>
+			<div class="page_list-select">
+				<div class="select_guide">
+					<span class="comm_select ong">
+						<label for="yearSelectUpDown">년도 선택</label>
+						<select id="yearSelectUpDown" name="date" onchange="dateChg(this.value);">
+							
+								<option value="19259" selected>2026년 8월</option>
+							
+								<option value="19180" >2026 상반기</option>
+							
+								<option value="19077" >2026년 2월</option>
+							
+								<option value="18914" >2025 하반기</option>
+							
+								<option value="18859" >2025년 8월</option>
+							
+								<option value="18775" >2025 상반기</option>
+							
+								<option value="18617" >2025년 2월</option>
+							
+								<option value="18476" >2024 하반기</option>
+							
+								<option value="18406" >2024년 8월</option>
+							
+								<option value="18331" >2024 상반기</option>
+							
+								<option value="18214" >2024년 2월</option>
+							
+								<option value="18120" >2023 하반기</option>
+							
+								<option value="18059" >2023년 8월</option>
+							
+								<option value="17933" >2023 상반기</option>
+							
+								<option value="17846" >2023년 2월</option>
+							
+								<option value="17700" >2022 하반기</option>
+							
+								<option value="17458" >2022 상반기</option>
+							
+								<option value="17244" >2021 하반기</option>
+							
+								<option value="17070" >2021 상반기</option>
+							
+								<option value="16785" >2020 하반기</option>
+							
+								<option value="16712" >2020 상반기 Update</option>
+							
+								<option value="16569" >2020 상반기</option>
+							
+								<option value="16344" >2019 하반기</option>
+							
+								<option value="16126" >2019 상반기</option>
+							
+								<option value="15884" >2018 하반기</option>
+							
+								<option value="15708" >2018 상반기</option>
+							
+								<option value="15398" >2017 하반기</option>
+							
+								<option value="15185" >2017 상반기</option>
+							
+								<option value="15003" >2016 하반기</option>
+							
+								<option value="14716" >2016 상반기</option>
+							
+								<option value="14325" >2015 하반기</option>
+							
+								<option value="14162" >2015 상반기</option>
+							
+								<option value="13865" >2014-2nd</option>
+							
+								<option value="13645" >2014-1st</option>
+							
+								<option value="13392" >2013-2nd</option>
+							
+								<option value="13048" >2013-1st</option>
+							
+								<option value="12699" >2012-2nd</option>
+							
+								<option value="12616" >2012-1st Update</option>
+							
+								<option value="12383" >2012-1st</option>
+							
+								<option value="12126" >2011-2nd</option>
+							
+								<option value="11817" >2011-1st</option>
+							
+								<option value="11582" >2010-2nd</option>
+							
+								<option value="11423" >2010-1st</option>
+							
+								<option value="11140" >2009-2nd</option>
+							
+								<option value="11064" >2009-1st Update</option>
+							
+								<option value="10925" >2009-1st</option>
+							
+								<option value="11063" >2008-2nd Update</option>
+							
+								<option value="10619" >2008-2nd</option>
+							
+								<option value="10473" >2008-1st</option>
+							
+								<option value="10188" >2007-2nd</option>
+							
+								<option value="10052" >2007-1st</option>
+							
+								<option value="9778" >2006年 4/4</option>
+							
+								<option value="9731" >2006年 3/4</option>
+							
+								<option value="9693" >2006年 2/4</option>
+							
+								<option value="9535" >2006年 1/4</option>
+							
+								<option value="9362" >2005年 4/4</option>
+							
+								<option value="9213" >2005年 3/4</option>
+							
+								<option value="9182" >2005年 2/4</option>
+							
+								<option value="9138" >2005年 1/4</option>
+							
+								<option value="8935" >2004年 4/4</option>
+							
+								<option value="8842" >2004年 2/4</option>
+							
+								<option value="8736" >2004年 1/4</option>
+							
+								<option value="8534" >2003年 4/4</option>
+							
+								<option value="7349" >2003年 3/4</option>
+							
+								<option value="7122" >2003年 2/4</option>
+							
+								<option value="7000" >2003年 1/4</option>
+							
+								<option value="6717" >2002年 4/4</option>
+							
+								<option value="6671" >2002年 3/4</option>
+							
+								<option value="6599" >2002年 2/4</option>
+							
+								<option value="6522" >2002年 1/4</option>
+							
+								<option value="6262" >2001年 4/4</option>
+							
+								<option value="6078" >2001年 3/4</option>
+							
+								<option value="6009" >2001年 2/4</option>
+							
+								<option value="3210" >2001年 1/4</option>
+							
+								<option value="2987" >2000年 4/4</option>
+							
+								<option value="2986" >2000年 3/4</option>
+							
+								<option value="2985" >2000年 2/4</option>
+							
+								<option value="2984" >2000年 1/4</option>
+							
+								<option value="2983" >1999年 4/4</option>
+							
+								<option value="2982" >1999年 3/4</option>
+							
+								<option value="2981" >1999年 2/4</option>
+							
+								<option value="2980" >1999年 1/4</option>
+							
+								<option value="2979" >1998年 4/4</option>
+							
+								<option value="2978" >1998年 3/4</option>
+							
+								<option value="2977" >1998年 2/4</option>
+							
+								<option value="2976" >1998年 1/4</option>
+							
+								<option value="2975" >1997年 3/4</option>
+							
+								<option value="2974" >1997年 2/4</option>
+							
+								<option value="2973" >1997年 1/4</option>
+							
+								<option value="2972" >1996年 4/4</option>
+							
+								<option value="2971" >1996年 3/4</option>
+							
+								<option value="2970" >1996年 2/4</option>
+							
+								<option value="2969" >1996年 1/4</option>
+							
+								<option value="2968" >1995年 4/4</option>
+							
+								<option value="2966" >1995年 2/4</option>
+							
+								<option value="2967" >1995年 3/4</option>
+							
+								<option value="3867" >1995年 1/4</option>
+							
+								<option value="3876" >1992年 4/4</option>
+							
+								<option value="2965" >1992年 2/4</option>
+							
+								<option value="2964" >1992年 1/4</option>
+							
+								<option value="2963" >1991年 4/4</option>
+							
+								<option value="2962" >1991年 3/4</option>
+							
+								<option value="2961" >1991年 2/4</option>
+							
+								<option value="2960" >1991年 1/4</option>
+							
+								<option value="3019" >1990年 3/4</option>
+							
+								<option value="3018" >1990年 2/4</option>
+							
+								<option value="3017" >1990年 1/4</option>
+							
+								<option value="3016" >1989年 4/4</option>
+							
+								<option value="3015" >1989年 3/4</option>
+							
+								<option value="3014" >1989年 2/4</option>
+							
+								<option value="3013" >1989年 1/4</option>
+							
+								<option value="3012" >1988年 4/4</option>
+							
+								<option value="3011" >1988年 3/4</option>
+							
+								<option value="3010" >1988年 2/4</option>
+							
+								<option value="3009" >1988年 1/4</option>
+							
+								<option value="3008" >1987年 4/4</option>
+							
+								<option value="3007" >1987年 2/4·3/4</option>
+							
+								<option value="3006" >1987年 1/4</option>
+							
+								<option value="3005" >1986年 4/4</option>
+							
+								<option value="3004" >1986年 3/4</option>
+							
+								<option value="3003" >1986年 2/4</option>
+							
+								<option value="3002" >1986年 1/4</option>
+							
+								<option value="3001" >1985年 3/4</option>
+							
+								<option value="3000" >1985年 2/4</option>
+							
+								<option value="2999" >1985年 1/4</option>
+							
+								<option value="2998" >1984年 4/4</option>
+							
+								<option value="2997" >1984年 3/4</option>
+							
+								<option value="2996" >1984年 2/4</option>
+							
+								<option value="2995" >1984年 1/4</option>
+							
+								<option value="2994" >1983年 4/4</option>
+							
+								<option value="2993" >1983年 3/4</option>
+							
+								<option value="2992" >1983年 2/4</option>
+							
+								<option value="2991" >1983年 1/4</option>
+							
+								<option value="2990" >1982年 4/4</option>
+							
+								<option value="2989" >1982年 3/4</option>
+							
+								<option value="2988" >1982年 2/4</option>
+							
+						</select>
+					</span>
+	 				<div class="rpt_link">
+	 					 					
+							<button type="button" class="i02" onclick="location.href='/file/download?atch_no=rrPWa1nCo2TlObH5ezxj%2Bw%3D%3D'">원문 다운로드</button>
+	 					
+					</div>
+				</div>
+			</div>
+			<div class="sns_btn-box page_right-move">
+				<span><a href="javascript:;" onclick="snsShareFunc.naver();return false;" class="n">네이버블로그</a></span>
+				<span><a href="javascript:;" onclick="snsShareFunc.facebook();;return false;" class="f">페이스북</a></span>
+				<span><a href="javascript:;" class="p">프린트</a></span>
+				<span><a href="javascript:;" onclick="clip();" class="c">URL 복사</a></span>
+				<span class="txt_control"><a href="javascript:;" class="b">크게보기</a></span>
+				<span class="txt_control"><a href="javascript:;" class="s">작게보기</a></span>
+			</div>
+		</div>
+		
+			<div class="utb_guide-box economy_utb-box">
+				<div class="utb_title">
+					<strong>요약 영상보고서</strong>
+					<a href="http://www.youtube.com/KDIofficial" target="_blank"><span>KID YOUTUBE</span>바로가기</a>
+				</div>
+				<div class="utb_conts">
+					<div class="utb_frmae">
+						<img src="../res/img/img_utb-guide.gif" alt="유튜브 영상">
+						<iframe width="100%" height="100%" src="https://www.youtube.com/embed/b3UnOHC_t0g"
+							title="YouTube video player" frameborder="0"
+							allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+							allowfullscreen></iframe>
+					</div>
+				</div>
+			</div>
+		
+		<div class="economy_conts-template">
+			<div class="editor-template">
+				<p class="p_type03" style="text-align: center;"><br />
+<span style="font-size:32px;">우리 경제는 글로벌 반도체경기 호황에 주로 기인하여 <b>2026년 3.2%의 높은 성장률을 기록</b>한 뒤, <b>2027년에도 2.2% 성장하며 양호한 흐름</b>을 이어갈 전망<br />
+&nbsp;</span></p>
+
+<div class="economy_list-comm">
+<ul>
+	<li><b>글로벌 반도체 수요</b>가 예상보다 높은 수준을 보이면서, 그 영향은 금년 중 주로 수출과 설비투자의 호조로 나타나고 내년에는 민간소비로도 일부 확산될 전망</li>
+	<li><b>민간소비</b>는 실질총소득 증가에 힘입어 금년과 내년에 각각 2.3%, 2.0% 증가하겠으나, 소득 증가가 반도체 부문에 편중됨에 따라 개선세는 다소 완만할 것으로 전망</li>
+	<li><b>설비투자</b>는 글로벌 AI 인프라 투자 확대에 힘입어 반도체를 중심으로 금년과 내년에 각각 7.9%, 7.0% 증가할 것으로 전망</li>
+	<li><b>건설투자</b>는 지방 부동산경기 침체와 공사비 상승으로 금년에는 0.1%의 미미한 증가에 그친 후, 내년에는 반도체공장 증설 등에 힘입어 2.7% 증가할 전망</li>
+	<li><b>수출</b>은 미국의 관세조치 및 중동 정세 불안에도 불구하고 글로벌 AI 관련 투자 호조에 힘입어 금년과 내년에 각각 8.7%, 5.0%의 높은 성장세를 나타낼 전망</li>
+	<li><b>경상수지</b>는 반도체 수출액이 급증하며 이례적 수준의 대규모 흑자가 전망됨</li>
+	<li><b>소비자물가</b>는 국제유가 상승 및 경기 개선으로 금년 2.7%의 높은 상승률을 기록한 후, 내년에는 국제유가가 안정되며 2.2%로 상승폭이 축소될 전망</li>
+	<li><b>취업자 수</b> 금년에 11만명 증가한 후, 내년에는 내수 개선세가 파급되면서 증가폭이 20만명으로 확대될 전망</li>
+</ul>
+</div>
+<style type="text/css">.p_type02 li {
+    text-indent: -20px; /* 텍스트 시작에 맞춰서 들여쓰기를 설정합니다. */
+    padding-left: 20px; /* 왼쪽 여백을 설정하여 들여쓰기의 영향을 보정합니다. */
+    list-style: none; /* 기본 목록 마커를 숨깁니다. */
+  }
+</style>
+<div>
+<p class="p_type03"><br />
+<span style="color:#e67e22;"><span style="font-size:22px;"><span style="color:#e67e22;"><strong>Ⅰ.&nbsp; 현 경제상황에 대한 인식</strong></span></span></span></p>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 최근 우리 경제는 AI 관련 글로벌 반도체 호황에 힘입어 높은 성장률을 나타냄.</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 2/4분기 국내총생산(GDP)은 수출과 내수 모두 증가하면서 전기대비 0.6% 성장하였으며, 전년동기대비로도 전분기(3.8%)에 이어 3.7%의 높은 성장률을 기록</li>
+	<li>&nbsp; &middot; 원유수입가격 상승에도 불구하고 반도체수출가격이 급등하면서 교역조건이 대폭 개선되었으며, 이에 따라 국내총소득(GDI) 증가율이 국내총생산(GDP) 증가율을 크게 상회</li>
+</ul>
+</div>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 수출과 설비투자는 글로벌 반도체경기의 호조에 힘입어 높은 증가세를 이어간 반면,건설투자는 부진을 지속함.</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 반도체를 포함한 컴퓨터&middot;전자 및 광학기기 수출의 증가율이 높은 수준을 지속하는가운데, 경상수지도 이례적인 수준의 흑자를 기록</li>
+	<li>&nbsp; &middot; 설비투자는 반도체 관련 부문을 중심으로 증가율이 확대된 반면, 건설투자는 반도체공장을 포함한 비주거용 건축 부문의 개선에도 불구하고 지방 주택경기 침체로 부진을 지속</li>
+</ul>
+</div>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 민간소비는 실질총소득의 급증에도 불구하고 소득 증가가 반도체 관련 부문에 집중됨에 따라 개선세가 비교적 완만한 모습</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 실질임금 상승률이 낮은 수준에 그치는 등 경제성장의 성과가 다수 가계의 소득 개선으로 폭넓게 확산되지 못하면서 민간소비 개선세는 완만한 수준에 그침.</li>
+</ul>
+</div>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 고용 유발효과가 낮은 반도체 관련 부문에 경제성장이 집중됨에 따라, 높은 성장세가 고용 여건의 뚜렷한 개선으로 이어지지 못하는 모습</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 건설업 부진과 非반도체 제조업의 낮은 성장세로 관련 업종의 고용이 감소하는 가운데 서비스업의 고용 증가폭도 점차 축소되면서 청년층을 중심으로 고용 여건이 악화</li>
+</ul>
+</div>
+
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 소비자물가 상승률이 중동 전쟁에 따른 유가 상승과 환율 상승의 영향으로 높게 유지되는 가운데, 이에 대응한 기준금리 인상 기조의 강화로 시장금리도 상승함.</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 국제유가와 환율의 상승으로 수입물가 오름세가 확대되면서, 소비자물가 상승률이 물가안정목표를 비교적 큰 폭으로 상회하였으며, 비용 상승 압력이 근원물가에도 파급됨.</li>
+</ul>
+</div>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 세계경제는 중동 전쟁의 충격으로 성장세가 둔화되었으나,&nbsp; AI 관련 투자 확대가 하방압력을 일부 완화하는 모습 </b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 세계경제는 중동 전쟁의 여파로 급락한 산업생산의 반등이 제한된 가운데, 미국의 추가 관세조치와 지정학적 긴장이 지속되면서 올해 성장률 전망이 소폭 하향 조정됨.</li>
+	<li>&nbsp; &middot; 다만, AI 관련 투자가 기존 전망을 상회하며 전쟁의 부정적 충격을 일부 완화하는 가운데 AI 부문의 글로벌 공급망 연계 정도에 따라 국가별 성장 격차가 뚜렷한 모습</li>
+</ul>
+</div>
+
+<div>
+<p class="p_type03"><span style="color:#e67e22;"><span style="font-size:22px;"><span style="color:#e67e22;"><strong>Ⅱ. 2026~27년 국내경제 전망</strong></span></span></span><br />
+<br />
+<span style="color:#2980b9;"><span style="font-size:22px;"><strong>1. 대외여건에 대한 주요 전제</strong></span></span></p>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 2026~27년 세계경제는 중동 전쟁의 영향으로 2025년에 비해 성장세가 다소 약화될 것으로 전망되나, 우리 경제와 밀접한 글로벌 AI 투자 호조세는 지속될 것으로 전제</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 최근 IMF는 2026년 세계 경제성장률이 중동 전쟁의 부정적 영향으로 2025년(3.5%)보다 낮은 3.0%를 기록한 후, 2027년에는 전쟁의 영향이 점차 축소되며 성장률이 3.4%로 확대될 것으로 전망</li>
+	<li>&nbsp; &middot; World Semiconductor Trade Statistics(WSTS)는 글로벌 메모리반도체 시장의 성장세가 금년과 내년 모두 당초 예상보다 크게 확대될 것으로 전망</li>
+</ul>
+</div>
+
+<div>
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ &nbsp;중동 전쟁이 지속되고 있으나, 원유 수입국의 재고 활용과 여타 산유국의 증산 등으로 공급 차질의 영향이 일부 완화되면서 국제유가 상승폭은 당초 예상보다 제한적일 것으로 전제</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 원유 도입단가(두바이유 기준)는 2026년 배럴당 86달러로 기존 전제(91달러)를 하회하고, 2027년에는 78달러(기존 전제 82달러)로 추가 하락할 것으로 전제</li>
+</ul>
+</div>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 실질실효환율로 평가한 원화 가치는 최근 수준에서 큰 변동이 없을 것으로 전제</b></span></li>
+</ul>
+</div>
+
+<p class="p_type03"><span style="color:#2980b9;"><span style="font-size:22px;"><strong>2. 2026~27년 국내경제 전망</strong></span></span></p>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 우리 경제는 글로벌 반도체경기 호황에 주로 기인하여 2026년 3.2%의 높은 성장률을 기록한 뒤, 2027년에도 2.2% 성장하며 양호한 흐름을 이어갈 전망</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 글로벌 반도체 수요가 예상보다 높은 수준을 보이면서, 그 영향은 금년 중 주로 수출과 설비투자의 호조로 나타나고 내년에는 민간소비로도 일부 확산될 전망</li>
+	<li>&nbsp; &middot; 민간소비는 실질총소득 증가에 힘입어 금년과 내년에 각각 2.3%, 2.0% 증가하겠으나, 소득 증가가 반도체 부문에 편중됨에 따라 개선세는 다소 완만할 것으로 전망</li>
+	<li>&nbsp; &middot; 설비투자는 글로벌 AI 인프라 투자 확대에 힘입어 반도체를 중심으로 금년과 내년에 각각 7.9%, 7.0% 증가할 것으로 전망</li>
+	<li>&nbsp; &middot; 건설투자는 지방 부동산경기 침체와 공사비 상승으로 금년에는 0.1%의 미미한 증가에 그친 후, 내년에는 반도체공장 증설 등에 힘입어 2.7% 증가할 전망</li>
+	<li>&nbsp; &middot; 수출은 미국의 관세조치 및 중동 정세 불안에도 불구하고 글로벌 AI 관련 투자 호조에 힘입어 금년과 내년에 각각 8.7%, 5.0%의 높은 성장세를 나타낼 전망</li>
+</ul>
+</div>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 경상수지는 반도체 수출액이 급증하며 이례적 수준의 대규모 흑자가 전망됨.</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; 글로벌 AI 투자 호조로 반도체가격이 크게 상승하며 금년과 내년에 3,600억달러 정도의 대규모 흑자가 예상됨.</li>
+	<li>&nbsp; &middot; 글로벌 반도체경기 전망이 대폭 상향 조정된 가운데 중동 전쟁에 따른 국제유가 상승폭은 당초 예상보다 제한적일 것으로 전망됨에 따라, 금년과 내년 경상수지 흑자폭을 각각 1,200억달러, 1,400억달러 정도 상향 조정</li>
+</ul>
+</div>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 소비자물가는 국제유가 상승 및 경기 개선으로 금년 2.7%의 높은 상승률을 기록한 후, 내년에는 국제유가가 안정되며 2.2%로 상승폭이 축소될 전망</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot;유가 전제를 하향 조정하였으나, 상반기 중 환율 상승의 영향이 당분간 물가상승 압력으로 작용하는 가운데 경기 개선에 따른 수요 압력도 일부 더해질 것으로 예상되어, 금년과 내년 소비자물가 상승률 전망은 기존 수준을 유지</li>
+	<li>&nbsp; &middot;내년 민간소비 전망의 상향 조정을 반영하여 근원물가 상승률을 0.1%p 상향 조정</li>
+</ul>
+</div>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 취업자 수는 금년에 11만명 증가한 후, 내년에는 내수 개선세가 파급되면서 증가폭이 20만명으로 확대될 전망</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot;최근의 노동시장 둔화를 반영하여 금년 취업자 수 증가폭을 6만명 하향 조정하였으며, 내년 취업자 수 증가폭은 기저효과 및 내수 경기의 상향 조정을 반영하여 3만명 상향</li>
+</ul>
+</div>
+
+<p class="p_type03"><span style="color:#2980b9;"><span style="font-size:22px;"><strong>3. 전망의 위험요인</strong></span></span></p>
+
+<div>
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 우리 경제가 글로벌 반도체 수요에 크게 의존하고 있어, 향후 반도체경기 변화가 거시경제 전반의 변동성을 확대할 가능성</b></span></li>
+</ul>
+
+<ul class="p_type02">
+	<li>&nbsp; &middot; AI 투자 수익성에 대한 우려로 글로벌 AI 투자 수요가 위축되거나, 여타 반도체 생산국과의 경쟁 심화로 국내 반도체 기업의 글로벌 시장점유율이 하락할 경우 성장세가 빠르게 둔화될 가능성</li>
+	<li>&nbsp; &middot; 반면, AI 투자 수요가 높은 수준을 유지하는 가운데 국내 기업의 반도체 공급 능력이 예상보다 빠르게 확충될 경우, 경제성장률이 전망을 상회할 가능성도 존재</li>
+</ul>
+
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 미국의 관세정책을 둘러싼 불확실성이 지속되는 가운데, 중동의 지정학적 갈등이 재차 격화되어 원자재 수급 차질과 생산비용 상승을 초래할 경우 경기 개선세가 제약될 가능성</b></span></li>
+</ul>
+
+<ul class="p_type03">
+	<li><span style="font-size:18px;"><b>□ 주식시장의 높은 변동성이 지속되면서 가계의 소비심리가 위축되고 금융서비스 소비가 둔화될 경우, 민간소비 개선세가 제약될 가능성</b></span></li>
+</ul>
+</div>
+
+<div>&nbsp;
+<div style="text-align: center;"><img src="/upload/publication/19259/editor/77BCDEC8E0_20260819094728.png" /></div>
+</div>
+</div>
+</div>
+
+			</div>
+		</div>
+		
+		
+			<div class="relation_data-box economy_data-box">
+				<div class="data_guide">
+<!-- 					<strong>관련 영상</strong> -->
+					<div class="data_scroll">
+						<div class="data_load">
+							
+								<a href="javascript:kdifn.slideLeftOpen('.move_movie_view.pub_768');playMovie('.move_movie_view.pub_768', 'Y');">
+									<img src="https://img.youtube.com/vi/b3UnOHC_t0g/mqdefault.jpg" alt="표지">
+									<div class="txt_guard">
+										<em>기타(경제전망)</em>
+										<strong>＂3,600억 달러 흑자 터졌다＂ 반도체가 멱살 잡고 끌어올린 한국 경제, 내년 전망은?</strong>
+										<p></p>
+									</div>
+								</a>
+							
+								<a href="javascript:kdifn.slideLeftOpen('.move_movie_view.eco_767');">
+									<img src="https://img.youtube.com/vi/NaunqEG-Tv8/mqdefault.jpg" alt="표지">
+									<div class="txt_guard">
+										
+											<em>숏츠</em>
+										
+										<strong>KDI 경제전망 | 수정,  2026년  8월 (shorts)</strong>
+										<p></p>
+									</div>
+								</a>
+							
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<div class="page_file-list">
+				<strong>목차별 원문보기</strong>
+				<ul>
+					
+								<li class="down"><p>요약</p><button type="button" onclick="location.href='/file/download?atch_no=t0ttotGKwxjCSAgCQUEjRA%3D%3D'">원문 다운로드</button></li>
+							
+								<li class="down"><p>현 경제상황에 대한 인식</p><button type="button" onclick="location.href='/file/download?atch_no=YSJbwhzHsYE%2B4iMIR6iGww%3D%3D'">원문 다운로드</button></li>
+							
+								<li class="down"><p>2026~27년 국내경제 전망</p><button type="button" onclick="location.href='/file/download?atch_no=Hb%2FBMQm9YWDANMw8Xonwvw%3D%3D'">원문 다운로드</button></li>
+							
+				</ul>
+			</div>
+		
+	</div>
+</section>
+
+<script>
+	
+	var setCount = 0;
+
+	function getImage(){ 
+		var rand = Math.random(); 
+		var url = '/captcha/captchaImg?rand='+rand; 	
+		$('#captchImg').attr('src', url);
+	} 
+	
+	function openCaptcha(no, type){
+		getImage();
+		$("#securityWord").val('');
+		$("#checkSecurityBtn").attr("onclick", "checkSecurity("+no+", '" + type + "')");
+		kdifn.miniPopupOpen('.employee_security');
+	}
+	
+	function checkSecurity(no, type){
+		$("#email_info").text('');
+		
+		if($("#securityWord").val() == ''){
+			alert("보안문자를 입력해주세요.");
+			$("#securityWord").focus();
+			return false;
+		}
+		
+		var answer = $('#securityWord').val();
+		
+		if ( type == 'email' ) {
+			chkAuthorEmail(no, answer);
+		} else if ( type == 'satis' ) {
+			setSatis(answer);
+		}
+		
+	}
+	
+	function chkAuthorEmail(no, answer) {
+		
+		if ( setCount == 0 ) {
+			
+			$.ajax({
+				type : 'POST'
+				,url : '/captcha/chkAnswerOrgAuthor'
+				,data : { "answer" : answer, "emp_no" : no }
+				,success : function(data) {
+					if(data.result == '200'){
+						
+						kdifn.miniPopupClose('.employee_security');
+						$("#email_info").text(data.email);
+						kdifn.miniPopupOpen('.employee_email');
+					
+						$("#securityWord").val('');
+						
+						setCount = 0;
+						
+					}else if(data.result == '300'){
+						alert("보안문자를 확인해주세요.");
+						setCount = 0;
+						return false;
+					}
+					
+				}  , error : function( request, status, error ) {
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+			       	alert("일시적인 오류가 발생했습니다.\n다시 시도해주세요.");
+			       	setCount = 0;
+			       	return false;
+				}
+			});
+			
+		}
+		
+	}
+	
+	function setSatis(answer) {
+		
+		if ( setCount == 0 ) {
+			
+			$.ajax({
+				 type : 'POST'
+				,url : '/captcha/chkAnswerCommon'
+				,data : {"answer" : answer}
+				,dataType : "json"
+				,success : function(data) {
+					
+					if(data == '200'){
+						
+						kdifn.miniPopupClose('.employee_security');
+						kdifn.miniPopupOpen('.employee_succ');
+					
+						$("#securityWord").val('');
+						$("#satisText").val('');
+						
+						setCount = 0;
+						
+					}else if(data == '300'){
+						
+						kdifn.miniPopupClose('.employee_security');
+						kdifn.miniPopupOpen('.employee_fail');
+					
+						$("#securityWord").val('');
+						
+						setCount = 0;
+						
+					}
+					
+				}  , error : function( request, status, error ) {
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		        	alert("일시적인 오류가 발생했습니다.\n다시 시도해주세요.");
+		        	return false;
+				}
+				
+			});
+			
+		}
+		
+	}
+	
+	function setSatisfied(){
+		
+		if($("#snslogindta").val() == '') {
+			alert("로그인 후 이용해주세요.");
+			$("#satisText").focus();
+			return false;
+		}
+		
+		if($("#satisText").val() == '') {
+			alert("내용을 입력해주세요.");
+			$("#satisText").focus();
+			return false;
+		}
+		
+		var form = $("form[name=setForm]")[0];
+		var data = new FormData(form);
+		if( setCount == 0) {
+			$.ajax({
+				 type : 'POST'
+				,url : '/satis/satisProc'
+				,processData: false
+		        ,contentType: false
+				,data : data
+				,dataType : "json"
+				,success : function(data) {
+					if(data.status) {
+						$("#satisText").val('');
+						alert(data.msg);
+					}else{
+						setCount = 0;
+						alert(data.msg);
+						return false;
+					}
+				}  , error : function( request, status, error ) {
+					console.log("code:"+request.status+"\n"+"message:"+request.responseText+"\n"+"error:"+error);
+		        	alert("로그인 후 이용하실 수 있습니다.");
+		        	return false;
+				}
+			});
+		}
+// 		openCaptcha(0, 'satis');
+	
+	}
+</script>
+<section id="satisfied" style="padding-bottom:40px;">
+	
+			<div class="nuri_top">
+		        <span>
+		        	
+		        			<img src="../res/img/img_nuri_1.jpg" alt="공공누리">
+		        		
+		        </span>
+		        <p>한국개발연구원의 본 저작물은 <span><em>“공공누리 제1유형 : 출처표시”</em> 조건에 따라 이용할 수 있습니다.</span> 저작권정책 참조</p>
+		    </div>
+		
+<div class="mini_popup-guide employee_security">
+	<strong>보안문자 확인</strong>
+	<div class="mini_conts">
+		<div class="security_check">
+			<p>무단등록 및 수집 방지를 위해 아래 보안문자를 입력해 주세요.</p>
+			<label for="securityWord"><img src="/captcha/captchaImg" id="captchImg" alt="보안문자"><button type="button" id="reload" onclick="javaScript:getImage()">문자 변경</button></label>
+			<input type="text" id="securityWord" placeholder="보안문자 입력">
+			<button type="button" id="checkSecurityBtn">확인</button>
+		</div>
+	</div>
+	<button type="button" onclick="kdifn.miniPopupClose('.employee_security');">팝업 닫기</button>
+</div>
+<div class="mini_popup-guide employee_email">
+	<strong>KDI 직원 정보 확인</strong>
+	<div class="mini_conts">
+		<p class="done">담당자 정보를 확인해 주세요.<a><b id="email_info"></b></a></p>
+		<div class="comm_twins-btns">
+			<a class="bk" href="javascript:kdifn.miniPopupClose('.employee_email');">확인</a>
+		</div>
+	</div>
+	<button type="button" onclick="kdifn.miniPopupClose('.employee_email');">팝업 닫기</button>
+</div>
+<div class="mini_popup-guide employee_phone">
+	<strong>KDI 직원 정보 확인</strong>
+	<div class="mini_conts">
+		<p class="done">담당자 정보를 확인해 주세요. <a><b id="phone_info">044-550-5454</b></a></p>
+		<div class="comm_twins-btns">
+			<a class="bk" href="javascript:kdifn.miniPopupClose('.employee_phone');">확인</a>
+		</div>
+	</div>
+	<button type="button" onclick="kdifn.miniPopupClose('.employee_phone');">팝업 닫기</button>
+</div>
+<div class="mini_popup-guide employee_succ">
+	<strong>등록완료</strong>
+	<div class="mini_conts">
+		<p class="done">소중한 의견 감사드립니다.</p>
+		<div class="comm_twins-btns">
+			<a class="bk" href="javascript:kdifn.miniPopupClose('.employee_succ');">확인</a>
+		</div>
+	</div>
+	<button type="button" onclick="kdifn.miniPopupClose('.employee_succ');">팝업 닫기</button>
+</div>
+<div class="mini_popup-guide employee_fail">
+	<strong>등록실패</strong>
+	<div class="mini_conts">
+		<p class="done">잠시 후 다시 시도해주세요.</p>
+		<div class="comm_twins-btns">
+			<a class="bk" href="javascript:kdifn.miniPopupClose('.employee_fail');">확인</a>
+		</div>
+	</div>
+	<button type="button" onclick="kdifn.miniPopupClose('.employee_fail');">팝업 닫기</button>
+</div>
+</section>
+
+<section id="newsletter">
+    <div class="letter_guide">
+        <div class="tit">
+            <strong><span>Join our</span> Newsletter</strong>
+            <p>매일 새로운 소식으로 준비된 KDI 뉴스레터와 함께<br>다양한 정보를 확인하세요.</p>
+        </div>
+        <div class="emil">
+   			<form id="goNewsletter" name="goNewsletter" action="/share/newsletter">
+	            <label>
+	                <input type="email" id="email" name="email" placeholder="@ 이메일을 입력하세요!">
+	                <button type="button" onclick="$('#goNewsletter').submit();">뉴스레터 신청</button>
+	            </label>
+   			</form>
+        </div>
+    </div>
+</section>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4ZXZC5" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+
+</main>
+<footer>
+    <div class="fot_menu">
+        <ul>
+        	<li><a href="https://eiec.kdi.re.kr/policy/materialList.do" target="_blank">경제정책정보</a></li>
+            <li><a href="http://epts.kdi.re.kr/" target="_blank">경제정책시계열서비스</a></li>
+            <li><a href="http://kdijep.org/" target="_blank">KDI JEP</a></li>
+            <li><a href="https://pimac.kdi.re.kr" target="_blank">공공투자관리센터</a></li>
+        </ul>
+        <ul>
+            <li><a href="http://lib.kdi.re.kr" target="_blank">도서관</a></li>
+            <li><a href="http://www.alio.go.kr" target="_blank">알리오</a></li>
+            <li><a href="/bookMember/booksLogin">도서회원</a></li>
+            <li><a href="/servicePolicy/charter">고객헌장</a></li>
+        </ul>
+        <ul>
+            <li><a href="/servicePolicy/privacy" style="color:#f5821f">개인정보처리방침</a></li>
+            <li><a href="/servicePolicy/mediaPrivacy">영상정보처리기기 운영ㆍ관리방침</a></li>
+            <li><a href="/servicePolicy/copyright">저작권정책</a></li>
+            <li><a href="/servicePolicy/email">이메일주소 무단수집거부</a></li>
+        </ul>
+        <ul>
+            <li><a href="/share/newsletter">뉴스레터</a></li>
+            <li><a href="/share/absurdityCenter">부조리신고센터</a></li>
+            <li><a href="/share/qnaList">Q&amp;A</a></li>
+            <li><a href="/infomation/location">찾아오시는길</a></li>
+        </ul>
+    </div>
+    <div class="fot_guide">
+        <div class="fot_conts">
+            <div class="address">
+                <address>세종특별자치시 남세종로 263 <span class="tel">Tel: <a href="tel:044-550-4114">044-550-4114</a></span><span>Mail: <a href="mailto:media@kdi.re.kr">media@kdi.re.kr</a></span></address>COPYRIGHT © KOREA DEVELOPMENT INSTITUTE ALL RIGHTS RESERVED
+            </div>
+            <div class="sns">
+                <a class="u" href="http://www.youtube.com/KDIofficial" target="_blank">YOU TUBE</a>
+<!--                 <a class="f" href="https://www.facebook.com/KoreaDevelopmentInstitute" target="_blank">FACEBOOK</a> -->
+                <a class="i" href="https://www.instagram.com/kdi.official_/" target="_blank">INSTAGRAM</a>
+<!--                 <a class="n" href="http://tv.naver.com/kdi" target="_blank">NAVER TV</a> -->
+                <a class="p" href="https://blog.naver.com/kdisearch" target="_blank">네이버블로그</a>
+                <a class="l" href="https://www.linkedin.com/company/korea-development-institute-kdi-/" target="_blank">LINKEDIN</a>
+            </div>
+            <div class="site">
+                <button type="button">FAMILY SITE</button>
+                <ul class="">
+                    <li><a href="http://eiec.kdi.re.kr" target="_blank">경제교육·정보센터</a></li>
+                    <li><a href="http://pimac.kdi.re.kr" target="_blank">공공투자관리센터</a></li>
+                    <li><a href="https://www.kdi.re.kr/introduce/interCenter" target="_blank">국제개발협력센터</a></li>
+                    <li><a href="http://www.kdischool.ac.kr/" target="_blank">국제정책대학원</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="page_other">
+<!--         <a href="https://channel.io/ko" title="채널톡 이동" target="_blank">채널톡</a> -->
+        <button type="button" id="pageTop" title="화면 위로 이동">TOP</button>
+        <!-- Channel Plugin Scripts -->
+		<script>
+// 		  (function() {
+// 		    var w = window;
+// 		    if (w.ChannelIO) {
+// 		      return (window.console.error || window.console.log || function(){})('ChannelIO script included twice.');
+// 		    }
+// 		    var ch = function() {
+// 		      ch.c(arguments);
+// 		    };
+// 		    ch.q = [];
+// 		    ch.c = function(args) {
+// 		      ch.q.push(args);
+// 		    };
+// 		    w.ChannelIO = ch;
+// 		    function l() {
+// 		      if (w.ChannelIOInitialized) {
+// 		        return;
+// 		      }
+// 		      w.ChannelIOInitialized = true;
+// 		      var s = document.createElement('script');
+// 		      s.type = 'text/javascript';
+// 		      s.async = true;
+// 		      s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+// 		      s.charset = 'UTF-8';
+// 		      var x = document.getElementsByTagName('script')[0];
+// 		      x.parentNode.insertBefore(s, x);
+// 		    }
+// 		    if (document.readyState === 'complete') {
+// 		      l();
+// 		    } else if (window.attachEvent) {
+// 		      window.attachEvent('onload', l);
+// 		    } else {
+// 		      window.addEventListener('DOMContentLoaded', l, false);
+// 		      window.addEventListener('load', l, false);
+// 		    }
+// 		  })();
+// 		  ChannelIO('boot', {
+// 		    "pluginKey": "9d365c6a-5805-4bb8-bcf9-ae50ea56746a"
+// 		  });
+		</script>
+		<!-- End Channel Plugin -->
+    </div>
+</footer>
+
+		<div class="popup_left-slide move_movie_view pub_768">
+			<div class="pop_top">
+				<h4 class="v02">요약 영상보고서</h4>
+				<div class="multi_title">
+					<em>기타(경제전망)</em>
+					<p>＂3,600억 달러 흑자 터졌다＂ 반도체가 멱살 잡고 끌어올린 한국 경제, 내년 전망은?</p>
+					<div class="link">
+						
+								<a href="/research/topicList?cd=A&sub=A00">#경제동향 및 전망</a>
+							
+					</div>
+					<span>2026.09.03</span>
+				</div>
+			</div>
+			<div class="multi_conts">
+				<div class="utb_guide-box">
+					<div class="utb_title">
+						<span></span>
+						<a href="http://www.youtube.com/KDIofficial" target="_blank"><span>KID YOUTUBE</span>바로가기</a>
+					</div>
+					<div class="utb_conts">
+						<div class="utb_frmae">
+							<img src="../res/img/img_utb-guide.gif" alt="유튜브 영상">
+							<iframe width="100%" height="100%" src="https://www.youtube.com/embed/b3UnOHC_t0g"
+								title="YouTube video player" frameborder="0"
+								allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+								allowfullscreen></iframe>
+						</div>
+					</div>
+				</div>
+				
+			</div>
+			<button type="button" class="close" onclick="kdifn.slideLeftClose('.move_movie_view.pub_768');playMovie('.move_movie_view.pub_768','N');">팝업 닫기</button>
+		</div>
+	
+			<div class="popup_left-slide move_movie_view eco_767">
+				<div class="pop_top">
+					<h4 class="v02">관련 영상자료</h4>
+					<div class="multi_title">
+						<em>숏츠</em>
+						<p>KDI 경제전망 | 수정,  2026년  8월 (shorts)</p>
+						<span>2026.09.03</span>
+					</div>
+				</div>
+				<div class="multi_conts">
+					<div class="utb_guide-box">
+						<div class="utb_title">
+							<span></span>
+							<a href="http://www.youtube.com/KDIofficial" target="_blank"><span>KID YOUTUBE</span>바로가기</a>
+						</div>
+						<div class="utb_conts">
+							<div class="utb_frmae">
+								<img src="../res/img/img_utb-guide.gif" alt="유튜브 영상">
+								<iframe width="100%" height="100%" src="https://www.youtube.com/embed/NaunqEG-Tv8"
+									title="YouTube video player" frameborder="0"
+									allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+									allowfullscreen></iframe>
+							</div>
+						</div>
+					</div>
+					
+				</div>
+				<button type="button" class="close" onclick="kdifn.slideLeftClose('.move_movie_view.eco_767');playMovie('.move_movie_view.eco_767','N')">팝업 닫기</button>
+			</div>
+		
+<div class="popup_left-slide move_research-team">
+    <div class="pop_top">
+        <h4>연구진 소개</h4>
+    </div>
+    <div class="team_info-box" id="authorArea">
+    </div>
+    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_research-team')">팝업 닫기</button>
+</div>
+</body>
+</html>

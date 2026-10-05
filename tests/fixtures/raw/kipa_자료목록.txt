@@ -1,0 +1,1 @@
+{"result":{"dataList":[],"paginationInfo":{"currentPageNo":1,"recordCountPerPage":10,"pageSize":10,"totalRecordCount":0,"totalPageCount":1,"firstPageNoOnPageList":1,"lastPageNoOnPageList":1,"firstRecordIndex":0,"lastRecordIndex":10,"isLoadMore":false,"firstPageNo":1,"lastPageNo":1}},"httpStatus":null,"status":200,"errorCode":null,"errorMessage":null}

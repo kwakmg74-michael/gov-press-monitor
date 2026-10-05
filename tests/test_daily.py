@@ -42,9 +42,50 @@ def test_배치파일이_왜_이런지_적어_둔다(name):
 def test_배치파일은_파이썬만_부른다(name):
     """일이 배치와 파이썬으로 나뉘어 있으면 어느 쪽이 도는지 헷갈린다."""
     줄 = [l.strip() for l in (ROOT / name).read_text(encoding="ascii").splitlines()]
-    한_일 = [l for l in 줄 if l and not l.startswith(("@", "rem", "chcp", "cd ", "exit", "pause"))]
-    assert len(한_일) == 1, 한_일
-    assert 한_일[0].startswith("python -u -m govpress ")
+    부른_것 = [l for l in 줄 if "-m govpress " in l]
+    assert len(부른_것) == 1, 부른_것
+    assert 부른_것[0].startswith('"%PY%" -u -m govpress ')
+
+
+# --- PC마다 다른 파이썬 ---------------------------------------------------------
+#
+# 서버PC는 가상환경(D:\Server\Envs\press)의 파이썬을 쓰고, pc1은 PATH에
+# 걸린 것을 그냥 쓴다. 배치 파일에 경로를 박아 두면 두 대가 같은 줄을
+# 서로 다르게 고쳐 놓고 git 에서 매번 부딪힌다. 그래서 경로는 파일로
+# 빼 두고, 그 파일은 git 이 쳐다보지 않게 한다.
+
+@pytest.mark.parametrize("name", BATS)
+def test_파이썬_경로를_파일에서_읽는다(name):
+    글 = (ROOT / name).read_text(encoding="ascii")
+    assert 'set "PY=python"' in 글                      # 적어 둔 것이 없으면 이것
+    assert 'if exist "%~dp0python-path.txt"' in 글      # 있으면 그것
+    assert 'set /p PY=<"%~dp0python-path.txt"' in 글
+
+
+@pytest.mark.parametrize("name", BATS)
+def test_경로에_빈칸이_있어도_된다(name):
+    """Program Files 밑이면 따옴표가 없을 때 두 동강 난다."""
+    assert '"%PY%" -u -m' in (ROOT / name).read_text(encoding="ascii")
+
+
+@pytest.mark.parametrize("name", BATS)
+def test_배치파일은_자기_폴더를_기준으로_찾는다(name):
+    r"""작업 스케줄러가 부르면 현재 폴더가 C:\Windows\System32 다."""
+    글 = (ROOT / name).read_text(encoding="ascii")
+    assert 'cd /d "%~dp0"' in 글
+    assert "python-path.txt" in 글 and "%~dp0python-path.txt" in 글
+
+
+def test_파이썬_경로는_git에_담지_않는다():
+    """담으면 서버가 올린 경로를 pc1이 받아 쓰게 된다."""
+    assert "python-path.txt" in (ROOT / ".gitignore").read_text(encoding="utf-8")
+
+
+@pytest.mark.parametrize("name", BATS)
+def test_경로를_어떻게_적는지_파일_안에_적어_둔다(name):
+    """따옴표를 치거나 뒤에 빈칸을 남기면 조용히 안 돈다."""
+    글 = (ROOT / name).read_text(encoding="ascii")
+    assert "python-path.txt (one line, no quotes, no trailing space)" in 글
 
 
 @pytest.mark.parametrize("name", BATS)

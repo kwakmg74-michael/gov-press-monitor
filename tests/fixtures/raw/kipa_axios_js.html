@@ -1,0 +1,198 @@
+/**
+ * 공통 모듈
+ * @FileName   axiosModule.js
+ * @Creator    hsh
+ * @CreateDate 2025. 01. 31.
+ * @Desction   업무 공통 함수 관련
+ ************** 소스 수정 이력 ***********************************************
+ *  date                  Modifier                Description
+ **************************************************************************
+ *  2025. 01. 31.         hsh                     최초 생성
+ **************************************************************************
+ * gfnCreateInstance :
+ * gfnPost :
+ * gfnSetInterceptors :
+ * gfnGetCsrfInfo :
+ * gfnShowLoadingScreen :
+ * gfnHideLoadingScreen :
+ */
+
+(function($) {
+	//axios모듈
+	let _csrf = document.querySelector('meta[name="_csrf"]').getAttribute('content');
+	let _csrf_header = document.querySelector('meta[name="_csrf_header"]').getAttribute('content');
+
+	var axiosModule = {
+		headers: {
+			'Content-Type': 'application/json',
+			[_csrf_header]: _csrf
+		},
+		baseURL: CONTEXTPATH,
+		//timeout: 1000,	//TODO 로딩화면...
+		withCredentials: true,
+
+		gfnCreateInstance: function() {
+			this.instance = axios.create({
+				baseURL: this.baseURL,
+				headers: this.headers,
+				//timeout: this.timeout,
+				withCredentials: this.withCredentials
+			});
+			this.gfnSetInterceptors();
+		},
+
+		gfnPost: async function(url, data, config) {//내부용 post
+			return this.instance.post(url, data, config);
+		},
+
+		/** 부모 화면이 서버에서 확정한 메뉴 컨텍스트 - 유효값만, 새 창 팝업은 opener 값 상속 */
+		gfnGetMenuCtx: function() {
+			var valid = function(v) { return (typeof v === 'string' && v !== '' && v !== 'default' && v !== 'null' && v !== 'undefined') ? v : ''; };
+			var ctx = { siteCd: valid(window.srvcSiteCd), menuCode: valid(window.srvcMenuCode) };
+			if (!ctx.menuCode && window.opener) {
+				try {
+					ctx.siteCd = ctx.siteCd || valid(window.opener.srvcSiteCd);
+					ctx.menuCode = valid(window.opener.srvcMenuCode);
+				} catch (e) { /* cross-origin opener */ }
+			}
+			return ctx;
+		},
+
+		gfnSetInterceptors: function() {
+			var self = this.instance;
+
+			this.instance.interceptors.request.use(function(config) {
+				config.headers['X-SrvcMenuNm'] = encodeURIComponent(window.srvcMenuNm);		//config.html 메뉴명
+				config.headers['X-SrvcBtnNm'] = encodeURIComponent(window.srvcBtnNm);		//config.html 서비스기능명
+				// 사이트구분/메뉴코드: 서버가 확정해 config.html에 내려준 값만 전송 (빈값/default는 헤더 생략) → 웹로그·콘텐츠로그 메뉴 귀속에 사용
+				var menuCtx = axiosModule.gfnGetMenuCtx();
+				if (menuCtx.siteCd) { config.headers['X-srvcSiteCd'] = menuCtx.siteCd; }
+				if (menuCtx.menuCode) { config.headers['X-srvcMenuCode'] = menuCtx.menuCode; }
+				if (window.opener) {
+					try {
+						config.headers['X-SrvcMenuNm'] = encodeURIComponent(window.opener.srvcMenuNm + (!isKo ? ' Popup' : ' 팝업')); // 마스터 화면의 메뉴명
+					}catch (e) {
+						config.headers['X-SrvcMenuNm'] = encodeURIComponent(window.srvcMenuNm);			//config.html 메뉴명
+					}
+
+				}
+
+				if (config.method.toLowerCase() === 'post') {
+					if(config.data){
+						
+						//로딩창 막을 때 사용
+						if(config.isLoading != false){ axiosModule.gfnShowLoadingScreen(); }
+						
+						if (config.isUpload) {//업로드일때
+							// 요청이 시작될 때 로딩 화면 표시 음.. 업로드,다운로는 사용하고 나머지는, 필요한곳에 직접사용으로 변경.
+							//axiosModule.gfnShowLoadingScreen();
+							const formData = new FormData();
+
+							for (let key in config.data) {
+								// 파일 데이터는 직접 추가..
+								if (key === 'file' && config.data[key] instanceof HTMLInputElement) {
+									let inputElement = config.data[key];
+
+									if (inputElement.files.length > 0) {
+										formData.append(key, inputElement.files[0]);
+									}
+								} else {
+									formData.append(key, config.data[key]);
+								}
+							}
+
+							config.data = formData;
+							config.headers['Content-Type'] = 'multipart/form-data';
+
+							// isUpload 플래그 추가하기(response showModal을 위해)
+							config.headers['X-Is-Upload'] = true;
+						}
+					}
+
+				}else {}
+				return config;
+			},
+			function(error) {
+				axiosModule.gfnHideLoadingScreen();
+				layerModule.gfnShowCmnAlertModal( error.toString(), 'Error' );
+				return Promise.reject(error);
+				}
+			);
+
+			this.instance.interceptors.response.use(
+				response => {
+					if (response.config.url.startsWith('/service')) {
+						// 서비스 요청에 대한 처리
+						if (response.data.status !== undefined && response.data.status !== 200 ) {
+							layerModule.gfnShowCmnAlertModal(response.data.errorMessage || response.statusText, (!isKo ? 'Error' : '에러'));
+							return Promise.reject(new Error(response.data.errorMessage || (!isKo ? 'An error occurred' : '에러 발생')));  //에러를 다음 처리단계로 전달
+						} else if(response.config.headers['X-Is-Upload'] && response.config.headers['X-Show-Alert'] === 'true') {
+							// 정상적으로 파일 업로드가 되었다면 gfnShowCmnAlertModal
+							if(!isKo) {
+								layerModule.gfnShowCmnAlertModal('Registration was successful.', 'Notice');
+							} else {
+								layerModule.gfnShowCmnAlertModal('정상적으로 등록되었습니다.', '알림');
+							}
+						}
+					} else if (response.config.url.startsWith('/html')) {
+						// TODO 화면 요청에 대한 처리 있으면 ...
+					}
+
+					return response;
+				},
+				error => {
+					if (error.config && error.config.url.includes('/service/cmn/token/validateToken')) {
+						//재귀호출 방지
+						return Promise.reject(error);
+					}
+
+					var errorMessage = error.response
+						? error.response.data.errorMessage || error.response.statusText
+						: error.message || (!isKo ? 'Network error' : '네트워크 에러');
+
+					layerModule.gfnShowCmnAlertModal(errorMessage, (!isKo ? 'Network eorr or server error' : '네트워크 또는 서버 에러'));
+					return Promise.reject(error);
+				}
+			);
+		}
+	};
+
+	/**
+	 * @class csrf정보 가져오기
+	 * @return
+	 */
+	axiosModule.gfnGetCsrfInfo = function (){
+		var $csrf = $('meta[name=_csrf]:first');
+		return ({
+			hName: $csrf.attr('data-csrf_hname'),
+			pName: $csrf.attr('data-csrf_pname'),
+			token: $csrf.attr('data-csrf_token')
+		});
+	}
+	/**
+	 * @class 로딩 보이기
+	 * @return
+	 */
+	axiosModule.gfnShowLoadingScreen = function () {
+		var loadingScreen = document.getElementById('loaddingSpinner');
+		if (loadingScreen) {
+			loadingScreen.style.display = 'block';
+		}
+	}
+	/**
+	 * @class 로딩 감추기
+	 * @return
+	 */
+	axiosModule.gfnHideLoadingScreen = function () {
+		var loadingScreen = document.getElementById('loaddingSpinner');
+		if (loadingScreen) {
+			loadingScreen.style.display = 'none';
+		}
+	}
+
+	// Axios 인스턴스를 초기화
+	axiosModule.gfnCreateInstance();
+
+	// 전역 범위로 노출
+	window.axiosModule = axiosModule;
+})(jQuery);

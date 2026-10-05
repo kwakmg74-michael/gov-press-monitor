@@ -1,0 +1,2207 @@
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+	
+
+
+
+
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="format-detection" content="telephone=no">
+<meta name="theme-color" content="#f5821f">
+<meta name="copyright" content="KDI 한국개발연구원">
+<link rel="shortcut icon" type="image/x-icon" href="../res/img/favicon.ico">
+<link rel="apple-touch-icon-precomposed" sizes="100x100" href="../res/img/favicon.png">
+<link rel="stylesheet" href="../res/font/font.css?20260908">
+<link rel="stylesheet" href="../res/css/style.css?20260908">
+<script type="text/javascript" src="../res/lib/jquery-3.7.1.min.js"></script>
+<script type="text/javascript" src="../res/lib/jQuery.easing.js"></script>
+<script type="text/javascript" src="../res/lib/jQuery.slick.js"></script>
+<script type="text/javascript" src="../res/js/kdi_full.js?20260908"></script>
+<script type="text/javascript" src="../res/js/kdi_contents.js?20260908"></script>
+<script src="//developers.kakao.com/sdk/js/kakao.js"></script>
+<script type="text/javascript" src="https://static.nid.naver.com/js/naverLogin_implicit-1.0.3.js" charset="utf-8"></script>
+<script type="text/javascript" src="../res/dev_js/social.js"></script>
+<script type="text/javascript">
+	var msg = '';
+	$(function(){
+		if ( msg != "" ) alert(msg);
+	});
+</script>
+
+<!-- <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-65433011-1', 'auto');
+  ga('require', 'linkid', 'linkid.js'); // 향상된 기능 추가
+  ga('require', 'displayfeatures');		// 인구통계 수집 추가코드
+
+  var metricValue = '123'; // 이메일오픈 추적
+  ga('set', 'metric1', metricValue);
+  ga('send', 'pageview');
+</script>  -->
+
+<!-- Global site tag (gtag.js) - Google Ads: 767066534 -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=AW-767066534"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'AW-767066534');
+</script>  -->
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-65433011-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-65433011-1');
+  gtag('config', 'AW-767066534');
+</script>
+
+<!-- Google Tag Manager -->
+<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+})(window,document,'script','dataLayer','GTM-T4ZXZC5');</script>
+<!-- End Google Tag Manager -->
+
+<!-- 20190115 Facebook Pixel Code -->
+<script>
+  !function(f,b,e,v,n,t,s)
+  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+  n.queue=[];t=b.createElement(e);t.async=!0;
+  t.src=v;s=b.getElementsByTagName(e)[0];
+  s.parentNode.insertBefore(t,s)}(window, document,'script',
+  'https://connect.facebook.net/en_US/fbevents.js');
+  fbq('init', '582166628785358');
+  fbq('track', 'PageView');
+</script>
+<noscript><img height="1" width="1" style="display:none"
+  src="https://www.facebook.com/tr?id=582166628785358&ev=PageView&noscript=1"
+/></noscript>
+	
+
+
+<meta property="og:type" content="website">
+
+<meta name="title" content="KDI 한국개발연구원 - 연구 - 연구 보고서">
+<meta name="language" content="kr">
+<meta name="keywords" content="KDI 한국개발연구원 - 연구 - 연구 보고서">
+<meta name="description" content="KDI에서 연구한 모든 보고서를 볼 수 있습니다.">
+<meta property="og:title" content="KDI 한국개발연구원 - 연구 - 연구 보고서">
+<meta property="og:description" content="KDI에서 연구한 모든 보고서를 볼 수 있습니다.">
+<meta property="og:image" content="http://www.kdi.re.kr/res/KDI_OG_IMAGE.jpg">
+<title>KDI 한국개발연구원 - 연구 - 연구 보고서</title>
+
+
+		<script type="text/javascript">
+			function pageFunction(pageNo){
+				$("#hidden_pg").val(pageNo);
+				$("#searchForm").submit();
+			}
+
+			$(function(){
+				
+				var checkedboxLen = $(".select_all-select li input[type=checkbox]").length;
+				var checkedLen = $(".select_all-select li input[type=checkbox]:checked").length;
+				
+				if ( checkedLen == 0 ) {
+					
+					$(".select_all-select input[type=checkbox]").prop("checked", true);
+					
+				}
+				
+				$("#allCheck").change(function(){
+			        if($("#allCheck").is(":checked")){
+			        	$(".select_all-select li input[type=checkbox]").prop('checked', true);
+			        } else {
+			        	$(".select_all-select li input[type=checkbox]").prop('checked', false);
+			        }
+			    });
+				
+				$(".select_all-select li input[type=checkbox]").change(function(){
+					
+					if ( $(".select_all-select li input[type=checkbox]:checked").length == checkedboxLen )
+						$("#allCheck").prop('checked', true);
+					else 
+						$("#allCheck").prop('checked', false);
+					
+				});
+				
+			});
+		</script>
+</head>
+<body>
+
+<script type="text/javascript">
+_linkedin_partner_id = "7029785";
+window._linkedin_data_partner_ids = window._linkedin_data_partner_ids || [];
+window._linkedin_data_partner_ids.push(_linkedin_partner_id);
+</script><script type="text/javascript">
+(function(l) {
+if (!l){window.lintrk = function(a,b){window.lintrk.q.push([a,b])};
+window.lintrk.q=[]}
+var s = document.getElementsByTagName("script")[0];
+var b = document.createElement("script");
+b.type = "text/javascript";b.async = true;
+b.src = "https://snap.licdn.com/li.lms-analytics/insight.min.js";
+s.parentNode.insertBefore(b, s);})(window.lintrk);
+</script>
+<noscript>
+<img height="1" width="1" style="display:none;" alt="" src="https://px.ads.linkedin.com/collect/?pid=7029785&fmt=gif" />
+</noscript>
+        <!-- Channel Plugin Scripts -->
+		<script>
+		  (function() {
+		    var w = window;
+		    if (w.ChannelIO) {
+		      return (window.console.error || window.console.log || function(){})('ChannelIO script included twice.');
+		    }
+		    var ch = function() {
+		      ch.c(arguments);
+		    };
+		    ch.q = [];
+		    ch.c = function(args) {
+		      ch.q.push(args);
+		    };
+		    w.ChannelIO = ch;
+		    function l() {
+		      if (w.ChannelIOInitialized) {
+		        return;
+		      }
+		      w.ChannelIOInitialized = true;
+		      var s = document.createElement('script');
+		      s.type = 'text/javascript';
+		      s.async = true;
+		      s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+		      s.charset = 'UTF-8';
+		      var x = document.getElementsByTagName('script')[0];
+		      x.parentNode.insertBefore(s, x);
+		    }
+		    if (document.readyState === 'complete') {
+		      l();
+		    } else if (window.attachEvent) {
+		      window.attachEvent('onload', l);
+		    } else {
+		      window.addEventListener('DOMContentLoaded', l, false);
+		      window.addEventListener('load', l, false);
+		    }
+		  })();
+		  ChannelIO('boot', {
+		    "pluginKey": "9d365c6a-5805-4bb8-bcf9-ae50ea56746a"
+		  });
+		</script>
+		<!-- End Channel Plugin -->
+<div id="skipNav"><a href="#contents">본문 바로가기</a></div>
+<header>
+    <div class="top_nav-wrap">
+     
+        <div class="top_guide">
+            <h1><a href="/"><img src="../res/img/KDI_logo.png" alt="KDI 한국개발연구원"></a></h1>
+            <nav>
+                <ul>
+                	
+							<li><button type="button">연구</button>
+		                        <div class="gnb_downslide">
+		                            <div class="gnb_guide">
+		                                <div class="gnb_left">
+		                                    <h2><b>연구</b>
+		                                    	
+		                                    			<p>KDI는<br>"미래를 여는 연구"를 통해<br>정책 대안을 제시합니다.</p>
+		                                    		
+		                                    </h2>
+		                                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="/research/reportList">연구 보고서</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/focusList">KDI FOCUS</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/economy">경제전망</a>
+					
+						<ul>
+							
+									<li><a href="/research/analysisList">현안분석</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monTrends">KDI 경제동향</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monNorth">KDI 북한경제리뷰</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/jep">KDI JEP</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/etcReportList">기타 보고서</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monCountry">나라경제</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monEb">Economic Bulletin</a>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/research/topicList">연구 주제</a>
+						
+							<ul>
+								
+										<li><a href="/research/topicList?cd=A">거시</a></li>
+									
+										<li><a href="/research/topicList?cd=B">금융</a></li>
+									
+										<li><a href="/research/topicList?cd=C">법경제</a></li>
+									
+										<li><a href="/research/topicList?cd=D">규제</a></li>
+									
+										<li><a href="/research/topicList?cd=E">노동</a></li>
+									
+										<li><a href="/research/topicList?cd=F">교육</a></li>
+									
+										<li><a href="/research/topicList?cd=G">산업</a></li>
+									
+										<li><a href="/research/topicList?cd=H">국제경제</a></li>
+									
+										<li><a href="/research/topicList?cd=I">재정</a></li>
+									
+										<li><a href="/research/topicList?cd=J">복지</a></li>
+									
+										<li><a href="/research/topicList?cd=K">북한경제</a></li>
+									
+										<li><a href="/research/topicList?cd=L">공공투자</a></li>
+									
+										<li><a href="/research/topicList?cd=M">국토인프라</a></li>
+									
+										<li><a href="/research/topicList?cd=N">국제개발협력</a></li>
+									
+										<li><a href="/research/topicList?cd=O">경제교육</a></li>
+									
+										<li><a href="/research/topicList?cd=P">경제정보</a></li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+<!-- 		<div class="cover"> -->
+<!-- 	        <button type="button" onclick="kdifn.gnbCover(this)" title="클릭하면 메뉴가 열립니다"> -->
+<!-- 	            <img src="../res/img/gnb_cover01.jpg" alt="KDI"> -->
+<!-- 	            <strong>연구주제</strong> -->
+<!--                 <p>보고서를 연구 주제별로 <br>확인할 수 있습니다.</p> -->
+<!-- 	        </button> -->
+<!-- 	    </div> -->
+    </div>
+</div>
+		                                    	
+		                                </div>
+		                                <div class="gnb_right">
+		                                    <div class="menu_other">
+		                                    	
+			                                    			<a href="https://www.kdi.re.kr/research/topicList" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_1-001.png" alt="표지">
+					                                            <strong>연구 주제</strong>
+<p>KDI의 발간물을 다양한 연구 주제로 분류하여 제공합니다.</p>
+					                                        </a>
+					                                    
+					                                        <a href="https://www.kdi.re.kr/share/researchList" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_2-001.png" alt="표지">
+					                                            <strong>연구과제 제안</strong>
+<p>KDI의 역할에 걸맞은 연구가 추진될 수 있도록 연구 과제를 제안해 주세요.</p>
+					                                        </a>
+				                                        
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </li>
+                		
+							<li><button type="button">소통</button>
+		                        <div class="gnb_downslide">
+		                            <div class="gnb_guide">
+		                                <div class="gnb_left">
+		                                    <h2><b>소통</b>
+		                                    	
+		                                    			<p>KDI는<br>한걸음 더 가까이<br>여러분께 다가섭니다.</p>
+		                                    		
+		                                    </h2>
+		                                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="#">세미나</a>
+					
+						<ul>
+							
+									<li><a href="/share/conferList">콘퍼런스</a></li>
+								
+									<li><a href="/share/seminarList">전문가 세미나</a></li>
+								
+									<li><a href="/share/seminarMov">세미나 영상</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/share/noticeList">공지사항</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/centerList">연구원 동정</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressList">보도자료</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressContriList">언론기고</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressRelease">언론보도</a>
+					
+						<ul>
+							
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/share/kdiansList">매거진 KDlans</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/recruitList">채용</a>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/share/multiMov">소통 콘텐츠</a>
+						
+							<ul>
+								
+										<li><a href="/share/multiMov">멀티콘텐츠</a></li>
+									
+										<li><a href="/share/socialBox">소셜박스</a></li>
+									
+										<li><a href="/share/userGuide?ug_cd=007004">KDI 이용가이드</a></li>
+									
+										<li><a href="/share/researchList">연구과제 제안</a></li>
+									
+										<li><a href="/share/absurdityCenter">부조리신고센터</a></li>
+									
+										<li><a href="/share/qnaList">Q&A</a></li>
+									
+										<li><a href="/share/newsletter">뉴스레터</a></li>
+									
+										<li><a href="/share/openAPI">KDI Open API</a></li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+	</div>
+</div>
+		                                    	
+		                                </div>
+		                                <div class="gnb_right">
+		                                    <div class="menu_other">
+		                                    	
+			                                    			<a href="https://www.kdi.re.kr/share/kdiansList" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_1-002.png" alt="표지">
+					                                            <strong>매거진 KDIans</strong>
+<p>2026 SUMMER VOL.69</p>
+					                                        </a>
+					                                    
+					                                        <a href="/share/newsletter" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_2-002.png" alt="표지">
+					                                            <strong>뉴스레터</strong>
+<p>KDI의 소식과 경제정책정보를<br>뉴스레터로 받아보세요.</p>
+					                                        </a>
+				                                        
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </li>
+                		
+							<li><button type="button">소개</button>
+		                        <div class="gnb_downslide">
+		                            <div class="gnb_guide">
+		                                <div class="gnb_left">
+		                                    <h2><b>소개</b>
+		                                    	
+		                                    			<p>since 1971<br>한국개발연구원의<br>과거, 현재 그리고 미래</p>
+		                                    		
+		                                    </h2>
+		                                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="/introduce/greetings">원장 소개</a>
+					
+						<ul>
+							
+									<li><a href="/introduce/greetings">인사말</a></li>
+								
+									<li><a href="/introduce/history">원장약력</a></li>
+								
+									<li><a href="/introduce/target">경영목표</a></li>
+								
+									<li><a href="/introduce/historyLedger">역대원장</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/introduce/org">조직도</a>
+					
+				</li>
+			
+				<li>
+					<a href="/introduce/expert">연구진</a>
+					
+				</li>
+			
+				<li>
+					<a href="#">홍보</a>
+					
+						<ul>
+							
+									<li><a href="/introduce/historyList">연혁</a></li>
+								
+									<li><a href="/introduce/pmVision">VISION HALL</a></li>
+								
+									<li><a href="/introduce/pmCi">기관 상징</a></li>
+								
+									<li><a href="/introduce/pmBrochure">브로슈어</a></li>
+								
+						</ul>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/introduce/macroFinancial">부서 안내</a>
+						
+							<ul class="s">
+								
+										<li class="">
+											<a href="/introduce/macroFinancial">거시ㆍ금융정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/industryMarket">산업ㆍ시장정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/financeSocial">재정ㆍ사회정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/economicOutlook">경제전망실</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/regCenter">규제연구실</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/globalEconomy">글로벌·북한경제연구실</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/eiec">경제교육·정보센터</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/pimac">공공투자관리센터</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/interCenter">국제개발협력센터</a>
+										</li>
+									
+										<li class="">
+											<a href="https://www.gkedc.go.kr/">글로벌지식협력단지</a>
+										</li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+<!-- 		<div class="cover"> -->
+<!-- 	        <button type="button" onclick="kdifn.gnbCover(this)" title="클릭하면 메뉴가 열립니다"> -->
+<!-- 	            <img src="../res/img/gnb_cover02.jpg" alt="KDI"> -->
+<!-- 	            <strong>연구분야</strong> -->
+<!--                 <p>KDI의 연구 분야, 센터 등을 <br>안내해 드립니다.</p> -->
+<!-- 	        </button> -->
+<!-- 	    </div> -->
+    </div>
+</div>
+		                                    	
+		                                </div>
+		                                <div class="gnb_right">
+		                                    <div class="menu_other">
+		                                    	
+			                                    			<a href="https://www.kdi.re.kr/introduce/pmVision" target="_self" class="item">
+					                                            <img src="/kdidata/menu/menu_img_1-003.jpg" alt="표지">
+					                                            <strong>KDI Vision Hall</strong>
+
+<p>개원 50주년을 맞이해 2021년 3월 개관했습니다.</p>
+					                                        </a>
+					                                    
+					                                        <a href="/introduce/historyList" target="" class="item">
+					                                            <img src="/kdidata/menu/menu_img_2-003.jpg" alt="표지">
+					                                            <strong>연혁</strong>
+
+<p>KDI의 시대별 주요 연구 성과를 소개합니다.</p>
+					                                        </a>
+				                                       
+		                                    </div>
+		                                </div>
+		                            </div>
+		                        </div>
+		                    </li>
+                		
+                </ul>
+            </nav>
+            
+            <div class="other_link">
+            	<ul>
+		            
+		            		<li><button type="button">정보공개</button>
+		            			<div class="gnb_downslide">
+		            				<div class="gnb_guide">
+		            					<div class="gnb_left">
+			            					<h2><b>정보<br>공개</b>
+			                                    <p>한국개발연구원의<br> 정보공개제도를 안내해 <br>드립니다.</p>
+			                                </h2>
+			                                
+<div class="menu_each">
+	<ul class="one_list">
+		
+				<li>
+					<a href="/disclosure/humanScene">인권경영</a>
+					
+						<ul>
+							
+									<li><a href="/disclosure/humanScene">인권경영헌장</a></li>
+								
+									<li><a href="/disclosure/humanPropel">인권경영 추진체계</a></li>
+								
+									<li><a href="/disclosure/humanPlan">인권경영 활동/교육</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/openPolicy">정보공개</a>
+					
+						<ul>
+							
+									<li><a href="/disclosure/openPolicy">정보공개제도 안내</a></li>
+								
+									<li><a href="/disclosure/openDictionary">사전정보공표</a></li>
+								
+									<li><a href="/disclosure/businessList">해외출장 보고</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/publicData">공공데이터 개방</a>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/realName">사업실명제</a>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/operationOpen">경영공시</a>
+					
+				</li>
+			
+	</ul>
+</div>
+		            					</div>
+		            				</div>
+		            			</div>
+		            		</li>
+		            	
+		            <li><a href="/eng/">ENG</a></li>
+            	</ul>
+	            <button type="button" class="search">검색</button>
+	            <button type="button" class="allview">전체 메뉴 보기</button>
+            </div>
+        </div>
+    </div>
+    <!-- sitemap -->
+    <div class="site_map-wrap">
+        <div class="site_top">
+            <h3><a href="/"><img src="../res/img/KDI_logo.png" alt="KDI 한국개발연구원"></a></h3>
+            <h4>SITEMAP</h4>
+            <button type="button">CLOSE</button>
+        </div>
+        <div class="site_mid">
+            <div class="center_guide">
+                <!-- 각 메뉴에 뎁스에 맞게 on 처리 해주세요 -->
+                <div class="site_area on">
+                    <h5><button type="button">연구</button></h5>
+                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="/research/reportList">연구 보고서</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/focusList">KDI FOCUS</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/economy">경제전망</a>
+					
+						<ul>
+							
+									<li><a href="/research/analysisList">현안분석</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monTrends">KDI 경제동향</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monNorth">KDI 북한경제리뷰</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/jep">KDI JEP</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/etcReportList">기타 보고서</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monCountry">나라경제</a>
+					
+				</li>
+			
+				<li>
+					<a href="/research/monEb">Economic Bulletin</a>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/research/topicList">연구 주제</a>
+						
+							<ul>
+								
+										<li><a href="/research/topicList?cd=A">거시</a></li>
+									
+										<li><a href="/research/topicList?cd=B">금융</a></li>
+									
+										<li><a href="/research/topicList?cd=C">법경제</a></li>
+									
+										<li><a href="/research/topicList?cd=D">규제</a></li>
+									
+										<li><a href="/research/topicList?cd=E">노동</a></li>
+									
+										<li><a href="/research/topicList?cd=F">교육</a></li>
+									
+										<li><a href="/research/topicList?cd=G">산업</a></li>
+									
+										<li><a href="/research/topicList?cd=H">국제경제</a></li>
+									
+										<li><a href="/research/topicList?cd=I">재정</a></li>
+									
+										<li><a href="/research/topicList?cd=J">복지</a></li>
+									
+										<li><a href="/research/topicList?cd=K">북한경제</a></li>
+									
+										<li><a href="/research/topicList?cd=L">공공투자</a></li>
+									
+										<li><a href="/research/topicList?cd=M">국토인프라</a></li>
+									
+										<li><a href="/research/topicList?cd=N">국제개발협력</a></li>
+									
+										<li><a href="/research/topicList?cd=O">경제교육</a></li>
+									
+										<li><a href="/research/topicList?cd=P">경제정보</a></li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+<!-- 		<div class="cover"> -->
+<!-- 	        <button type="button" onclick="kdifn.gnbCover(this)" title="클릭하면 메뉴가 열립니다"> -->
+<!-- 	            <img src="../res/img/gnb_cover01.jpg" alt="KDI"> -->
+<!-- 	            <strong>연구주제</strong> -->
+<!--                 <p>보고서를 연구 주제별로 <br>확인할 수 있습니다.</p> -->
+<!-- 	        </button> -->
+<!-- 	    </div> -->
+    </div>
+</div>
+                </div>
+                <div class="site_area ">
+                    <h5><button type="button">소통</button></h5>
+                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="#">세미나</a>
+					
+						<ul>
+							
+									<li><a href="/share/conferList">콘퍼런스</a></li>
+								
+									<li><a href="/share/seminarList">전문가 세미나</a></li>
+								
+									<li><a href="/share/seminarMov">세미나 영상</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/share/noticeList">공지사항</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/centerList">연구원 동정</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressList">보도자료</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressContriList">언론기고</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/pressRelease">언론보도</a>
+					
+						<ul>
+							
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/share/kdiansList">매거진 KDlans</a>
+					
+				</li>
+			
+				<li>
+					<a href="/share/recruitList">채용</a>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/share/multiMov">소통 콘텐츠</a>
+						
+							<ul>
+								
+										<li><a href="/share/multiMov">멀티콘텐츠</a></li>
+									
+										<li><a href="/share/socialBox">소셜박스</a></li>
+									
+										<li><a href="/share/userGuide?ug_cd=007004">KDI 이용가이드</a></li>
+									
+										<li><a href="/share/researchList">연구과제 제안</a></li>
+									
+										<li><a href="/share/absurdityCenter">부조리신고센터</a></li>
+									
+										<li><a href="/share/qnaList">Q&A</a></li>
+									
+										<li><a href="/share/newsletter">뉴스레터</a></li>
+									
+										<li><a href="/share/openAPI">KDI Open API</a></li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+	</div>
+</div>
+                </div>
+                <div class="site_area ">
+                    <h5><button type="button">소개</button></h5>
+                    
+<div class="menu_each">
+	<ul>
+		
+				<li>
+					<a href="/introduce/greetings">원장 소개</a>
+					
+						<ul>
+							
+									<li><a href="/introduce/greetings">인사말</a></li>
+								
+									<li><a href="/introduce/history">원장약력</a></li>
+								
+									<li><a href="/introduce/target">경영목표</a></li>
+								
+									<li><a href="/introduce/historyLedger">역대원장</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/introduce/org">조직도</a>
+					
+				</li>
+			
+				<li>
+					<a href="/introduce/expert">연구진</a>
+					
+				</li>
+			
+				<li>
+					<a href="#">홍보</a>
+					
+						<ul>
+							
+									<li><a href="/introduce/historyList">연혁</a></li>
+								
+									<li><a href="/introduce/pmVision">VISION HALL</a></li>
+								
+									<li><a href="/introduce/pmCi">기관 상징</a></li>
+								
+									<li><a href="/introduce/pmBrochure">브로슈어</a></li>
+								
+						</ul>
+					
+				</li>
+			
+	</ul>
+	<div class="bg">
+		<ul>
+			
+					<li>
+						<a href="/introduce/macroFinancial">부서 안내</a>
+						
+							<ul class="s">
+								
+										<li class="">
+											<a href="/introduce/macroFinancial">거시ㆍ금융정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/industryMarket">산업ㆍ시장정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/financeSocial">재정ㆍ사회정책연구부</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/economicOutlook">경제전망실</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/regCenter">규제연구실</a>
+										</li>
+									
+										<li class="">
+											<a href="/introduce/globalEconomy">글로벌·북한경제연구실</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/eiec">경제교육·정보센터</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/pimac">공공투자관리센터</a>
+										</li>
+									
+										<li class="c">
+											<a href="/introduce/interCenter">국제개발협력센터</a>
+										</li>
+									
+										<li class="">
+											<a href="https://www.gkedc.go.kr/">글로벌지식협력단지</a>
+										</li>
+									
+							</ul>
+						
+					</li>
+				
+		</ul>
+<!-- 		<div class="cover"> -->
+<!-- 	        <button type="button" onclick="kdifn.gnbCover(this)" title="클릭하면 메뉴가 열립니다"> -->
+<!-- 	            <img src="../res/img/gnb_cover02.jpg" alt="KDI"> -->
+<!-- 	            <strong>연구분야</strong> -->
+<!--                 <p>KDI의 연구 분야, 센터 등을 <br>안내해 드립니다.</p> -->
+<!-- 	        </button> -->
+<!-- 	    </div> -->
+    </div>
+</div>
+                </div>
+                <div class="site_area ">
+                    <h5><button type="button">정보공개</button></h5>
+                    
+<div class="menu_each">
+	<ul class="one_list">
+		
+				<li>
+					<a href="/disclosure/humanScene">인권경영</a>
+					
+						<ul>
+							
+									<li><a href="/disclosure/humanScene">인권경영헌장</a></li>
+								
+									<li><a href="/disclosure/humanPropel">인권경영 추진체계</a></li>
+								
+									<li><a href="/disclosure/humanPlan">인권경영 활동/교육</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/openPolicy">정보공개</a>
+					
+						<ul>
+							
+									<li><a href="/disclosure/openPolicy">정보공개제도 안내</a></li>
+								
+									<li><a href="/disclosure/openDictionary">사전정보공표</a></li>
+								
+									<li><a href="/disclosure/businessList">해외출장 보고</a></li>
+								
+						</ul>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/publicData">공공데이터 개방</a>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/realName">사업실명제</a>
+					
+				</li>
+			
+				<li>
+					<a href="/disclosure/operationOpen">경영공시</a>
+					
+				</li>
+			
+	</ul>
+</div>
+                </div>
+            </div>
+        </div>
+        <div class="site_btm">
+            <ul>
+                <li><a href="/bookMember/booksLogin">도서회원</a></li>
+                <li><a href="/infomation/location">찾아오시는길</a></li>
+            </ul>
+            <ul>
+                <li><a href="/servicePolicy/charter">고객헌장</a></li>
+                <li><a href="/servicePolicy/privacy">개인정보처리방침</a></li>
+                <li><a href="/servicePolicy/mediaPrivacy">영상정보처리기기 운영ㆍ관리방침</a></li>
+                <li><a href="/servicePolicy/copyright">저작권정책</a></li>
+                <li><a href="/servicePolicy/email">이메일주소 무단수집거부</a></li>
+            </ul>
+        </div>
+    </div>
+    
+<script type="text/javascript" charset="utf-8" src="//epts.kdi.re.kr/resources/jslb/use.js"></script>
+<script src="//code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+<script>
+
+function highlightTextTop(term, obj){
+	let html_ = $(obj).text();
+	html_ = html_.replace(term, "<em>"+term+"</em>");
+	$(obj).html(html_);
+}
+function GlobalsearchTerm() {
+	let termdt = $("#topSearchValue").val();
+	termdt = $.trim(termdt);
+	if (termdt == "") {
+		alert("검색어를 입력해 주세요.");
+		return;
+	}
+	location.href="/kdisearch/search?term=" + encodeURIComponent(termdt);	
+}
+$(function(){
+	fnGetTopWord();
+    $("#topSearchValue").on("keyup",function(key){
+        if(key.keyCode==13) {
+        	GlobalsearchTerm();
+        }
+    });	
+	$("#topSearchValue").autocomplete({
+		source: function(request, response) {
+			var term = $.ui.autocomplete.escapeRegex(request.term);
+			var matcher1 = new RegExp("^" + term, "i");
+			var matcher2 = new RegExp("^.+" + term, "i");
+			function subarray(matcher) {return $.grep(useArray, function(item) {return matcher.test(item);});}
+			response($.merge(subarray(matcher1), subarray(matcher2)));
+		},
+		autoFocus: false
+	}).data("ui-autocomplete")._renderItem = function (ul, item) {
+	  	var $a = $("<a></a>").text(item.label);
+	  	highlightTextTop(this.term, $a);
+	  	return $("<li></li>").append($a).appendTo(ul);
+	};
+	$("#topSearchValue").keyup(function (){
+			$("#topSearchValue").autocomplete({
+				source: function(request, response) {
+					var term = $.ui.autocomplete.escapeRegex(request.term);
+					var matcher1 = new RegExp("^" + term, "i");
+					var matcher2 = new RegExp("^.+" + term, "i");
+					function subarray(matcher) {return $.grep(useArray, function(item) {return matcher.test(item);});}
+					var resultarr = $.merge(subarray(matcher1), subarray(matcher2));
+					response(resultarr.slice(0, 10));
+				},
+				autoFocus: false,
+				delay: 300
+			}).data("ui-autocomplete")._renderItem = function (ul, item) {
+			  	var $a = $("<a></a>").text(item.label);
+			  	highlightTextTop(this.term, $a);
+			  	return $("<li></li>").append($a).appendTo(ul);
+			};
+	});	
+});
+
+function fnGetTopWord(){
+	$.ajax({
+		url: "/kdisearch/getrankword",
+		dataType: "text",
+		success: function(data) {
+			let rankdata = eval(data);
+			if (rankdata != null) {
+				if(rankdata.length > 0){
+		   			$("#topsearchwordWrap").empty();
+		   			if($("#mainsearchwordWrap").length > 0) $("#mainsearchwordWrap").empty();
+		   			let html_ = "";
+		   			let rank = 1;
+		   			for (var k=0; k<rankdata.length; k++) {
+		   				let str = rankdata[k][0];
+		   				if (k <= 2) {
+		   					html_ += "<li class=\"tier\"><a href=\"javascript:thisSearch('"+str+"');\" title=\""+str+"\">"+str+"</a></li>";
+		   				}
+		   				else {
+		   					html_ += "<li><a href=\"javascript:thisSearch('"+str+"');\" title=\""+str+"\">"+str+"</a></li>";
+		   				}
+		   				rank ++;
+		   			}
+		   			$("#topsearchwordWrap").append(html_);
+		   			if($("#mainsearchwordWrap").length > 0){
+			   			let html_ = "";
+			   			let rank = 1;
+			   			for (var k=0; k<rankdata.length; k++) {
+			   				let str = rankdata[k][0];
+			   				if (k <= 2) {
+			   					html_ += "<a href=\"javascript:thisSearch('"+str+"');\" title=\""+str+"\">"+str+"</a>";
+			   				}
+			   				else {
+			   					html_ += "<a href=\"javascript:thisSearch('"+str+"');\" title=\""+str+"\">"+str+"</a>";
+			   				}
+			   				rank ++;
+			   			}	
+			   			$("#mainsearchwordWrap").append(html_);
+		   			}
+				}
+			}
+		}
+	});
+}	
+
+function thisSearch(thisterm) {
+	location.href="/kdisearch/search?term=" + encodeURIComponent(thisterm);
+}
+</script>    
+    <!-- search -->
+    <div id="site_search-wrap">
+    	<div class="site_scroll">
+	        <div class="search_word-inp">
+	            <div class="search_box">
+	                <div class="box_guide">
+	                    <label for="topSearchValue">SEARCH</label>
+	                    <input id="topSearchValue" type="text" placeholder="KDI 통합검색을 이용해 보세요">
+	                    <button type="button" onclick="GlobalsearchTerm()">검색</button>
+	                </div>
+	            </div>
+	            <div class="popular_terms">
+	                <strong>인기 검색어</strong>
+	                <ul id="topsearchwordWrap">
+	                </ul>
+	                <button type="button" onclick="kdifn.commUlOpen(this)">OPEN</button>
+	            </div>
+	        </div>
+	        
+		        <div class="hot_issue-box">
+		            <h3>SPOTLIGHT</h3>
+		            <div class="issue_slide-box">
+		            	
+		            		<div class="item">
+		                        <a href="https://www.kdi.re.kr/research/economy?pub_no=19259" target="_self">
+		                        	
+											<b class="i06">KDI 경제전망</b>
+										
+		                            <strong>KDI 경제전망 | 수정, 2026년 8월</strong>
+		                            <p>우리 경제는 글로벌 반도체경기 호황에 주로 기인하여 2026년 3.2%의 높은 성장률을 기록한 뒤, 2027년에도 2.2% 성장하며 양호한 흐름을 이어갈 전망</p>
+		                            <span>2026.05.13</span>
+		                        </a>
+		                    </div>
+		            	
+		            		<div class="item">
+		                        <a href="/share/noticeView?bd_no=53443" target="_self">
+		                        	
+											<b class="i20">공지사항</b>
+										
+		                            <strong>「지식공유브리프」26년 4호 발간 안내</strong>
+		                            <p>국제개발협력 전문가라면 꼭 알아야 할 최신 트렌드! 지식공유브리프 26년 4호가 발간되었습니다. 지금 확인해 보세요!</p>
+		                            <span>2026.09.01</span>
+		                        </a>
+		                    </div>
+		            	
+		            		<div class="item">
+		                        <a href="/research/focusView?pub_no=19239" target="_self">
+		                        	
+											<b class="i02">KDI FOCUS</b>
+										
+		                            <strong>재생에너지의 효과적 보급확대를 위한 정책 과제</strong>
+		                            <p>재생에너지 보조금 제도 합리화, 전력계통 확충, 자본조달 환경 정비를 통합 추진하여, 재생에너지 보급 속도와 효율성을 동시에 확보해야 함</p>
+		                            <span>2026.07.27</span>
+		                        </a>
+		                    </div>
+		            	
+		            		<div class="item">
+		                        <a href="/share/pressContriView?bd_no=53429" target="_self">
+		                        	
+											<b class="i20">언론기고</b>
+										
+		                            <strong>반도체 호황일 때 키워야 할 제2, 제3의 수출엔진</strong>
+		                            <p>반도체가 끌어올린 韓 경상수지와 성장률, 기업을 넘어 국가의 미래를 가르는 칩워(Chip War) 시대에 우리가 갖춰야 할 초격차 핵심 전략은 무엇일까?</p>
+		                            <span>2026.08.28</span>
+		                        </a>
+		                    </div>
+		            	
+		            </div>
+		        </div>
+	        
+	    </div>
+        <button type="button">닫기</button>
+    </div>
+</header>
+<main>
+<section id="contents">
+	
+<!--
+    상세 뷰 페이지 모바일에서는 라인맵 선택이 노출 안 됩니다.
+    히든 처리로 뷰페이지 접속시 "#contents"에 "view_page-back"
+    className 추가해주세요 PC에서는 영향 없습니다.
+    대시 모바일에서 뒤로 가는 타이틀 버튼이 노출 됩니다
+ -->
+<div class="linemap_guide-box">
+    <a href="javascript:history.back();" class="moveing_back">BACK</a>
+    <div class="comm_linemap false">
+        <a href="/" class="home">HOME</a>
+        <div class="depth">
+        	
+        			<button type="button" onclick="kdifn.lineMapMenu(this)">연구</button>
+        		
+            <ul>
+            	
+            			<li><a class="on" href="/research/reportList">연구</a></li>
+            		
+            			<li><a class="" href="/share/conferList">소통</a></li>
+            		
+            			<li><a class="" href="/introduce/org">소개</a></li>
+            		
+            </ul>
+        </div>
+        <!--
+            여기부터 모바일 메뉴가 노출 됩니다.
+            "sub" 서브 메뉴가 2개일 경우 "comm_linemap"에 "two_depth"
+            className을 추가해주세요 2단으로 50%씩 반반 노출
+            아닐 경우 1단으로 100% 전체 길이로 노출
+         -->
+        <div class="depth sub f">
+        	
+        			<button type="button" onclick="kdifn.lineMapMenu(this)">연구 보고서</button>
+        		
+            <ul>
+            	
+            			<li><a class="on" href="/research/reportList">연구 보고서</a></li>
+            		
+            			<li><a class="" href="/research/focusList">KDI FOCUS</a></li>
+            		
+            			<li><a class="" href="/research/economy">경제전망</a></li>
+            		
+            			<li><a class="" href="/research/monTrends">KDI 경제동향</a></li>
+            		
+            			<li><a class="" href="/research/monNorth">KDI 북한경제리뷰</a></li>
+            		
+            			<li><a class="" href="/research/jep">KDI JEP</a></li>
+            		
+            			<li><a class="" href="/research/etcReportList">기타 보고서</a></li>
+            		
+            			<li><a class="" href="/research/monCountry">나라경제</a></li>
+            		
+            			<li><a class="" href="/research/monEb">Economic Bulletin</a></li>
+            		
+            			<li><a class="" href="/research/topicList">연구 주제</a></li>
+            		
+            </ul>
+        </div>
+        
+        
+        <a href="javascript:history.back();" class="back_page">BACK</a>
+    </div>
+</div>
+
+	<div class="page_contents">
+<form id="searchForm" name="searchForm">
+<input type="hidden" id="hidden_pg" name="pg" value="2">
+		<div class="page_top-wrap both mob_page-select">
+			<h2>연구 보고서</h2>
+			<button type="button" class="mob_dropdown" onclick="kdifn.mobDropDown(this)">보고서 종류를 선택해 주세요</button>
+			<div class="select_all-select">
+				<label class="comm_check"><input type="checkbox" id="allCheck"><span>전체보고서</span></label>
+				<ul>
+					<li>
+						<label class="comm_check">
+							<input type="checkbox" name="pub_cd" value="A2" 
+							 >
+							<span>연구보고서</span>
+						</label>
+					</li>
+					<li>
+						<label class="comm_check">
+							<input type="checkbox" name="pub_cd" value="A3" 
+							 >
+							<span>정책연구시리즈</span>
+						</label>
+					</li>
+				</ul>
+				<button type="submit" onclick="kdifn.mobDropDown(this)">적용</button>
+			</div>
+		</div>
+		<div class="page_search-inp">
+			<div class="search_guide">
+				<p>검색결과 : <span>1,386</span> 건</p>
+				<label>
+					<input type="text" placeholder="검색어를 입력해주세요" title="검색어를 입력해주세요" name="nm" value="">
+					<button type="submit">검색</button>
+				</label>
+				<span class="comm_select">
+					<label for="allSelectYear">발간연도보기</label>
+					<select id="allSelectYear" name="year" id="year">
+						<option value="" selected>발간연도보기</option>
+						
+							<option value="2026" >2026년</option>
+						
+							<option value="2025" >2025년</option>
+						
+							<option value="2024" >2024년</option>
+						
+							<option value="2023" >2023년</option>
+						
+							<option value="2022" >2022년</option>
+						
+							<option value="2021" >2021년</option>
+						
+							<option value="2020" >2020년</option>
+						
+							<option value="2019" >2019년</option>
+						
+							<option value="2018" >2018년</option>
+						
+							<option value="2017" >2017년</option>
+						
+							<option value="2016" >2016년</option>
+						
+							<option value="2015" >2015년</option>
+						
+							<option value="2014" >2014년</option>
+						
+							<option value="2013" >2013년</option>
+						
+							<option value="2012" >2012년</option>
+						
+							<option value="2011" >2011년</option>
+						
+							<option value="2010" >2010년</option>
+						
+							<option value="2009" >2009년</option>
+						
+							<option value="2008" >2008년</option>
+						
+							<option value="2007" >2007년</option>
+						
+							<option value="2006" >2006년</option>
+						
+							<option value="2005" >2005년</option>
+						
+							<option value="2004" >2004년</option>
+						
+							<option value="2003" >2003년</option>
+						
+							<option value="2002" >2002년</option>
+						
+							<option value="2001" >2001년</option>
+						
+							<option value="2000" >2000년</option>
+						
+							<option value="1999" >1999년</option>
+						
+							<option value="1998" >1998년</option>
+						
+							<option value="1997" >1997년</option>
+						
+							<option value="1996" >1996년</option>
+						
+							<option value="1995" >1995년</option>
+						
+							<option value="1994" >1994년</option>
+						
+							<option value="1993" >1993년</option>
+						
+							<option value="1992" >1992년</option>
+						
+							<option value="1991" >1991년</option>
+						
+							<option value="1990" >1990년</option>
+						
+							<option value="1989" >1989년</option>
+						
+							<option value="1988" >1988년</option>
+						
+							<option value="1987" >1987년</option>
+						
+							<option value="1986" >1986년</option>
+						
+							<option value="1985" >1985년</option>
+						
+							<option value="1984" >1984년</option>
+						
+							<option value="1983" >1983년</option>
+						
+							<option value="1982" >1982년</option>
+						
+							<option value="1981" >1981년</option>
+						
+							<option value="1980" >1980년</option>
+						
+							<option value="1979" >1979년</option>
+						
+							<option value="1978" >1978년</option>
+						
+							<option value="1977" >1977년</option>
+						
+							<option value="1976" >1976년</option>
+						
+							<option value="1975" >1975년</option>
+						
+							<option value="1974" >1974년</option>
+						
+							<option value="1973" >1973년</option>
+						
+							<option value="1972" >1972년</option>
+						
+							<option value="1971" >1971년</option>
+						
+					</select>
+				</span>
+				<span class="comm_select">
+					<label for="listSelectNum">리스트 갯수 선택</label>
+					<select id="listSelectNum" name="pp" id="pp">
+						<option value="10" selected>10개</option>
+						<option value="20" >20개</option>
+						<option value="30" >30개</option>
+					</select>
+				</span>
+				<button type="submit">검색</button>
+			</div>
+		</div>
+</form>
+		<div class="page_list-group">
+			
+					<ul>
+						
+							<li>
+								
+										<a href="./reportView?pub_no=19124">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/19124_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i12">정책연구시리즈</b>
+												<strong>에너지 산업 육성을 위한 시장 설계</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=G&sub=G07">#환경 및 에너지</a>
+												
+													<a href="/research/topicList?cd=G&sub=G99">#산업 일반(기타)</a>
+												
+									</em>
+									<p>
+										
+											<span>윤여창
+											</span>
+										
+											<span>53p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view19124')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=Oa9JvwqV6%2FKAfvKRitbuug%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=19126">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/19126_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i1">연구보고서</b>
+												<strong>중대재해처벌법이 노동시장에 미친 영향</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=E&sub=E99">#노동 일반(기타)</a>
+												
+									</em>
+									<p>
+										
+											<span>정수환
+											</span>
+										
+											<span>241p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view19126')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=wi3%2FzSGR1ljOcm%2BkHm9V7w%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=19167">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/19167_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i12">정책연구시리즈</b>
+												<strong>장기요양보험제도의 효과성 제고를 위한 연구</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=J&sub=J00">#복지정책</a>
+												
+													<a href="/research/topicList?cd=J&sub=J02">#의료보건</a>
+												
+													<a href="/research/topicList?cd=J&sub=J99">#복지 일반(기타)</a>
+												
+									</em>
+									<p>
+										
+											<span>김도헌
+											</span>
+										
+											<span>132p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view19167')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=Nk1cRwD8%2B%2FGjBmF4SsU4pg%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=19166">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/19166_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i12">정책연구시리즈</b>
+												<strong>모바일 생태계의 경쟁에 대한 연구: 앱마켓의 시장지배력을 중심으로</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=C&sub=C00">#경쟁정책</a>
+												
+													<a href="/research/topicList?cd=C&sub=C01">#시장구조</a>
+												
+									</em>
+									<p>
+										
+											<span>김민정
+												외
+												
+											</span>
+										
+											<span>90p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view19166')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=AgwN74IT5HOpR0XSDMYhTw%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=18941">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/18941_0.jpg">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i1">연구보고서</b>
+												<strong>노인돌봄 인력의 전망과 정책 대응</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=E&sub=E99">#노동 일반(기타)</a>
+												
+													<a href="/research/topicList?cd=J&sub=J99">#복지 일반(기타)</a>
+												
+									</em>
+									<p>
+										
+											<span>권정현
+											</span>
+										
+											<span>134p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view18941')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=gZI02e1spY8Yg2onRdcsmw%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=19154">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/19154_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i12">정책연구시리즈</b>
+												<strong>기업 연구개발 조세지원 방식의 국제 비교와 정책 시사점</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=I&sub=I00">#조세</a>
+												
+													<a href="/research/topicList?cd=I&sub=I99">#재정 일반(기타)</a>
+												
+									</em>
+									<p>
+										
+											<span>김학수
+											</span>
+										
+											<span>62p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view19154')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=LEkKJoU7d7OjFchFGK5VMg%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=19123">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/19123_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i12">정책연구시리즈</b>
+												<strong>공교육 특성이 학생에게 미치는 영향 분석: 학군 내 고등학교 배정의 인과적 효과를 중심으로</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=F&sub=F01">#초중등교육</a>
+												
+									</em>
+									<p>
+										
+											<span>최규성
+											</span>
+										
+											<span>66p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view19123')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=ILO%2FjcrFKRL2kDQmXXr1%2Bg%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=19076">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/19076_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i1">연구보고서</b>
+												<strong>북한 산업·기업 데이터베이스를 통한 북한 경제구조 분석</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=K&sub=K01">#남북경협/대북정책/통일정책</a>
+												
+													<a href="/research/topicList?cd=K&sub=K99">#북한경제 일반(기타)</a>
+												
+									</em>
+									<p>
+										
+											<span>이종규
+												외
+												
+											</span>
+										
+											<span>241p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view19076')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=IhFX7EbbuMM9bmKy1JV24Q%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=18832">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/18832_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i1">연구보고서</b>
+												<strong>혁신기업의 육성과 스케일업: 우리 경제의 새로운 성장동력 창출 전략</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=G&sub=G03">#무역구조 및 정책</a>
+												
+													<a href="/research/topicList?cd=G&sub=G04">#생산성 및 기업동학</a>
+												
+													<a href="/research/topicList?cd=G&sub=G05">#기술혁신 및 창업</a>
+												
+													<a href="/research/topicList?cd=G&sub=G06">#중소기업</a>
+												
+									</em>
+									<p>
+										
+											<span>김민호
+												외
+												
+											</span>
+										
+											<span>346p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view18832')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=XqnIq31S2x1NpcZ%2FaJNIAA%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+							<li>
+								
+										<a href="./reportView?pub_no=19064">
+											
+													<div class="rpt_img">
+														<img alt="커버" src="/kdidata/pub_cover/19064_0.png">
+													</div>
+												
+											<div class="rpt_tit">
+												<b class="i12">정책연구시리즈</b>
+												<strong>도시규모분포에 대한 연구: 분포결정요인과 공간정책의 후생효과</strong>
+											</div>
+										</a>
+									
+								
+								<div class="rpt_other">
+									<em>
+										
+													<a href="/research/topicList?cd=M&sub=M04">#지역경제</a>
+												
+									</em>
+									<p>
+										
+											<span>김선함
+											</span>
+										
+											<span>97p</span>
+										
+									</p>
+								</div>
+								<div class="rpt_link">
+									
+										<button type="button" class="i01" onclick="kdifn.slideLeftOpen('.move_summary_view19064')">요약보기</button>
+									
+											<button type="button" class="i02" onclick="location.href='/file/download?atch_no=P8P7n8OxE8nl6YgZY6wepg%3D%3D'">원문 다운로드</button>
+										
+								</div>
+							</li>
+							
+					</ul>
+				
+		</div>
+		<div class="comm_pagination"><button type="button" onclick="pageFunction(1)">PREV</button><button type="button" class="prev" onclick="return false;">이전 페이지로 이동</button><span><a href="javascript:;" onclick="pageFunction(1);">1</a><a class="on" href="javascript:;" onclick="return false;" style="cursor:default;">2</a><a href="javascript:;" onclick="pageFunction(3);">3</a><a href="javascript:;" onclick="pageFunction(4);">4</a><a href="javascript:;" onclick="pageFunction(5);">5</a><a href="javascript:;" onclick="pageFunction(6);">6</a><a href="javascript:;" onclick="pageFunction(7);">7</a><a href="javascript:;" onclick="pageFunction(8);">8</a><a href="javascript:;" onclick="pageFunction(9);">9</a><a href="javascript:;" onclick="pageFunction(10);">10</a></span><button type="button" class="next" onclick="pageFunction(11)">다음 페이지로 이동</button><button type="button" class="n02" onclick="pageFunction(139)">NEXT</button></div>
+	</div>
+</section>
+
+<section id="newsletter">
+    <div class="letter_guide">
+        <div class="tit">
+            <strong><span>Join our</span> Newsletter</strong>
+            <p>매일 새로운 소식으로 준비된 KDI 뉴스레터와 함께<br>다양한 정보를 확인하세요.</p>
+        </div>
+        <div class="emil">
+   			<form id="goNewsletter" name="goNewsletter" action="/share/newsletter">
+	            <label>
+	                <input type="email" id="email" name="email" placeholder="@ 이메일을 입력하세요!">
+	                <button type="button" onclick="$('#goNewsletter').submit();">뉴스레터 신청</button>
+	            </label>
+   			</form>
+        </div>
+    </div>
+</section>
+<!-- Google Tag Manager (noscript) -->
+<noscript><iframe src="https://www.googletagmanager.com/ns.html?id=GTM-T4ZXZC5" height="0" width="0" style="display:none;visibility:hidden"></iframe></noscript>
+<!-- End Google Tag Manager (noscript) -->
+</main>
+<footer>
+    <div class="fot_menu">
+        <ul>
+        	<li><a href="https://eiec.kdi.re.kr/policy/materialList.do" target="_blank">경제정책정보</a></li>
+            <li><a href="http://epts.kdi.re.kr/" target="_blank">경제정책시계열서비스</a></li>
+            <li><a href="http://kdijep.org/" target="_blank">KDI JEP</a></li>
+            <li><a href="https://pimac.kdi.re.kr" target="_blank">공공투자관리센터</a></li>
+        </ul>
+        <ul>
+            <li><a href="http://lib.kdi.re.kr" target="_blank">도서관</a></li>
+            <li><a href="http://www.alio.go.kr" target="_blank">알리오</a></li>
+            <li><a href="/bookMember/booksLogin">도서회원</a></li>
+            <li><a href="/servicePolicy/charter">고객헌장</a></li>
+        </ul>
+        <ul>
+            <li><a href="/servicePolicy/privacy" style="color:#f5821f">개인정보처리방침</a></li>
+            <li><a href="/servicePolicy/mediaPrivacy">영상정보처리기기 운영ㆍ관리방침</a></li>
+            <li><a href="/servicePolicy/copyright">저작권정책</a></li>
+            <li><a href="/servicePolicy/email">이메일주소 무단수집거부</a></li>
+        </ul>
+        <ul>
+            <li><a href="/share/newsletter">뉴스레터</a></li>
+            <li><a href="/share/absurdityCenter">부조리신고센터</a></li>
+            <li><a href="/share/qnaList">Q&amp;A</a></li>
+            <li><a href="/infomation/location">찾아오시는길</a></li>
+        </ul>
+    </div>
+    <div class="fot_guide">
+        <div class="fot_conts">
+            <div class="address">
+                <address>세종특별자치시 남세종로 263 <span class="tel">Tel: <a href="tel:044-550-4114">044-550-4114</a></span><span>Mail: <a href="mailto:media@kdi.re.kr">media@kdi.re.kr</a></span></address>COPYRIGHT © KOREA DEVELOPMENT INSTITUTE ALL RIGHTS RESERVED
+            </div>
+            <div class="sns">
+                <a class="u" href="http://www.youtube.com/KDIofficial" target="_blank">YOU TUBE</a>
+<!--                 <a class="f" href="https://www.facebook.com/KoreaDevelopmentInstitute" target="_blank">FACEBOOK</a> -->
+                <a class="i" href="https://www.instagram.com/kdi.official_/" target="_blank">INSTAGRAM</a>
+<!--                 <a class="n" href="http://tv.naver.com/kdi" target="_blank">NAVER TV</a> -->
+                <a class="p" href="https://blog.naver.com/kdisearch" target="_blank">네이버블로그</a>
+                <a class="l" href="https://www.linkedin.com/company/korea-development-institute-kdi-/" target="_blank">LINKEDIN</a>                
+            </div>
+            <div class="site">
+                <button type="button">FAMILY SITE</button>
+                <ul class="">
+                    <li><a href="http://eiec.kdi.re.kr" target="_blank">경제교육·정보센터</a></li>
+                    <li><a href="http://pimac.kdi.re.kr" target="_blank">공공투자관리센터</a></li>
+                    <li><a href="https://www.kdi.re.kr/introduce/interCenter" target="_blank">국제개발협력센터</a></li>
+                    <li><a href="http://www.kdischool.ac.kr/" target="_blank">국제정책대학원</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="page_other">
+<!--         <a href="https://channel.io/ko" title="채널톡 이동" target="_blank">채널톡</a> -->
+        <button type="button" id="pageTop" title="화면 위로 이동">TOP</button>
+        <!-- Channel Plugin Scripts -->
+		<script>
+// 		  (function() {
+// 		    var w = window;
+// 		    if (w.ChannelIO) {
+// 		      return (window.console.error || window.console.log || function(){})('ChannelIO script included twice.');
+// 		    }
+// 		    var ch = function() {
+// 		      ch.c(arguments);
+// 		    };
+// 		    ch.q = [];
+// 		    ch.c = function(args) {
+// 		      ch.q.push(args);
+// 		    };
+// 		    w.ChannelIO = ch;
+// 		    function l() {
+// 		      if (w.ChannelIOInitialized) {
+// 		        return;
+// 		      }
+// 		      w.ChannelIOInitialized = true;
+// 		      var s = document.createElement('script');
+// 		      s.type = 'text/javascript';
+// 		      s.async = true;
+// 		      s.src = 'https://cdn.channel.io/plugin/ch-plugin-web.js';
+// 		      s.charset = 'UTF-8';
+// 		      var x = document.getElementsByTagName('script')[0];
+// 		      x.parentNode.insertBefore(s, x);
+// 		    }
+// 		    if (document.readyState === 'complete') {
+// 		      l();
+// 		    } else if (window.attachEvent) {
+// 		      window.attachEvent('onload', l);
+// 		    } else {
+// 		      window.addEventListener('DOMContentLoaded', l, false);
+// 		      window.addEventListener('load', l, false);
+// 		    }
+// 		  })();
+// 		  ChannelIO('boot', {
+// 		    "pluginKey": "9d365c6a-5805-4bb8-bcf9-ae50ea56746a"
+// 		  });
+		</script>
+		<!-- End Channel Plugin -->
+    </div>
+</footer>
+<!-- 팝업 - 요약보기 -->
+
+		<div class="popup_left-slide move_summary_view19124">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>정책연구시리즈</b>
+		        <strong>에너지 산업 육성을 위한 시장 설계</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		오늘날 기후위기 대응과 탄소중립 달성에 대한 필요성이 커지는 상황에서, 재생에너지와 저탄소 공정 확산을 위한 지원이 확대되고 있다. 동시에 신성장 동력 확보와 보호무역 강화로 인한 국내 산업 육성 요구도 늘어나고 있다. 하지만 산업 육성 정책은 가격 신호 왜곡과 자원배분 비효율, 통상 리스크를 초래할 수 있다는 우려도 함께 커지고 있다. 본 연구는 이런 문제의식에 기반해, 국내 에너지 산업 육성 정책과 에너지 시장 설계의 상호작용이 기업의 시장 참여와 효율성에 미치는 영향을 분석한다.<br /><br />이를 위해 국내외 기업 간 비용과 경쟁력 격차를 전제로 비대칭 경매 모형을 구축한다. 그리고 인프라 구축과 제도 개선 등 시장 진입 비용을 낮추는 수평적 지원정책과 함께, 국내 기업이 낙찰될 때 조건부 보조금을 제공하는 방식과 비가격 가점을 부여함으로써 시장과 연계하는 수직적 지원정책을 비교하여 분석한다. 균형 분석을 수행한 결과, 진입 비용이 존재하는 상황에서는 조건부 보조금이 시장 연계 방식보다 시장 참여를 덜 위축시켜서 자원배분 효율을 높일 가능성이 큰 것으로 나타났다. 또한 수평적 지원과 수직적 지원의 정책 조합은 국산 제품 사용 비중 목표를 달성하면서도 시장 왜곡을 줄이고 경쟁을 확대하는 데 유리한 것으로 나타났다.<br /><br />이러한 결과를 바탕으로 본 연구는 정책 목표를 구체화하고, 지원 대상과 수준을 설정하는 방향을 제시한다. 또한 비가격 배점을 포함한 시장 연계 방식의 설계, 통상 규범과의 정합성, 평가체계 등 핵심 정책 설계 원칙을 도출한다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view19124')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view19126">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>연구보고서</b>
+		        <strong>중대재해처벌법이 노동시장에 미친 영향</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		본 연구는 2021년 1월 제정되어 2022년 1월에 시행된 중대재해 처벌 등에 관한 법률(이하 중대재해처벌법)이 노동시장에 미친 영향을 연구하여 정책적 시사점을 도출한다.<br /><br />제2장에서는 연구의 배경이 되는 제도적 구조를 정리하고, 연구 주제를 도출한다. 구체적으로는 중대재해처벌법의 제정 배경·핵심 내용·초기 판례 동향 및 기존 논의를 정리한다. 이후 노동경제학적 관점에서 기업이 안전 투자와 고용량을 선택하는 간단한 모형을 이용하여 중대재해처벌법의 영향을 이론적으로 예측하고 연구 주제를 도출한다. 이론 모형에 의하면 중대재해처벌법은 기업의 안전 투자 수준을 증가시켜 사고를 감소시킬 것으로 예측되지만, 또한 노동수요에는 부정적 영향을 줄 것으로 예측된다.<br /><br />이후에는 제2장에서 도출한 이론적 예측을 실증적으로 검증한다. 제3장에서는 자체적으로 진행한 사업체 대상 설문조사 자료를 이용하여 분석한 결과, 중대재해처벌법 시행 이후 안전보건관리체계가 확충된 모습을 확인하였다. 그러나 안전보건관리체계의 양적 성장에도 불구하고, 질적인 향상은 제한적인 징후 역시 관찰되었다. <br /><br />제4장부터 제6장에서는 중대재해처벌법의 효과에 관한 인과적 분석 내용을 제시한다. 제4장에서는 안전 관련 투자의 투입 요소인 안전관리인력 노동시장에 미친 영향을 지역별 고용조사(B형) 자료와 통제집단합성 이중차분법(Synthetic Difference-in-Differences)을 이용하여 분석하였다. 분석 결과, 중대재해처벌법은 안전관리인력의 고용량을 증가시켰으며, 그 효과는 2022년에서 2024년에 걸쳐 더 커졌다. 그러나 임금에 미치는 영향은 2022년 하반기에 뚜렷하게 나타난 이후 점차 사라져, 2024년 하반기에는 통계적으로 유의하지 않은 수준까지 감소하였다. 이는 안전관리인력의 공급이 탄력적으로 늘어났음을 뜻한다. <br /><br />제5장에서는 중대재해처벌법이 사망사고 발생에 미친 영향을 분석하였다. 산업재해현황 자료와 산업 간 위험 정도의 차이를 이용한 이중차분법을 이용하여 분석한 결과, 중대재해처벌법은 3대 재래형 사고를 감소시켰으나 그 외 사고에는 뚜렷한 영향을 주지 않았다.<br /><br />제6장에서는 중대재해처벌법이 고위험 직업의 노동수요에 미친 영향을 분석하였다. 근로환경조사를 이용하여 직업별 위험 노출 정도를 추정하고, 이 결과를 지역별 고용조사(B형) 자료와 결합하였다. 연속적 처치집단 이중차분법(Continuous Treatment Difference-in-Differences)을 이용하여 중대재해처벌법의 영향을 추정한 결과, 중대재해처벌법 시행 이후 위험 노출도가 더 높은 직업의 고용량이 위험 노출도가 더 낮은 직업의 고용량에 비하여 감소했음을 발견하였다.<br /><br />제7장에서는 기존의 분석 결과를 노출하고, 이를 바탕으로 정책적 시사점을 도출한다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view19126')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view19167">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>정책연구시리즈</b>
+		        <strong>장기요양보험제도의 효과성 제고를 위한 연구</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		우리나라는 고령화의 진전에 따라 노인 의료비 지출이 증가하고 있으며, 특히 의료적 필요도는 낮지만 요양 필요도가 높은 노인이 고비용의 의료기관에 장기간 입원하는 이른바 사회적 입원 현상이 중요한 정책 과제로 지적되고 있다. 이러한 노인의 돌봄 수요 증가와 삶의 질 개선의 필요성, 그리고 비효율적인 의료비 지출 문제에 대응하기 위해 정부는 2008년에 노인장기요양보험제도를 도입하였다. 제도 도입 이후 장기요양 서비스의 대상과 범위는 지속적으로 확대되었으며, 도입 초기의 3등급 체계에서 경증 치매 노인을 포괄하는 6등급 체계로 개편되었다. 아울러 시설 중심의 급여 제공 방식에서 재가 중심으로 전환하고자 재가급여의 보장성도 강화되었다. <br /><br />본 연구는 노인코호트 DB를 활용하여 노인장기요양보험제도가 의료비 지출에 미치는 대체 효과를 분석함으로써, 현행 노인장기요양보험제도의 효과성을 검토하고자 한다. 또한 이러한 결과를 토대로 향후 장기요양보험제도의 의료 이용 대체 효과를 제고할 수 있는 정책적 시사점을 제시한다. 실증분석 방법으로는 노인장기요양보험제도의 각 등급 기준점 근방에서 시설 및 재가 급여 비용이 외생적으로 변화한다는 점에 착안하여, 경사형 회귀불연속설계(Fuzzy Regression Disontinuity Design)와 사건사 분석(Event Study Design)을 활용하였다.<br />각 등급 기준점 근방의 신규 등급인정 신청자를 비교·분석한 결과, 중증도가 높은 1~2등급에서는 시설급여 또는 재가급여의 확대가 의료시설 이용과 의료비 지출을 감소시키는 것으로 나타났다. 병원 유형별로는 병원급 의료기관과 요양병원에서의 의료비 지출이 감소하였으며, 이용 형태별로는 입원비가 감소한 것으로 나타났다. 반면, 3~5등급에서는 재가급여의 확대가 의료시설 이용이나 의료비 지출을 감소시키는 효과가 관찰되지 않았다. 한편, 사건사 분석 결과, 경증 치매환자를 대상으로 하는 인지지원등급에서는 재가급여 확대가 의료비 지출을 감소시키는 효과가 확인되었다. <br /><br />이러한 결과는 장기요양보험제도의 효과가 등급별로 이질적으로 나타날 수 있음을 보여준다. 특히 3~5등급의 경우 재가급여 서비스의 질과 양이 충분하지 않고, 의료와 요양의 복합적인 욕구를 지닌 노인에게 통합적인 지원을 제공하지 못했을 가능성을 시사한다. 반면, 다른 등급에 비해서 상대적으로 경증 질환을 가진 인지지원등급 노인의 경우 신체적 제약이 크지 않기에 주·야간보호센터와 같은 비교적 저비용의 돌봄서비스를 장시간 이용할 수 있는 여건이 조성되었고, 이로 인해 의료서비스 이용을 대체하는 효과가 상대적으로 크게 나왔을 가능성이 있다.<br />이러한 분석 결과를 바탕으로, 본 연구는 재가급여의 질적 개선과 더불어 2026년도부터 도입 예정인 통합돌봄지원제도가 안정적으로 정착하기 위한 정책 방안을 해외 사례를 중심으로 도출한다. 구체적으로는 의료와 요양 서비스를 연속적으로 제공할 수 있는 중간형 요양시설의 도입, 의료, 요양 통합돌봄 지원체계의 원활한 운영을 위한 전문인력 확보방안, 인구 소멸 지역에서의 효율적인 통합돌봄 인력 확충 방안, 그리고 노인의 의료기관 퇴원 이후 재가 복귀를 유도하기 위해 사회적 입원에 대한 책임 주체를 명확히 하는 방안들을 제안한다. 
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view19167')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view19166">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>정책연구시리즈</b>
+		        <strong>모바일 생태계의 경쟁에 대한 연구: 앱마켓의 시장지배력을 중심으로</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		본 연구는 자세한 데이터를 기반으로 앱마켓 관련 시장에 대해서 심층적으로 분석하고, 앱마켓 플랫폼의 시장지배력에 대한 함의를 도출하고자 했다. 구체적으로는 구글과 애플의 앱마켓 간 그리고 앱마켓 내 주요 앱들의 경쟁 상황을 다각도로 분석하되, 해외 주요국의 시장과 구별되는 차이점이 있는지도 살펴보았다.<br /><br />먼저 제2장에서는 구글플레이와 앱스토어의 전반적인 시장 규모를 무료앱/유료앱, 일반앱/게임앱, 카테고리별 등 다양한 측면에서 분석했다. 국가별로 어느 앱마켓이 더 우세한지에 있어서는 꽤 큰 차이가 발견되는데, 국내에서는 구글플레이의 다운로드 수/매출 점유율이 2023년 기준으로 70%를 상회하고 있다. 그리고 모든 주요국에서 무료앱이 다운로드와 매출 측면 모두에서 차지하는 비중이 꾸준히 상승해서 최근에는 98%를 상회할 정도로 절대적인 수준을 보이고 있다. 앱마켓의 수익 모델이 유료앱의 판매보다는 인앱결제에 의존하고 있음을 시사한다. 다음으로 일반앱과 게임앱을 나누어 시장 규모를 비교했을 때는, 게임앱이 매출에서 차지하는 비중이 구글플레이가 93%, 앱스토어가 71%에 달하고 있어서 전체적인 매출 성장을 이끌고 있는 것으로 보인다. 한국의 경우 주요국과 비교했을 때 게임앱의 매출 비중이 유독 높을 뿐만 아니라, 일부 상위 카테고리로의 집중도 역시 현저히 높은 수준인 것으로 나타났다.<br /><br />다음으로 제3장에서는 상위 1,000개 앱에 대한 개별 앱 수준의 성과 데이터를 이용하여 앱마켓 내 상위 앱으로의 집중도를 분석했는데, 다운로드와 매출 측면 모두에서 집중도가 상당한 수준인 것으로 나타났다. 상위 1,000개 앱이 차지하는 비중은 매출액을 기준으로 했을 때 거의 100%에 가까운 수준이고, 다운로드 수를 기준으로 하더라도 60%에 달하고 있다. 또한 상위 1,000개 앱의 성과가 Pareto 분포를 따르는 것으로 가정하고 추정한 형태 매개변수의 값을 카테고리별로 비교했을 때는, 많은 경우(특히 무료 다운로드) 추정치가 1 미만이어서 성과가 극단적으로 최상위 앱에 치우친 형태인 것으로 나타났다. 특히 매출 분포의 경우에는 게임앱이 일반앱보다 전반적으로 더 불균등한 분포를 보이고 있다.<br /><br />이어서 제4장에서는 각 앱의 성과 순위가 얼마나 변동성을 보이는지에 대해 특히 최상위 앱을 중심으로 분석했다. 성과 순위를 여러 그룹으로 나눈 뒤 순위 그룹 간 월별 전환 행렬을 구해서 분석한 결과, 전반적으로 다음 달에도 동일한 순위 그룹에 머무르는 경향이 발견됐는데, 특히 높은 순위 그룹일수록 그룹이 유지되는 경향이 더 강하게 나타났다. 그리고 매출에 기반한 성과 순위가 다운로드 기준 순위에 비해 변동성이 상당히 작은 편인 것으로 나타났다.<br /><br />본고의 분석 결과는 앱마켓 시장이 경쟁적 병목 상황에 가까워서 플랫폼의 앱 개발자에 대한 시장지배력이 강하게 나타날 수 있는 데다가, 구글플레이와 앱스토어의 사용자 그룹이 이질적이어서 싱글호밍을 하고 있는 소비자에 대한 앱마켓 간의 경쟁 또한 제한될 가능성을 보여준다. 특히 한국의 경우 다른 주요국과 비교했을 때 게임앱이 매출에서 차지하는 비중이 절대적인 데다가, 인기 카테고리(특히 인앱구매가 활발한 게임 카테고리)로의 집중 경향이 두드러진다. 이로 인해, 한편으로 앱마켓의 입장에서는 인기 게임앱을 유치하는 것이 중요해지고, 다른 한편으로 앱 개발자의 입장에서는 사용자의 관심을 끌기 위해 앱마켓의 차트 순위나 피처링 등 마케팅 수단이 중요해진다. 즉, 앱마켓 관련 주요 경쟁 사건인 인앱결제 강제, 피처링을 활용한 다른 앱마켓의 배제, 자사우대 행위 등의 유인이나 효과가 강화될 수 있는 환경이므로 경쟁당국의 면밀한 관찰이 요구된다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view19166')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view18941">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>연구보고서</b>
+		        <strong>노인돌봄 인력의 전망과 정책 대응</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		노인돌봄 일자리는 노동집약적이며 감정 소모적인 동시에 저숙련자가 비교적 쉽게 진입할 수 있는 저임금 일자리이다. 이런 이유로 전 세계적으로 노인돌봄 일자리는 선호도가 낮으며, 고령화가 진행된 선진국들은 서비스 인력 부족 문제를 겪고 있다. 우리나라는 2024년 12월 65세 이상 고령인구가 전체 인구의 20% 이상을 차지하는 초고령사회로 진입하였다. 또한 베이비붐 세대가 75세 이상 후기 고령자로 진입하는 2030년 이후에는 노인돌봄서비스가 필요한 초고령인구 규모가 빠른 증가세를 나타내면서 노인돌봄 분야의 수급 불균형 문제가 가까운 시일 내에 심화될 것으로 예상된다.<br /><br />본 연구는 우리나라 노인돌봄서비스 인력의 현황과 한계를 확인하고 노인돌봄 인력 정책의 개선 방향을 제안하는 것을 목표로 한다. 이를 위해 노인돌봄 인력 수급 추계를 통해 앞으로 부족한 인력의 규모를 전망하고 인력 확충 정책 대응 방향에 대해 논의한다. 또한 인력의 양적, 질적 확충이 노인의 삶의 질 개선에 미친 영향을 실증분석하고, 이를 통해 현재 노인돌봄 인력 정책의 개선 방향을 제안하는 것을 목표로 한다.<br /><br />제2장에서는 미래의 노인돌봄서비스에 대한 수요 규모를 전망하고 요양보호사 인력 공급 규모를 추계한다. 추계 결과에 근거해 앞으로 필요한 인력의 규모를 가늠하고, 노인돌봄서비스 수급 불균형 문제를 전국 수준과 광역 시도의 지역 수준에서 검토하는 것을 목표로 한다. 추계 결과에 따르면 초고령인구 규모의 빠른 증가로 장기요양서비스에 대한 수요는 가파르게 증가할 것으로 전망되는 반면 요양보호사 인력의 증가세는 수요의 증가세에 미치지 못해 인력 수급 불균형이 심화될 것으로 예상된다. 지역별 고령화 정도의 차이와 경제활동인구 규모의 차이로 노인돌봄 인력 수급 불균형 정도의 지역별 편차는 현재보다 확대될 것으로 전망된다. 이러한 결과는 지역의 인력을 확충하기 위해서는 보다 적극적인 정책 대응이 필요함을 제시한다.<br /><br />다만, 공급 확충만으로 지속적인 수요 증가에 대응하는 것은 한계가 있다. 따라서 고령층의 건강 관리를 통한 수요 관리 전략이 동반될 필요가 있다. 이를 확인하기 위해 제2장에서는 과거 10년간 고령인구의 건강수준 개선을 반영한 서비스 수요 추계를 수행하였다. 분석 결과에 따르면 일상생활수행능력을 포함한 고령층의 기능 상태는 개선되었으며, 이러한 건강 개선이 일정 기간 지속된다면 장기요양서비스에 대한 수요는 건강 개선을 반영하지 않은 수요 전망에 비해 4~7% 감소한다. 분석 결과에 바탕해 제2장에서는 고령자의 건강 증진 및 기능 개선을 반영하여 노인돌봄서비스를 수요 측면에서 관리할 필요성에 대해 논의한다.<br /><br />제3장에서는 요양시설의 노인돌봄 인력 확충이 서비스 수급자의 건강 성과에 미친 영향을 분석해, 요양보호사 인력 확충을 위한 투자가 비용효과적인 정책 대응일 수 있음을 제시한다. 이를 위해 건강보험 청구자료와 노인장기요양보험 DB를 이용해 2018년의 최저임금 인상과 2022년의 요양시설 요양보호사 인력 배치 기준 변화가 시설의 인력 고용과 시설서비스 수급자의 의료서비스 이용에 미친 영향을 분석한다. 분석 결과에 따르면 요양시설의 인력 확충은 서비스 수급자의 의료서비스 이용 감소로 이어져 건강 개선에 긍정적인 영향을 미친 것으로 나타난다.<br /><br />제4장에서는 간호기능을 중심으로 한 노인돌봄 인력의 전문성 강화가 서비스 수급자의 삶의 질 개선에 긍정적인 영향을 미친 것을 실증적으로 확인하고, 인력의 전문성 강화 필요성에 대해 논의한다. 이를 위해 제4장에서는 2018년의 최저임금 인상이 유발한 요양시설 간호 인력의 숙련도 구성 변화가 수급자의 의료서비스 이용에 미친 영향 분석과 2019년부터 시행된 전문요양실 시범사업의 시행이 시설급여 수급자의 의료서비스 이용에 미친 영향을 분석한다. 분석 결과에 따르면 요양시설 간호 인력의 숙련도 구성 변화는 요양서비스의 질에 민감한 상병(욕창, 요로감염, 치매)으로 인한 의료서비스 이용 감소와 유의한 관련이 있는 것으로 확인된다. 전문요양실 시범사업의 시행은 시설 입소자의 의료서비스 이용, 특히 비용이 높은 입원서비스 이용 감소에 유의한 효과가 있는 것으로 나타나며, 그 결과 시설 입소자의 총의료비 지출이 감소한 것으로 확인된다. 장기요양 급여비의 증가가 의료비 지출 감소 효과를 일부 상쇄하나 전문요양실 시범사업은 시설 입소자의 합리적 의료서비스 이용 관리라는 정책목표에 부합되는 사업으로 평가할 수 있다.<br /><br />제5장에서는 노인돌봄 분야의 외국인 인력에 대한 이해를 돕는 것을 목표로, 요양보호사 중 외국인 인력의 특성을 행정자료를 이용해 제한적인 수준이나마 확인한다. 이를 위해 노인장기요양보험 DB를 이용해 요양시설 근로 기록이 있는 외국인 요양보호사의 특성을 내국인 요양보호사와 비교하였다. 요양보호사 중 외국인 인력은 빠르게 증가하고 있으나 2023년 기준 전체 근로 요양보호사의 1%에 미치지 못해 제한적인 숫자만이 일자리로 진입하고 있는 것으로 확인된다. 또한 인력의 고령화 정도가 높아 젊은 외국인 인력을 활용한 요양보호사 인력의 노동생산성 제고를 기대하기 어렵다. 지역별 노인돌봄서비스 인력 수급 불균형 문제 대응이 시급한 상황이나 외국인 인력의 77% 이상이 수도권에 집중되어 지역별 격차 문제 해소에도 한계를 드러내고 있다. 외국인 요양보호사 인력의 이러한 특징은 현재 요양보호사 자격 취득 가능 비자 범주를 확대하는 방식의 외국인 인력 정책의 전환이 필요함을 보여준다. 이를 위해 제5장에서는 노인돌봄 인력 부족에 대한 대응으로 이민 인력 정책을 활용하는 국가의 정책 대응을 구체적으로 살펴보고 우리나라의 노인돌봄 분야 외국인 인력 정책에 대한 시사점을 검토한다.<br /><br />제6장에서는 앞선 장들에서 논의한 결과에 기반해 노인돌봄 인력의 정책 대응 방향에 대해 논의한다. 구체적으로 인력의 양적 확충 정책과, 인력의 전문성 강화를 통한 노인돌봄서비스의 질적 개선, 그리고 수요자 건강 관리를 통한 서비스 수요 관리의 세 가지 영역에서 대안을 검토한다. 인력의 양적 확충 정책 영역에서는 일자리 질 개선, 돌봄 기술을 활용한 업무 부담의 완화, 외국인 인력을 활용한 인력 확충 정책을 제안한다. 인력의 전문성 강화 영역에서는 요양시설 내 간호기능 강화의 필요성을 제시하며, 이를 위해 요양시설에서 수행할 수 있는 간호 처치의 범위를 명확히 하고, 시설 종사자를 대상으로 노인의학에 대한 교육 및 훈련을 강화하는 대안을 검토한다. 마지막으로 건강 관리를 통한 서비스 수요 관리를 위한 만성질환 및 정신건강 관리 방안을 살펴본다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view18941')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view19154">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>정책연구시리즈</b>
+		        <strong>기업 연구개발 조세지원 방식의 국제 비교와 정책 시사점</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		현대 경제에서 연구개발 활동은 내재되어 있는 불확실성이 크고 결과물이 공공재적 성격을 지니기 때문에, 민간기업의 자발적인 투자 수준은 사회적으로 바람직한 수준에 미치지 못하는 경향이 있다. 각국 정부는 이러한 시장 실패를 보완하기 위해 특허권 보호, 직접 보조금 지원, 그리고 연구개발 투자의 조세부담을 낮춰주는 조세지원 제도를 활용한다. 한국의 연구개발 조세지원의 주된 특징은 기업규모별 차등지원과 특정 기술유형(신성장·원천기술, 국가전략기술)에 대한 파격적인 지원이다. 그러나 2024년 기준 연구개발 조세지원을 신청한 기업 중 99.5%의 중소기업과 92.4%의 일반기업이 활용하는 일반 연구개발비에 대한 지원, 특히 일반기업에 대한 지원은 매우 낮은 수준이다. 본 연구는 중장기적으로 한국 경제의 미래 성장동력의 밑거름이 될 민간기업의 R&D 행위에 대한 조세지원 제도를 여타 주요 국가의 제도와 비교·평가하고, 향후 정책 방향에 대한 시사점을 제시한다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view19154')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view19123">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>정책연구시리즈</b>
+		        <strong>공교육 특성이 학생에게 미치는 영향 분석: 학군 내 고등학교 배정의 인과적 효과를 중심으로</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		본 연구는 2010년 서울의 고교 평준화 정책을 이용하여 학교 간 학업 성취도 차이가 개별 학생에 대한 학교 효과로 어떻게 이어지는지 실증적으로 분석하였다. ‘한국교육종단연구’ 2005년 데이터와 2010년 서울시 내 고등학교 단위 국가수준 학업성취도 평가 결과 자료를 연결하여 학생이 ‘우연히’ 평균 학업성취도 수준이 높은 학교로 진학했을 때의 효과를 추정하였다. 개별 학군 내 무작위 고교 배정이라는 가정을 보완하기 위해 학군 내 인접 고교를 묶는 클러스터링 작업을 거쳐 지리적으로 가까운 학교 그룹 내에서 분석을 진행함과 동시에 관측 가능한 여러 사회 ·경제적 배경 변수를 추가로 통제했다.<br /><br />분석 결과, 평균적으로 관찰되는 학교 간 학력 차이는 일정 부분 인과적인 학교 효과에서 비롯되는 것으로 나타났다. 학업성취도 평가 결과 평균적으로 ‘보통 이상’ 비율이 높은 학교에 진학한 학생은 고1 학업성취도 평가, 수능 성적과 수업 이해도에서 더 큰 개선을 보였다. 그러나 직접적인 학업 성취 이외의 가치관 형성과 비인지 역량 등의 측면에서는 유의한 효과를 발견하지 못했으며, 고교 입학 이전 이미 성취 수준이 높았던 학생들에게서 집중적인 학력 향상 효과가 있었다. 이는 학력 향상이 반드시 그 외 여러 학생들의 발달로 이어지지는 않음과 동시에 입시경쟁에서 이미 뒤처진 학생들에 대한 교육 투자가 상대적으로 미비할 수 있음을 시사한다.<br /><br />이어서 어떤 학교 특성이 추정된 학교 효과와 관련될 수 있는지 탐색하였다. 먼저 데이터 내 포함된 학교 유형 특성들 중 단성, 사립학교 여부, 고학력 교사 비율 등이 유의한 관계를 가지는 변수로 나타났다. 이어서 학생 및 교사에 대한 설문조사 결과들을 이용한 분석 결과 교사 역량, 학생들이 경험하는 교내 풍토, 그리고 엄격한 교칙 유지 여부 등도 뚜렷한 관련성을 보였다. 반대로 교원 1인당 학생 수, 정규직 교사 비율, 학생 1인당 학교 대지 면적 등의 특성들에 대해서는 유의한 관계를 찾지 못했다. 이상의 분석 결과는 교원 숫자와 같은 양적 변수보다 교원 역량과 교내 분위기와 같은 질적 특성들이 학교의 교육 효과 강화에 더 중요할 수 있음을 의미한다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view19123')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view19076">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>연구보고서</b>
+		        <strong>북한 산업·기업 데이터베이스를 통한 북한 경제구조 분석</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		본 연구는 북한의 산업·기업 DB를 활용하여 북한의 경제구조를 분석하고자 했다. DB를 통하여 북한의 기업 및 산업을 미시적 차원에서 분석하는 한편, 그 결과를 인공위성 지표와 교차 검증하는 과정을 담았다.<br /><br />제2장에서는 산업연구원의 DB 원자료를 받아 2000년부터 2024년까지 검토하고 재구성하였다. 연도별로 단절된 파일을 하나의 형태로 구축하고 중복되는 값을 삭제했으며, 각각 다르게 나타난 기업명은 통일시켰다. 다음으로 동일한 기업임에도 식별 변수가 불일치하는 경우에는 하나의 기준으로 정리하였으며, 필요할 경우 산업코드, 행정구역 등을 추가했다. 이렇게 본 연구에서 재구성된 DB는 기존 산업연구원의 DB와 비교하여 기업 관찰 수가 3,557개에서 3,973개로, 전체 보도 건수는 86,116건에서 153,047건으로 증가했다.<br /><br />제3장에서는 북한 기업의 분포와 변화 양상을 분석하여 매체 보도가 단순한 선전용이 아니라 일정한 경제적 함의를 지녔다는 점을 확인했다. 먼저 산업별 보도 비중은 한국은행 산업별 GDP 비율과 높은 상관성을 보였으며, 투자 보도는 1~2년 후 생산 보도의 증가로 이어지는 유의미한 경향을 확인했다. 특히 투자 보도의 영향력이 정치 보도보다 크게 나타났다. 다음으로 특정 시기 이후 부상하거나 쇠퇴한 기업을 식별했는데, 김정은 집권 이후 부상한 기업으로는 청천강계단식발전소, 단천발전소, 순천화학연합기업소 등이, 쇠퇴한 기업으로는 신창탄광, 검덕광산, 희천공작기계공장 등이 있었다. 또한 제재 이후 부상한 기업으로는 순천린비료공장, 설비조립연합기업소, 고성군민발전소 등이, 쇠퇴한 기업으로는 초산청년발전소, 사리원탄광, 금야청년탄광 등이 있었다.<br /><br />제4장에서는 재구성한 북한 산업·기업 DB를 통해 북한 산업에 대한 다각적 분석을 수행하였다. 산업별로는 시기에 따라 산업 보도와 기타 보도의 추세가 다르게 나타났으며, 이는 해당 산업의 생산과 투자 활동이 해당 시점에 얼마나 활발한지 혹은 침체되어 있는지와 밀접한 관련이 있는 것으로 보였다. 또한 북한 지역별로 주요 산업이 다르게 분포되어 있는데, 이는 자연적, 지리적, 인구·사회학적 요인이 작용한 것으로 분석되었다. ‘지방발전 20×10 정책’의 지역 선정과 관련하여서는, 정책의 성공 여부가 중요한 잣대인 지역이 있는 반면, 주민들의 생활수준이 열악한 지역이 초기에 선정되어 정책 목적에 맞게 지역 선정이 이루어진 곳도 있었다.<br /><br />제5장에서는 재구성된 DB와 위성관측 야간조도를 결합해 패널 회귀분석과 이벤트-스터디 분석을 수행함으로써 보도된 ‘투자’·‘생산’이 실제 조업 및 전력 사용 증가와 연계되는지 간접적으로 확인했다. 결과에 따르면, 투자·생산 보도는 모두 야간조도와 유의한 양(+)의 상관관계를 보였다. 이벤트-스터디 분석에서는 투자 기사를 ‘이벤트’로 두고, 사건 시점인 투자 보도 한 달 전을 기준으로 사후 효과를 추정하였다. 그 결과, 사건 이후 0~12개월 동안의 평균효과는 약 7.1%로 5% 수준에서 통계적으로 유의하였으며, 개별 시차 계수도 7~12개월 구간에 유의한 양(+)의 효과가 집중되었다. 이는 “투자 보도 이후 어느 정도 시차를 두고 해당 기업 주변의 조도가 지속적으로 밝아지는 경향”이 존재함을 시사한다. 나아가 투자·생산 보도 빈도에 가중치를 부여한 야간조도 지표를 구축해 한국은행 경제활동별 GDP와의 상관관계를 분석한 결과, 에너지·경공업·중화학공업에서 높은 상관성이 확인되었다.<br /><br />종합하면, 본 연구는 북한 매체의 보도를 단순한 선전물로 치부하지 않고, 경제정책 방향, 산업별 우선순위, 기업활동 실태 등을 간접적으로 파악할 수 있는 ‘근거’로서 주목했다. 그 결과, 보도가 거시경제적 변화를 직접 보여주지는 못하더라도 산업 혹은 기업 차원의 변화를 미시적으로 추적할 수 있는 일종의 ‘도구’로서 기능할 수 있다는 사실을 확인했다. 나아가 이러한 분석이 위성자료 등 대안 지표를 통해 검증된다면 분석의 잠재력은 한층 더 확장될 수 있을 것으로 기대된다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view19076')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view18832">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>연구보고서</b>
+		        <strong>혁신기업의 육성과 스케일업: 우리 경제의 새로운 성장동력 창출 전략</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		스케일업 기업은 경제에 새로운 활력을 불어넣고 국가경쟁력을 강화하는 데 핵심적인 역할을 한다. 이들 기업은 신산업 분야에서 디지털 전환, 친환경 기술, 신재생 에너지 등과 같은 혁신을 선도하며, 산업구조 변화를 가속화하고 지속가능한 성장을 이끄는 동력으로 작용한다. 이러한 측면에서 스케일업 기업의 성장을 촉진하는 최적의 생태계를 조성하고, 고성장 기업이 지속적으로 배출될 수 있는 환경을 마련하는 것은 국가경쟁력을 강화하는 데 중요한 역할을 할 수 있다. 그러나 현실적으로 우리나라의 많은 기업들이 스케일업 과정에서 적합한 인재 확보, 디지털 도구의 효과적 활용, 연구개발 협력, 글로벌 시장 진출 등 다양한 장벽에 직면하고 있다.<br /><br />본 연구는 우리나라 기업 생태계가 혁신적이고 경쟁력 있는 기업들에 대해 국내 시장은 물론 글로벌 시장에서도 지속적으로 성장할 수 있는 환경을 제공하고 있는지 점검한다. 그리고 그러한 환경을 충분히 제공하지 못한 부분에 집중하여, 보다 바람직한 생태계로 전환하기 위한 정책방향과 실행전략을 제시한다. 연구는 총 4개의 주요 장으로 구성되어 있다. 이하 문단에서는 각 장에서 다루는 주요 내용을 제2장부터 제5장까지 순차적으로 요약한다.<br /><br /><br />제2장  혁신기업의 성장을 위한 스케일업 정책 개선 방향 연구<br /><br />스케일업 기업은 경제성장과 고용을 이끄는 핵심 동력으로 작용할 뿐만 아니라 경제의 총생산성을 향상시키는 역할도 중요하다. 주요국에서 스케일업 기업을 정책의 초점으로 설정하여 다양한 정책을 시행하고 있는 것을 확인하였다. 제2장에서 우리나라 고성장 기업의 성장동학을 실증분석을 통해 진단하고, 기업의 고성장 가능성을 높이는 주요 요인에 대해 분석한 결과는 다음과 같이 요약될 수 있다.<br /><br />첫째, 지난 15년 동안 일정 규모 이상의 기업 수는 증가했지만, 고성장 기업 수의 비율은 2009년 12% 수준에서 2022년 8% 수준으로 하락하였다. 고성장 기업의 매출액 비중은 2009년 22%에서 2022년 13%로 하락하였으며, 종사자 수 비중은 같은 기간 20%에서 11%로 하락하였다. 젊은 기업의 비중 또한 크게 하락하였는데, 젊은 기업 중 고성장 기업 비중과 기성 기업 중 고성장 기업 비중의 하락이 유사하게 나타났다. 동시에 매출액이 오히려 감소하는 역성장 기업의 비율이 상당히 증가하였다. 다양한 측면에서 기업의 성장동학이 감소하였으며, 특히 고성장 기업의 활동 감소가 정도의 차이는 있지만 산업과 지역 전반에서 관찰된다. 제조업에서 고성장 기업 비중의 하락폭이 컸고 수도권 이외 지역에서 제조업 비중이 더 높은 것을 고려하면, 수도권 외 지역에서 성장 역동성이 더욱 하락하였다고 할 수 있다.<br /><br />둘째, 고성장 기업의 비중 변화 원천에 대한 분석에서 기업의 업력과 관련하여, 고성장 기업 비중이 높은 업력 6~9년, 10~19년 그룹에서 고성장 기업 비중의 감소가 가장 크게 나타났다. 특히 모회사가 없는 단독 기업의 경우에 해당 현상이 두드러지게 나타났다. 기업규모와 관련하여 고성장 기업의 성장률이 낮아지는 현상이 종사자 수 규모별로 큰 차이 없이 나타났다. 디지털 전환이 기업의 성장을 촉진할 수 있는 수단이 되지만, 디지털 집약도가 높은 산업에서 고성장 기업의 비중이 가장 크게 하락하였다.<br /><br />셋째, 스케일업 동인에 대한 분석 결과, 고성장 기업이 되기 위해서는 생산성 향상, 인적자원의 확보, 연구개발투자 및 무형자산 보유, 특허권 확보와 같은 혁신과 지식 기반의 요소가 중요한 역할을 하며, 국제화 정도 또한 긍정적인 역할을 하였다. 서비스업의 경우 일부 요인은 고성장 가능성을 높이는 효과가 제한적으로 나타났다. 생산성 향상과 인적자원 확보, 무형자산이 주요 성장 동인으로 나타난 결과는 현 스케일업 기업지원정책의 지원 대상과 수단 설정에 참고가 될 수 있다. 스케일업 지원정책이 혁신, 무형자산 투자, 네트워크 확장 및 해외진출과 관련한 활동을 지원하면서 해당 활동이 생산성 향상으로 이어질 수 있도록 해야 한다.<br /><br />이어서 제2장에서는 우리나라의 수많은 기업지원정책 중 스케일업 기업지원정책을 분별하고 정책수단의 편중과 지원방식의 문제를 지적하였다. 우리나라의 경우 연구개발비(R&D) 지원사업으로 비용을 지원하는 것에 그치는 사업이 다수인 것으로 나타났다. 정책 지원이 스케일업 기업에 대한 잘못된 가정을 바탕으로 대상을 한정하여 실행하는 경우, 정책의 효과성이 크게 감소할 수 있음을 논의하였다. 스케일업 기업의 경우, 혁신, 생산성 향상, 네트워크 형성, 해외진출 등 성장을 위한 다양한 전략에 대한 정보와 실질적인 지원이 필요하며, 스케일업의 성장 동학과 원인에 대한 이해를 바탕으로 한 정책 설계가 필요하다. 연구 결과를 바탕으로 우리나라 스케일업 정책이 기업의 성장을 효과적으로 지원할 수 있는 정책 개선 방향을 제시하였다.<br /><br /><br />제3장  스타트업 육성을 위한 규제 개선 방향: 글로벌 접근성 강화를 중심으로<br /><br />스타트업의 성공은 각 국가의 경제사회 환경에 따라 달라지지만, 공통적인 요소도 존재한다. 인재 유입, 금융, 네트워크 강화가 그것인데, 이들은 스타트업 생태계 활성화의 핵심 요소이며 개별 스타트업의 스케일업을 위해서도 중요한 요소이다. 우리나라는 꾸준한 창업지원정책으로 이러한 요인들을 강화해 왔고, 그 결과 세계에서도 상위권에 속하는 창업 생태계를 구축했다.<br /><br />그러나 이와 같이 잘 구축된 스타트업 창업 생태계임에도 글로벌화 등의 측면에서는 미흡한 부분이 존재한다. 정부에서 추진하는 최근의 스타트업 정책에서도 글로벌화 부분이 강조되어 진행되고 있다. 스타트업 선진국인 싱가포르, 이스라엘, 미국, 영국, 프랑스의 사례를 통해 글로벌화 추진 정책에서 필요한 규제 문제를 검토하였다. 주로 창업 및 취업 비자 정책, 아웃바운드 정책을 비교하였다.<br /><br />창업비자에서는 주요 선진국에서 공통적으로 민간 지원기관 및 투자자의 평가를 중심으로 비자 승인을 하고 있는 것을 발견할 수 있다. 이는 우리나라의 정량적인 비자 승인 시스템과는 비교되는 모습이다. 정형화하기 어려운 스타트업의 성공 가능성을 판단하기 위해서는 정성적인 평가도 중요한 것을 알 수 있다. 또한 취업비자 사례와 아웃바운드 규제 사례를 통해 우리나라 정책에 반영할 방향성을 찾을 수 있었다.<br /><br />제3장에서는 이와 같은 해외 사례를 바탕으로 우리나라 창업비자, 취업비자, 그리고 아웃바운드 정책에 있어서의 개선 방향을 제시한다. 창업비자의 경우, 민관 인증기관과의 평가 협력, 스타트업 전용 비자 도입, 장기 체류 및 영주권 연계성 강화, 사업성 및 성장성 중심의 평가 시스템 마련, 일관된 비자 시스템, 행정절차의 간소화를 개선 방향으로 제시하였다. 취업비자는 가산점 제도와 같이 여러 평가요소들을 반영한 종합적인 평가가 필요하며, 성장을 지원하고자 하는 산업군별로 세부 규정을 달리할 필요가 있다. 마지막으로 아웃바운드 제도로는 싱가포르의 이중공제제도, 이스라엘의 양도세 면제제도를 참고하여 우리 상황에 맞게 도입하는 것을 고려할 수 있다.<br /><br /><br />제4장  수출을 통한 혁신기업의 스케일업 전략<br /><br />제4장에서는 기업이 스케일업 과정에서 마지막 단계로 직면하는 수출시장 진출과 성장을 이론적 및 실증적으로 분석하고, 이를 토대로 수출 관련 정책의 바람직한 방향성을 제시하고자 한다. <br /><br />먼저 한국의 수출동학에서 다음 몇 가지 중요한 사실을 발견하였다. 수출활동은 강한 지속성을 지니고, 과거 수출 경험과 기업규모가 현재 수출 참여에 중요한 영향을 미친다. 진입률은 낮지만, 초기 진입 기업의 수출 비중은 생존 시 빠르게 증가한다. 퇴출률은 전반적으로 낮으며, 수출 감소가 퇴출 전 급격히 이루어진다. 이러한 사실은 초기 진입비용과 지속적 성장의 중요성을 보여준다.<br /><br />다음으로 경제학 모형을 통해 수출동학과 정책의 이론적 근거를 검토하였다. 수출 여부는 고정비용, 생산 효율성, 무역비용에 따라 결정되며, 과거 수출 경험이 고정비용을 낮춰 지속성을 강화한다. 무역비용은 경험에 따라 감소하며, 이는 기업의 수출 비중 증가로 이어진다. 이러한 사실은 수출 고정비용을 보전하고 생산성을 높이며, 무역비용을 낮추는 정책수단을 통해 정부가 원하는 방향으로 수출동학을 유도할 수 있음을 시사한다. 특히 정부는 수출지원 프로그램을 통해 수출 고정비용을 낮추고, 연구개발 지원 및 관세율 정책을 통해 생산성을 제고하고 무역비용을 완화할 수 있다.<br /><br />위 정책수단 중 대표적인 무역정책인 관세율 정책을 적극적으로 추진하기 어려운 현 상황에서, 제4장의 실증분석에서는 수출지원 프로그램에 집중하여 그 효과성을 점검하였다. 처치집단과 비교집단을 구성해 분석한 결과, 수출지원정책은 기업의 수출시장 진입 확률을 유의미하게 높이고, 수출 국가 수를 확대하는 데 기여하였다. 그러나 정책 효과는 초기 시장 진입과 확장에 국한되었으며, 매출 성장 및 부가가치 증대와 같은 스케일업 효과는 제한적이었다.<br /><br />결국 향후 정책은 효과성이 입증된 수출지원 프로그램의 적극적인 활용에 더해, 기업이 수출시장에 진출한 이후 지속적인 성장을 할 수 있도록 인센티브를 제공하는 방향으로 설계될 필요가 있다.<br /><br /><br />제5장  기업 스케일업을 위한 산학연 협력의 현황과 과제<br /><br />제5장에서는 기업의 스케일업 및 창업의 원천으로 작용할 수 있는 산학연 협력의 현황을 진단하고, 이를 개선하기 위한 정책적 제언을 제시하는 것을 목적으로 한다. 산학연 협력에 초점을 둔 이유는 다음과 같다. 첫째, ‘개방형 혁신’으로 대표되는 기업혁신활동의 변화, 둘째, 산학연에 분포된 혁신자원의 효율적 활용, 셋째, 지역혁신체계 관점에서 부문 간 연계 강화의 필요성이다.<br /><br />제5장에서는 다음 질문에 답하고자 시도한다. 첫째, 공공 R&D 결과물은 활발한 창업과 산학연 연구협력 등의 경로를 통해 기업의 혁신역량 및 생산성 제고에 기여하고 있는가? 둘째, 만약 그렇지 못하다면 현실적으로 산학연 협력이 활성화되지 못하고 있는 장애요인은 무엇인가? 셋째, 현재 추진 또는 계획 중인 산학연 연구협력을 위한 정책들을 고려할 때, 산학연 협력을 활성화하기 위해서는 어떤 정책 개선이 필요한가?<br /><br />분석 결과는 다음과 같다. 첫째, 기업 스케일업을 위한 산학연 혁신 협력의 중요성이 점점 커지고 있다. 이는 혁신 창출을 위한 비용 증가, 기업혁신 경로의 다양화, 장소 기반 혁신체계의 중요성 부각에 기인한다. 특히 대학과 공공연구소가 기술 및 비기술 혁신 수요를 가진 기업과 긴밀히 협력할 경우, 기업 스케일업을 촉진하고 혁신체계의 전반적 효율성을 제고할 수 있다.<br /><br />둘째, 지난 20여 년간 산학연 협력 강화를 위한 정책에 따라 대학과 공공연구소의 기술 이전 및 사업화 성과는 점진적으로 증가했으나, 여전히 기업 수요에 기반한 실질적 협력으로 이어지지는 못하고 있다. 대학은 산학협력단 및 기술지주회사 설립 등 제도적 기반이 확충되었음에도 불구하고, 산업체와의 협력을 통한 수익보다는 정부 R&D 과제 수주에 의존하는 경향을 보인다. 특히 중소기업보다는 중견대기업이 공공연구기관과의 협력을 더 활발히 수행하고 있다.<br /><br />셋째, 산학연 협력 부진은 다양한 요인에서 기인한다. 기술 공급 측면에서는 대학과 공공연구소의 논문 및 특허 생산이 양적으로 확대되었으나, 사업화 연계 가능성이 높은 임팩트 있는 특허의 비중은 낮다. 기술 수요 측면에서는 데이터 제약으로 인과성을 명확히 확인하기 어렵지만, 대체로 기업규모가 크고 일정 수준의 혁신역량을 보유한 기업들이 대학 및 공공연구소와의 협력을 활발히 수행하는 반면, 중소기업의 협력 수요는 뚜렷하지 않다.<br /><br />넷째, 기술 이전 조직과 전담 인력이 확충되었음에도 전문인력 확보는 여전히 부족한 실정이다. 그러나 이는 산학연 협력 부진의 결정적 요인으로 보기 어렵다. 또한 산학연 협력 정책은 지식, 인력, 물적 교류 전반에서 다양한 정부 사업으로 추진되고 있어, 지원제도의 부재를 협력 부진의 핵심 원인이라고 보기는 어렵다. 다만, 산학연 협력 정책의 주무 부처가 교육부로 설정되면서 기술과 인력 공급 측면에 초점이 맞춰진 점이 한계로 지적된다.<br /><br />이러한 연구 결과를 바탕으로 제5장에서는 다음의 정책 제언을 제시한다. 우선, 산학연 협력 부진의 주요 원인은 기술 및 인력의 공급과 수요 간 미스매치로 판단되며, 이를 해결하기 위해 기업 수요에 기반한 산학연 협력활동으로의 전환이 필요하다. 이를 위해 기업의 협력 수요를 정밀히 진단하고 이에 대응하는 전략을 마련해야 한다. 특히 중소기업을 협력의 주요 대상으로 삼되, 중소기업의 혁신역량이 대기업 및 중견기업에 비해 상대적으로 취약한 현실을 고려해 대기업과 중견기업도 협력 과정에 참여하도록 유인할 필요가 있다. 또한 교육부 주도의 기존 산학연 협력 정책을 전환하여, 산업체의 혁신 및 인력 협력 수요를 파악하고 이를 중개할 수 있는 지역 기반의 ‘원스톱 서비스’ 도입이 필요하다.<br /><br />다음으로, 2025년부터 기존 교육부 지방대학 지원사업과 통합되어 추진될 예정인 RISE 사업의 틀 안에서 산학연 협력을 효과적으로 지원하기 위한 전략적 기획이 요구된다. 특히 RISE 사업은 지역의 인구 및 산업 구조 변화에 대응하여 지방대학의 역할을 수요 중심으로 특성화하는 방향과 연계해 추진해야 한다. 또한 RISE 사업이 지방대학 지원 관련 5개 사업을 통합 운영할 계획인 만큼, 이들 간의 연계 강화와 효율적인 재원 배분을 위한 치밀한 전략이 필수적이다.<br /><br />마지막으로, 출연연구기관은 정부 R&D 투자의 약 40%를 사용하는 핵심 주체로, 연구성과 확산을 위해 출연연의 특성을 고려한 특성화와 일부 산업연계 기술 연구기관의 산업체 지원 기능 강화가 필요하다. 아울러, 출연연의 연구성과물 이전 및 사업화를 촉진하기 위해 보유 기술의 전용실시권 허용, 기술료 감면제도 개선 등 제도적 개선방안도 검토해야 한다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view18832')">팝업 닫기</button>
+		</div>
+	
+		<div class="popup_left-slide move_summary_view19064">
+			<div class="pop_top">
+		        <h4 class="v01">요약 보기</h4>
+		        <b>정책연구시리즈</b>
+		        <strong>도시규모분포에 대한 연구: 분포결정요인과 공간정책의 후생효과</strong>
+		    </div>
+		    <div class="pop_conts">
+		    	<div class="editor-template">
+		    		수도권 인구집중과 그 대응은 우리나라 최대 현안 중 하나이다. 본 연구는 수량적 공간일반균형모형을 활용하여 우리나라 도시규모분포의 결정요인을 구조적으로 추정하고, 지역정책의 효과와 현행 인구분포의 최적성을 정량적으로 분석함으로써 지역발전정책의 접근법과 가능성을 검토한다.<br /><br />전국 161개 시군을 도시로 정의하고 2005~19년 자료를 분석한 결과, 동 기간 수도권 인구 비중 증가를 추동한 요인은 총요소생산성 격차였으며, 쾌적도와 인구수용비용 등 다른 요인은 이를 억제하는 방향으로 작동했다. 특히 2010년대에 발생한 거제, 구미, 울산 등 비수도권 제조업 도시의 총요소생산성 하락이 수도권 집중을 가속화했다. 2010년대 인구분산정책, 즉 혁신도시와 세종시 건설은 인프라 개선을 통해 해당 도시 인구를 일정 수준 성장시켰으나, 총요소생산성 개선이 부진하여 도시 성장 및 수도권 집중 완화 효과는 제한적이었다.<br /><br />비수도권 7개 도시를 권역별 거점도시로 선정하여 육성하는 가상실험 결과, 수도권 비중을 2000년 수준으로 낮추기 위해서는 상당한 수준의 총요소생산성 및 인프라 효율성 개선이 필요하다. 이를 후생손실 없이 정당화할 수 있는 정책비용 상한 폭은 제한적이다. 이러한 투자로도 수도권 비중은 여전히 인구의 절반에 가깝다. 최적공간정책 분석 결과, 집적경제의 효율적 활용을 위해서는 전국 대도시로의 인구집중이 권고된다. 이때 서울뿐 아니라 부산 대구 광주 등 비수도권 대도시로도 인구가 재배치되어 수도권 집중은 2019년 수준에서 더 심화되지 않을 수 있다.<br /><br />이 결과는 세 가지 시사점을 제공한다. 첫째, 수도권 집중의 핵심 요인은 생산성 변화로서, 지역발전정책이 실효성을 갖기 위해서는 생산성을 실질적으로 향상시키는 정책수단의 개발이 선행되어야 한다. 둘째, 낙관적 시나리오에서도 수도권 비중을 43% 이하로 낮추기 어려우며, 정책개입에는 선택과 집중이 요구된다. 셋째, 최적공간정책은 대도시 집중을 권고하나 이것이 반드시 수도권 집중 심화로 연결되지는 않는다. 수도권 집중 심화 방지가 목적이라면 권역별 거점도시 육성을 통한 선제적 공간구조 재편이 유효할 수 있다.
+		    	</div>
+		    </div>
+		    <button type="button" class="close" onclick="kdifn.slideLeftClose('.move_summary_view19064')">팝업 닫기</button>
+		</div>
+	
+</body>
+</html>
