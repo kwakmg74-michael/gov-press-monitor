@@ -89,6 +89,32 @@ def run_git(args: list[str], cwd) -> tuple[int, str]:
     return done.returncode, (done.stdout + done.stderr).strip()
 
 
+def sync(cwd=None, git=run_git) -> bool:
+    """올리기 전에 상대방이 올린 것을 먼저 받아 둔다.
+
+    2026-10-05부터 두 대가 같은 저장소를 쓴다. 서버PC는 하루 세 번 수집해
+    화면을 올리고, pc1은 코드를 고쳐 올린다. 받아 두지 않으면 나중에
+    올리는 쪽이 `rejected (non-fast-forward)` 로 통째로 튕긴다 — 그런데
+    수집은 성공했다고 적히니, 겉으로는 멀쩡해 보인다.
+
+    --autostash 는 아직 담지 않은 것(방금 만든 docs 같은)을 잠깐 치웠다가
+    도로 꺼내 준다. 부딪히면 반쯤 걸친 상태로 두지 않고 되돌린다.
+    """
+    cwd = Path(cwd or project_root())
+    code, said = git(["pull", "--rebase", "--autostash"], cwd)
+    if code == 127:  # git이 없으면 어차피 올리지도 못한다
+        return True
+    if said:
+        print(said)
+    if code == 0:
+        return True
+
+    git(["rebase", "--abort"], cwd)
+    print("  [!] 다른 PC가 올린 것과 부딪혔습니다. 이번에는 올리지 않습니다.")
+    print("      수집한 자료는 그대로 있습니다. 손으로 `git pull` 한 번 해 주세요.")
+    return False
+
+
 def push(paths, message: str, cwd=None, git=run_git) -> int:
     """담을 것만 담아 올린다.
 
@@ -114,13 +140,23 @@ def push(paths, message: str, cwd=None, git=run_git) -> int:
         print(said)
     if code:
         print("  [!] 담아 두지 못했습니다.")
+        # 2026-10-04에 서버PC가 여기서 멈췄다. 수집은 다 됐는데 화면만
+        # 그대로였다. git 이 내놓는 말이 영어라 알아보기 어려웠다.
+        if "who you are" in said or "user.email" in said:
+            print('      이 PC의 git에 "누가 올리는지"가 설정돼 있지 않습니다.')
+            print("      아무 폴더에서나 한 번만 치면 계속 유지됩니다:")
+            print('        git config --global user.name "이름"')
+            print('        git config --global user.email "메일주소"')
         return 1
 
     code, said = git(["push"], cwd)
     if said:
         print(said)
     if code:
-        print("  [!] 올리기 실패. 인터넷이나 GitHub 로그인을 확인하세요.")
+        if "non-fast-forward" in said or "rejected" in said:
+            print("      다른 PC가 먼저 올렸습니다. `git pull --rebase` 뒤에 다시 해 주세요.")
+        else:
+            print("  [!] 올리기 실패. 인터넷이나 GitHub 로그인을 확인하세요.")
         return 1
 
     print(f"  올렸습니다: {SITE_URL}")

@@ -202,6 +202,7 @@ def test_한_판이_수집부터_올리기까지_이어진다(tmp_path, monkeypa
                         lambda a: (_ for _ in ()).throw(RuntimeError("연결 끊김")))
     monkeypatch.setattr(cli.dashboard, "publish", lambda db, f: (한_일.append("화면"), tmp_path)[1])
     monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 한_일.append("올리기") or 0)
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: True)
     monkeypatch.setattr(cli.daily, "project_root", lambda: tmp_path)
 
     code = cli.main(["--db", str(tmp_path / "t.db"), "daily"])
@@ -234,6 +235,7 @@ def test_테스트가_깨지면_올리지_않는다(tmp_path, monkeypatch, capsy
     class 깨짐:
         returncode = 1
 
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: True)
     monkeypatch.setattr(cli.subprocess, "run", lambda *a, **k: 깨짐())
     올린것: list = []
     monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 올린것.append(1) or 0)
@@ -250,6 +252,7 @@ def test_할_말을_안_적으면_그냥_올린다(tmp_path, monkeypatch):
         returncode = 0
 
     적힌말: list[str] = []
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: True)
     monkeypatch.setattr(cli.subprocess, "run", lambda *a, **k: 통과())
     monkeypatch.setattr(cli.storage, "stats", lambda db: {"total": 10})
     monkeypatch.setattr(cli.dashboard, "publish", lambda db, f: tmp_path)
@@ -266,3 +269,122 @@ def test_올릴_때_코드와_화면을_함께_담는다():
         assert 것 in cli.RELEASE_PATHS
     assert "." not in cli.RELEASE_PATHS
     assert "articles.db" not in cli.RELEASE_PATHS
+
+
+# --- 두 대가 같은 저장소를 쓴다 -------------------------------------------------
+#
+# 2026-10-05부터 서버PC가 수집·발행을 맡고, pc1은 코드를 고쳐 올린다.
+# 받아 두지 않고 올리면 나중에 올리는 쪽이 통째로 튕기는데, 수집은
+# 성공했다고 적히니 겉으로는 멀쩡해 보인다. 9월에 두 달을 그렇게 보냈다.
+
+def test_올리기_전에_먼저_받는다():
+    git = 가짜git()
+    assert daily.sync(git=git) is True
+    assert git.부른것 == [["pull", "--rebase", "--autostash"]]
+
+
+def test_담아_두지_않은_것은_잠깐_치워_둔다():
+    """방금 만든 docs 가 그대로 있으면 받아 오다 막힌다."""
+    git = 가짜git()
+    daily.sync(git=git)
+    assert "--autostash" in git.부른것[0]
+
+
+def test_부딪히면_반쯤_걸친_채로_두지_않는다(capsys):
+    git = 가짜git(터질곳={"pull": 1})
+    assert daily.sync(git=git) is False
+    assert ["rebase", "--abort"] in git.부른것
+    assert "이번에는 올리지 않습니다" in capsys.readouterr().out
+
+
+def test_git이_없으면_받기도_건너뛴다():
+    assert daily.sync(git=가짜git(터질곳={"pull": 127})) is True
+
+
+def test_받지_못하면_올리지_않는다(tmp_path, monkeypatch, capsys):
+    from govpress import __main__ as cli
+
+    for 이름 in ("_collect", "_collect_local", "_collect_public"):
+        monkeypatch.setattr(cli, 이름, lambda a: 0)
+    monkeypatch.setattr(cli.dashboard, "publish", lambda db, f: tmp_path)
+    monkeypatch.setattr(cli.daily, "project_root", lambda: tmp_path)
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: False)
+    올린것: list = []
+    monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 올린것.append(1) or 0)
+
+    assert cli.main(["--db", str(tmp_path / "t.db"), "daily"]) == 1
+    assert not 올린것
+    # 그래도 화면은 만들어 둔다. 다음 차례에 저절로 올라간다.
+    assert "화면 만들기" in (tmp_path / daily.LOG_NAME).read_text(encoding="utf-8")
+
+
+def test_받기는_화면을_만들기_전에_한다(tmp_path, monkeypatch):
+    """받은 뒤에 만들어야 남의 것 위에 내 화면이 얹힌다."""
+    from govpress import __main__ as cli
+
+    순서: list[str] = []
+    for 이름 in ("_collect", "_collect_local", "_collect_public"):
+        monkeypatch.setattr(cli, 이름, lambda a: 0)
+    monkeypatch.setattr(cli.daily, "project_root", lambda: tmp_path)
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: 순서.append("받기") or True)
+    monkeypatch.setattr(cli.dashboard, "publish",
+                        lambda db, f: 순서.append("화면") or tmp_path)
+    monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 순서.append("올리기") or 0)
+
+    cli.main(["--db", str(tmp_path / "t.db"), "daily"])
+    assert 순서 == ["받기", "화면", "올리기"]
+
+
+def test_이름이_없으면_무엇을_치라고_알려_준다(capsys):
+    """서버PC가 여기서 멈췄다. git 이 내놓는 말이 영어라 알아보기 어려웠다."""
+    def git(a, cwd):
+        if a[:1] == ["diff"]:
+            return 1, ""
+        if a[0] == "commit":
+            return 1, "*** Please tell me who you are.\nRun\n  git config --global user.email"
+        return 0, ""
+
+    assert daily.push(["docs"], "실패", git=git) == 1
+    나온것 = capsys.readouterr().out
+    assert "git config --global user.name" in 나온것
+    assert "kwakmg74" not in 나온것  # 공개 저장소에 올라가는 코드다
+
+
+def test_먼저_올린_사람이_있으면_그렇게_말해_준다(capsys):
+    def git(a, cwd):
+        if a[:1] == ["diff"]:
+            return 1, ""
+        if a[0] == "push":
+            return 1, "! [rejected]  main -> main (non-fast-forward)"
+        return 0, ""
+
+    assert daily.push(["docs"], "늦었다", git=git) == 1
+    assert "다른 PC가 먼저 올렸습니다" in capsys.readouterr().out
+
+
+def test_올리기도_받기부터_한다(tmp_path, monkeypatch, capsys):
+    """pc1에서 손으로 올릴 때도 마찬가지다."""
+    from govpress import __main__ as cli
+
+    순서: list[str] = []
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: 순서.append("받기") or True)
+    monkeypatch.setattr(cli.subprocess, "run",
+                        lambda *a, **k: 순서.append("테스트") or type("R", (), {"returncode": 0})())
+    monkeypatch.setattr(cli.storage, "stats", lambda db: {"total": 10})
+    monkeypatch.setattr(cli.dashboard, "publish",
+                        lambda db, f: 순서.append("화면") or tmp_path)
+    monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 순서.append("올리기") or 0)
+
+    assert cli.main(["release", "손본 것"]) == 0
+    assert 순서 == ["받기", "테스트", "화면", "올리기"]
+
+
+def test_받지_못하면_테스트도_돌리지_않는다(monkeypatch, capsys):
+    from govpress import __main__ as cli
+
+    돈것: list = []
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: False)
+    monkeypatch.setattr(cli.subprocess, "run", lambda *a, **k: 돈것.append(1))
+
+    assert cli.main(["release"]) == 1
+    assert not 돈것

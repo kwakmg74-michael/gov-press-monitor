@@ -306,21 +306,36 @@ def _daily_steps(args, root) -> int:
     step("공공기관", lambda: _collect_public(argparse.Namespace(
         db=args.db, only=None, pages=args.pages)))
 
+    # 화면을 만들기 전에 받아 둔다. 두 대가 같은 저장소를 쓰기 때문이다.
+    print()
+    print("--- 다른 PC가 올린 것 받기 ---")
+    받았나 = True
+    try:
+        받았나 = daily.sync(cwd=root)
+    except Exception as exc:  # noqa: BLE001
+        print(f"  [!] 받다가 멈췄습니다: {exc}")
+        받았나 = False
+
     step("화면 만들기", lambda: print(
         f"게시용 폴더 생성: {dashboard.publish(args.db, dashboard.PUBLISH_DIR).resolve()}"))
 
-    code = 0
     print()
     print("--- 인터넷에 올리기 ---")
-    try:
-        code = daily.push(
-            [dashboard.PUBLISH_DIR],
-            f"보도자료 화면 갱신 {started:%Y-%m-%d %H:%M}",
-            cwd=root,
-        )
-    except Exception as exc:  # noqa: BLE001
-        print(f"  [!] 올리다가 멈췄습니다: {exc}")
+    if not 받았나:
+        # 받지 못한 채 올리면 어차피 튕긴다. 화면은 이미 만들어 뒀으니
+        # 다음 차례에 저절로 올라간다.
+        print("  받아 오지 못해 이번에는 올리지 않습니다.")
         code = 1
+    else:
+        try:
+            code = daily.push(
+                [dashboard.PUBLISH_DIR],
+                f"보도자료 화면 갱신 {started:%Y-%m-%d %H:%M}",
+                cwd=root,
+            )
+        except Exception as exc:  # noqa: BLE001
+            print(f"  [!] 올리다가 멈췄습니다: {exc}")
+            code = 1
 
     걸린분 = round((datetime.now() - started).total_seconds() / 60)
     print()
@@ -341,7 +356,12 @@ def _release(args) -> int:
     root = daily.project_root()
 
     print()
-    print("[1/3] 테스트")
+    print("[1/4] 다른 PC가 올린 것 받기")
+    if not daily.sync(cwd=root):
+        return 1
+
+    print()
+    print("[2/4] 테스트")
     done = subprocess.run([sys.executable, "-m", "pytest", "-q"], cwd=str(root))
     if done.returncode:
         print()
@@ -350,14 +370,14 @@ def _release(args) -> int:
         return 1
 
     print()
-    print("[2/3] 화면 만들기")
+    print("[3/4] 화면 만들기")
     if not (storage.stats(args.db) or {}).get("total"):
         print(" [!] DB가 비어 있습니다. 먼저 수집부터 하세요.")
         return 1
     print(f"게시용 폴더 생성: {dashboard.publish(args.db, dashboard.PUBLISH_DIR).resolve()}")
 
     print()
-    print("[3/3] 올리기")
+    print("[4/4] 올리기")
     return daily.push(RELEASE_PATHS, args.message or "화면·설정 수정", cwd=root)
 
 
