@@ -637,3 +637,27 @@ def test_더_보기_칸은_필요없을_때_숨는다(tmp_path):
 def test_숨김이_다른_규칙에_밀리지_않는다(tmp_path):
     """.stale { display: flex } 가 [hidden] 을 눌러 이긴 일이 있었다."""
     assert "[hidden] { display: none !important; }" in render(tmp_path)
+
+
+# --- 언제 바뀌는지 적어 두기 ----------------------------------------------------
+#
+# 2026-10-05에 수집이 pc1에서 서버PC로 옮겨 가면서 시각이 바뀌었다.
+# 화면 문구는 pc1 시절("오전 10시")에 멈춰 있었다. 오류가 나지 않는 종류의
+# 어긋남이라, 보는 사람만 "안 바뀌네" 하고 돌아간다.
+
+def test_도는_시각이_화면에_적혀_있다(tmp_path):
+    html_text = render(tmp_path)
+    for 시각 in dashboard.UPDATE_TIMES:
+        assert 시각 in html_text
+
+
+def test_시각은_작업_스케줄러와_맞춰야_한다():
+    """고칠 때 저쪽도 같이 고치라는 말이 코드 옆에 있어야 한다."""
+    글 = Path(dashboard.__file__).read_text(encoding="utf-8")
+    머리 = 글[: 글.index("UPDATE_TIMES = ")]
+    assert "작업 스케줄러" in 머리.rsplit("\n\n", 1)[-1]
+
+
+def test_지금은_서버PC가_세_번_돈다():
+    """바뀌면 이 테스트가 먼저 깨져서, 화면 문구도 같이 보게 된다."""
+    assert dashboard.UPDATE_TIMES == ("오전 9시 30분", "오후 2시", "오후 5시")
