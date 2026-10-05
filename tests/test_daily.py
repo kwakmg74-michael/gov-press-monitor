@@ -295,21 +295,66 @@ def test_할_말을_안_적으면_그냥_올린다(tmp_path, monkeypatch):
     적힌말: list[str] = []
     monkeypatch.setattr(cli.daily, "sync", lambda **k: True)
     monkeypatch.setattr(cli.subprocess, "run", lambda *a, **k: 통과())
-    monkeypatch.setattr(cli.storage, "stats", lambda db: {"total": 10})
-    monkeypatch.setattr(cli.dashboard, "publish", lambda db, f: tmp_path)
     monkeypatch.setattr(cli.daily, "push", lambda 것, 말, **k: 적힌말.append(말) or 0)
 
     assert cli.main(["release"]) == 0
-    assert 적힌말 == ["화면·설정 수정"]
+    assert 적힌말 == ["코드 수정"]
 
 
-def test_올릴_때_코드와_화면을_함께_담는다():
+def test_올릴_때_코드를_담는다():
     from govpress import __main__ as cli
 
-    for 것 in ("govpress", "tests", "docs", "자동수집.bat", "올리기.bat"):
+    for 것 in ("govpress", "tests", "자동수집.bat", "올리기.bat", ".gitattributes"):
         assert 것 in cli.RELEASE_PATHS
     assert "." not in cli.RELEASE_PATHS
     assert "articles.db" not in cli.RELEASE_PATHS
+
+
+# --- pc1은 화면을 올리지 않는다 ---------------------------------------------------
+#
+# 수집은 서버PC가 맡고 pc1은 코드를 고친다. 그래서 두 대의 articles.db 가
+# 갈라진다 — 2026-10-05에 서버 10,809건, pc1 10,338건이었다.
+#
+# 예전처럼 올리기.bat 이 화면까지 다시 만들면, 코드 한 줄 고치려고 누른 것이
+# pc1의 낡은 DB로 사이트를 471건 뒤로 되돌린다. 오류는 나지 않는다.
+
+def test_손으로_올릴_때는_화면을_만들지_않는다(tmp_path, monkeypatch):
+    from govpress import __main__ as cli
+
+    class 통과:
+        returncode = 0
+
+    만들었나: list = []
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: True)
+    monkeypatch.setattr(cli.subprocess, "run", lambda *a, **k: 통과())
+    monkeypatch.setattr(cli.dashboard, "publish",
+                        lambda db, f: 만들었나.append(1) or tmp_path)
+    monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 0)
+
+    assert cli.main(["release", "코드만"]) == 0
+    assert not 만들었나
+
+
+def test_화면_폴더는_코드와_함께_담지_않는다():
+    """담으면 pc1에 남아 있던 낡은 docs 가 그대로 올라간다."""
+    from govpress import __main__ as cli
+
+    assert "docs" not in cli.RELEASE_PATHS
+
+
+def test_화면은_누가_만드는지_알려_준다(tmp_path, monkeypatch, capsys):
+    """'화면 만들기'가 사라졌는데 말이 없으면 빠진 줄 안다."""
+    from govpress import __main__ as cli
+
+    class 통과:
+        returncode = 0
+
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: True)
+    monkeypatch.setattr(cli.subprocess, "run", lambda *a, **k: 통과())
+    monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 0)
+
+    cli.main(["release", "코드만"])
+    assert "서버PC가 다음 수집 때" in capsys.readouterr().out
 
 
 # --- 두 대가 같은 저장소를 쓴다 -------------------------------------------------
@@ -412,12 +457,10 @@ def test_올리기도_받기부터_한다(tmp_path, monkeypatch, capsys):
     monkeypatch.setattr(cli.subprocess, "run",
                         lambda *a, **k: 순서.append("테스트") or type("R", (), {"returncode": 0})())
     monkeypatch.setattr(cli.storage, "stats", lambda db: {"total": 10})
-    monkeypatch.setattr(cli.dashboard, "publish",
-                        lambda db, f: 순서.append("화면") or tmp_path)
     monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 순서.append("올리기") or 0)
 
     assert cli.main(["release", "손본 것"]) == 0
-    assert 순서 == ["받기", "테스트", "화면", "올리기"]
+    assert 순서 == ["받기", "테스트", "올리기"]
 
 
 def test_받지_못하면_테스트도_돌리지_않는다(monkeypatch, capsys):

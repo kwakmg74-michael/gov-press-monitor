@@ -345,23 +345,36 @@ def _daily_steps(args, root) -> int:
 
 # 손으로 고친 것을 올릴 때 함께 담는 것들. 통째로 담지 않는 까닭은
 # 작업 중이던 것이 딸려 올라가면 안 되기 때문이다.
+# 손으로 고친 것을 올릴 때 담는 것들. docs 가 없는 것이 중요하다 —
+# 아래 _release 의 설명을 보라.
 RELEASE_PATHS = (
-    "govpress", "tests", "tools", "docs",
-    ".gitignore", "자동수집.bat", "올리기.bat",
+    "govpress", "tests", "tools",
+    ".gitignore", ".gitattributes", "자동수집.bat", "올리기.bat",
 )
 
 
 def _release(args) -> int:
-    """올리기.bat 이 부른다. 테스트가 깨지면 올리지 않는다."""
+    """올리기.bat 이 부른다. 코드만 올린다. 화면은 건드리지 않는다.
+
+    2026-10-05부터 수집은 서버PC가 맡는다. 그래서 두 대의 articles.db 가
+    갈라진다 — 그날 서버는 10,809건, pc1은 10,338건이었다.
+
+    예전처럼 여기서 화면을 다시 만들면, 코드 한 줄 고쳐 올리려고 누른 것이
+    pc1의 낡은 DB로 화면을 그려 서버가 올린 것을 덮어쓴다. 사이트가 471건
+    뒤로 돌아가는데 오류는 나지 않는다. 겉으로는 잘 올라간 것처럼 보인다.
+
+    그래서 화면 만들기를 뺐고, docs 도 담지 않는다. 화면은 서버PC가
+    다음 수집 때 자기 DB로 다시 만들어 올린다.
+    """
     root = daily.project_root()
 
     print()
-    print("[1/4] 다른 PC가 올린 것 받기")
+    print("[1/3] 다른 PC가 올린 것 받기")
     if not daily.sync(cwd=root):
         return 1
 
     print()
-    print("[2/4] 테스트")
+    print("[2/3] 테스트")
     done = subprocess.run([sys.executable, "-m", "pytest", "-q"], cwd=str(root))
     if done.returncode:
         print()
@@ -370,15 +383,12 @@ def _release(args) -> int:
         return 1
 
     print()
-    print("[3/4] 화면 만들기")
-    if not (storage.stats(args.db) or {}).get("total"):
-        print(" [!] DB가 비어 있습니다. 먼저 수집부터 하세요.")
-        return 1
-    print(f"게시용 폴더 생성: {dashboard.publish(args.db, dashboard.PUBLISH_DIR).resolve()}")
-
-    print()
-    print("[4/4] 올리기")
-    return daily.push(RELEASE_PATHS, args.message or "화면·설정 수정", cwd=root)
+    print("[3/3] 올리기")
+    code = daily.push(RELEASE_PATHS, args.message or "코드 수정", cwd=root)
+    if code == 0:
+        print()
+        print(" 코드만 올렸습니다. 화면은 서버PC가 다음 수집 때 새로 만들어 올립니다.")
+    return code
 
 
 def _open_folder(path) -> None:
