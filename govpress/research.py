@@ -619,7 +619,8 @@ LINKS: tuple[dict[str, str], ...] = (
     # --- 연구소 : 금융지주 ---
     {"name": "KB경영연구소", "group": "연구소",
      "note": "부동산·금융 시장 보고서. 민간이라 시각이 다르다",
-     "url": "https://www.kbfg.com"},
+     # kbfg.com 만으로는 KB금융그룹 대문이다. 연구소는 한 칸 더 들어간다.
+     "url": "https://www.kbfg.com/kbresearch/index.do"},
     {"name": "하나금융연구소", "group": "연구소",
      "note": "가계금융과 부동산 시장 분석",
      "url": "https://www.hanaif.re.kr"},
