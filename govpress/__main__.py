@@ -262,6 +262,41 @@ def _publish(args) -> int:
     return 0
 
 
+def _sync(args) -> int:
+    """받아 오기만 하고 끝낸다. 자동수집.bat 이 수집보다 먼저 부른다.
+
+    왜 따로 떼어 놓았는가 — 2026-10-09에 겪은 일이다.
+
+    10월 8일 저녁에 KB경영연구소 바로가기 주소를 고쳐 올렸다. 다음 날
+    아침 9시 반 수집에서 서버가 그 코드를 제대로 받아 갔다. 그런데
+    만들어진 화면에는 옛 주소가 그대로 있었다.
+
+    파이썬은 프로그램이 시작할 때 필요한 파일을 한 번 읽어 머리에
+    담아 둔다. 그 뒤에 git 이 디스크의 파일을 바꿔 놓아도, 이미 돌고
+    있는 프로그램은 자기가 담아 둔 옛 내용으로 끝까지 간다. 받기는
+    분명히 성공했는데, 그 판은 옛 코드로 화면을 그린 것이다.
+
+    오류는 나지 않는다. 다음 판부터는 새 코드로 돌기 때문에 하루면
+    저절로 맞아 버리고, 그래서 "고친 게 왜 안 보이지" 하고 한나절을
+    헤매게 된다.
+
+    그래서 받기를 별도의 파이썬 호출로 떼어 놓았다. 이 프로그램이
+    끝나고 나서 다음 호출이 시작되므로, 그때는 새 파일을 읽는다.
+    """
+    root = daily.project_root()
+    with open(root / daily.LOG_NAME, "a", encoding="utf-8") as fp:
+        both = daily.Tee(sys.stdout, fp)
+        was_out, was_err = sys.stdout, sys.stderr
+        sys.stdout = sys.stderr = both
+        try:
+            daily.banner(f"{datetime.now():%Y-%m-%d %H:%M}  자동 수집 시작")
+            print()
+            print("--- 다른 PC가 올린 것 받기 ---")
+            return 0 if daily.sync(cwd=root) else 1
+        finally:
+            sys.stdout, sys.stderr = was_out, was_err
+
+
 def _daily(args) -> int:
     """하루 세 번 도는 한 판. 자동수집.bat 이 부른다.
 
@@ -283,7 +318,8 @@ def _daily(args) -> int:
 
 def _daily_steps(args, root) -> int:
     started = datetime.now()
-    daily.banner(f"{started:%Y-%m-%d %H:%M}  자동 수집 시작")
+    if getattr(args, "sync", True):
+        daily.banner(f"{started:%Y-%m-%d %H:%M}  자동 수집 시작")
 
     def step(title, work) -> None:
         """한 곳이 자빠져도 나머지는 마저 돈다.
@@ -306,15 +342,17 @@ def _daily_steps(args, root) -> int:
     step("공공기관", lambda: _collect_public(argparse.Namespace(
         db=args.db, only=None, pages=args.pages)))
 
-    # 화면을 만들기 전에 받아 둔다. 두 대가 같은 저장소를 쓰기 때문이다.
-    print()
-    print("--- 다른 PC가 올린 것 받기 ---")
+    # 받기는 보통 앞 단계(govpress sync)가 이미 끝내 놓았다. 아래 _sync 의
+    # 설명을 보라. 손으로 `govpress daily` 만 부른 경우에만 여기서 받는다.
     받았나 = True
-    try:
-        받았나 = daily.sync(cwd=root)
-    except Exception as exc:  # noqa: BLE001
-        print(f"  [!] 받다가 멈췄습니다: {exc}")
-        받았나 = False
+    if getattr(args, "sync", True):
+        print()
+        print("--- 다른 PC가 올린 것 받기 ---")
+        try:
+            받았나 = daily.sync(cwd=root)
+        except Exception as exc:  # noqa: BLE001
+            print(f"  [!] 받다가 멈췄습니다: {exc}")
+            받았나 = False
 
     step("화면 만들기", lambda: print(
         f"게시용 폴더 생성: {dashboard.publish(args.db, dashboard.PUBLISH_DIR).resolve()}"))
@@ -457,6 +495,10 @@ def main(argv=None) -> int:
     day = sub.add_parser("daily", help="하루치 한 판 — 수집·화면·올리기 (자동수집.bat)")
     day.add_argument("--days", type=int, default=7, help="정부기관을 최근 며칠분 볼지 (기본 7)")
     day.add_argument("--pages", type=int, default=3, help="지자체·공공기관을 몇 페이지씩 볼지 (기본 3)")
+    day.add_argument("--no-sync", dest="sync", action="store_false",
+                     help="받기를 건너뛴다 (자동수집.bat이 앞 단계에서 이미 받았다)")
+
+    sub.add_parser("sync", help="다른 PC가 올린 것 받기 — 자동수집.bat의 첫 단계")
 
     rel = sub.add_parser("release", help="테스트하고 코드까지 올리기 (올리기.bat)")
     rel.add_argument("message", nargs="?", default="", help="무엇을 고쳤는지 한 줄")
@@ -488,6 +530,8 @@ def main(argv=None) -> int:
         return _dashboard(args)
     if args.command == "publish":
         return _publish(args)
+    if args.command == "sync":
+        return _sync(args)
     if args.command == "daily":
         return _daily(args)
     if args.command == "release":

@@ -38,13 +38,47 @@ def test_배치파일이_왜_이런지_적어_둔다(name):
     assert "ASCII-only" in 글
 
 
+def _govpress_calls(name) -> list[str]:
+    줄 = [l.strip() for l in (ROOT / name).read_text(encoding="ascii").splitlines()]
+    return [l for l in 줄 if "-m govpress " in l]
+
+
 @pytest.mark.parametrize("name", BATS)
 def test_배치파일은_파이썬만_부른다(name):
     """일이 배치와 파이썬으로 나뉘어 있으면 어느 쪽이 도는지 헷갈린다."""
-    줄 = [l.strip() for l in (ROOT / name).read_text(encoding="ascii").splitlines()]
-    부른_것 = [l for l in 줄 if "-m govpress " in l]
-    assert len(부른_것) == 1, 부른_것
-    assert 부른_것[0].startswith('"%PY%" -u -m govpress ')
+    부른_것 = _govpress_calls(name)
+    assert 부른_것, f"{name}이 govpress를 부르지 않습니다"
+    for 줄 in 부른_것:
+        assert 줄.startswith('"%PY%" -u -m govpress '), 줄
+
+
+# --- 받기는 수집과 다른 판에서 해야 한다 ------------------------------------------
+#
+# 2026-10-09. 10월 8일 저녁에 올린 코드가 다음 날 아침 수집에 반영되지
+# 않았다. 받기는 성공했는데 화면은 옛 코드로 그려졌다.
+#
+# 파이썬은 시작할 때 파일을 읽어 머리에 담는다. 돌고 있는 중에 git 이
+# 디스크를 바꿔 놔도 이미 담아 둔 것은 안 바뀐다. 그래서 받기를 따로
+# 떼어, 그 판이 끝나고 다음 판이 새 파일을 읽게 했다.
+
+def test_받기와_수집은_따로_부른다():
+    부른_것 = _govpress_calls("자동수집.bat")
+    assert len(부른_것) == 2, 부른_것
+    assert 부른_것[0].endswith("govpress sync")
+    assert 부른_것[1].endswith("govpress daily --no-sync")
+
+
+def test_받기가_수집보다_먼저다():
+    """순서가 뒤집히면 받아 온 코드가 그 판에 쓰이지 않는다."""
+    글 = (ROOT / "자동수집.bat").read_text(encoding="ascii")
+    assert 글.index("govpress sync") < 글.index("govpress daily")
+
+
+def test_왜_두_번_부르는지_파일_안에_적어_둔다(name="자동수집.bat"):
+    """한 줄로 합치고 싶어지는 모양이다. 까닭이 곁에 있어야 한다."""
+    글 = (ROOT / name).read_text(encoding="ascii")
+    assert "Two python calls on purpose" in 글
+    assert "already" in 글 and "running process" in 글
 
 
 # --- PC마다 다른 파이썬 ---------------------------------------------------------
@@ -472,3 +506,78 @@ def test_받지_못하면_테스트도_돌리지_않는다(monkeypatch, capsys):
 
     assert cli.main(["release"]) == 1
     assert not 돈것
+
+
+# --- govpress sync ------------------------------------------------------------
+
+def test_받기만_하는_명령이_있다(tmp_path, monkeypatch, capsys):
+    from govpress import __main__ as cli
+
+    받았나: list = []
+    monkeypatch.setattr(cli.daily, "project_root", lambda: tmp_path)
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: 받았나.append(1) or True)
+    모은것: list = []
+    monkeypatch.setattr(cli, "_collect", lambda a: 모은것.append(1))
+
+    assert cli.main(["sync"]) == 0
+    assert 받았나 == [1]
+    assert not 모은것, "받기만 해야 하는데 수집까지 했습니다"
+
+
+def test_받기도_기록에_남는다(tmp_path, monkeypatch):
+    """창을 안 보고 있었어도 나중에 읽을 수 있어야 한다."""
+    from govpress import __main__ as cli
+
+    monkeypatch.setattr(cli.daily, "project_root", lambda: tmp_path)
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: True)
+    cli.main(["sync"])
+
+    적힌 = (tmp_path / daily.LOG_NAME).read_text(encoding="utf-8")
+    assert "자동 수집 시작" in 적힌
+    assert "다른 PC가 올린 것 받기" in 적힌
+
+
+def test_못_받으면_받기가_실패로_끝난다(tmp_path, monkeypatch):
+    from govpress import __main__ as cli
+
+    monkeypatch.setattr(cli.daily, "project_root", lambda: tmp_path)
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: False)
+    assert cli.main(["sync"]) == 1
+
+
+def test_앞에서_받았으면_다시_받지_않는다(tmp_path, monkeypatch):
+    """두 번 받으면 느리기만 한 게 아니라 머리글이 두 번 찍힌다."""
+    from govpress import __main__ as cli
+
+    for 이름 in ("_collect", "_collect_local", "_collect_public"):
+        monkeypatch.setattr(cli, 이름, lambda a: 0)
+    monkeypatch.setattr(cli.dashboard, "publish", lambda db, f: tmp_path)
+    monkeypatch.setattr(cli.daily, "project_root", lambda: tmp_path)
+    monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 0)
+    받았나: list = []
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: 받았나.append(1) or True)
+
+    assert cli.main(["--db", str(tmp_path / "t.db"), "daily", "--no-sync"]) == 0
+    assert not 받았나
+
+    적힌 = (tmp_path / daily.LOG_NAME).read_text(encoding="utf-8")
+    assert 적힌.count("자동 수집 시작") == 0, "머리글은 앞 단계(sync)가 찍는다"
+    assert "화면 만들기" in 적힌
+
+
+def test_손으로_daily만_부르면_그때는_받는다(tmp_path, monkeypatch):
+    """자동수집.bat 을 거치지 않는 길도 막히면 안 된다."""
+    from govpress import __main__ as cli
+
+    for 이름 in ("_collect", "_collect_local", "_collect_public"):
+        monkeypatch.setattr(cli, 이름, lambda a: 0)
+    monkeypatch.setattr(cli.dashboard, "publish", lambda db, f: tmp_path)
+    monkeypatch.setattr(cli.daily, "project_root", lambda: tmp_path)
+    monkeypatch.setattr(cli.daily, "push", lambda *a, **k: 0)
+    받았나: list = []
+    monkeypatch.setattr(cli.daily, "sync", lambda **k: 받았나.append(1) or True)
+
+    assert cli.main(["--db", str(tmp_path / "t.db"), "daily"]) == 0
+    assert 받았나 == [1]
+    적힌 = (tmp_path / daily.LOG_NAME).read_text(encoding="utf-8")
+    assert 적힌.count("자동 수집 시작") == 1
