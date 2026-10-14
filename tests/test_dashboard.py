@@ -6,7 +6,7 @@ import json
 import re
 from pathlib import Path
 
-from govpress import agencies, dashboard, models, presale, storage
+from govpress import agencies, dashboard, models, presale, research, storage
 from govpress.korea_kr import parse_list
 
 FIXTURE = Path(__file__).parent / "fixtures" / "korea_list.html"
@@ -689,19 +689,31 @@ def test_분양도_글을_긁지_않는다(tmp_path):
     assert models.PRESALE in dashboard.LINK_ONLY
 
 
-def test_네_곳이_들어_있다(tmp_path):
+def test_네_곳이_적은_차례대로_나온다(tmp_path):
+    """가나다순이면 GH가 맨 앞에 온다. 자주 보는 순서가 따로 있다."""
     탭 = _presale_tab(tmp_path)
-    assert {l["name"] for l in 탭["links"]} == {
-        "LH청약플러스", "LH 공지사항", "SH청약", "GH청약"}
+    assert [l["name"] for l in 탭["links"]] == [
+        "LH청약+", "LH 공지", "SH청약", "GH청약"]
     assert 탭["agencies"] == 4
+
+
+def test_연구업계는_그대로_가나다순이다(tmp_path):
+    """마흔세 곳은 눈으로 찾아야 하므로 묶음 안에서 차례가 서 있어야 한다."""
+    assert not getattr(research, "KEEP_WRITTEN_ORDER", False)
+    묶음별: dict[str, list[str]] = {}
+    for link in _research_tab(tmp_path)["links"]:
+        묶음별.setdefault(link["group"], []).append(link["name"])
+    for 묶음, 이름 in 묶음별.items():
+        한글 = [n for n in 이름 if n[:1] >= "가"]
+        assert 한글 == sorted(한글), 묶음
 
 
 def test_LH는_공고와_공지가_따로다(tmp_path):
     """일정 변경·정정은 공고 목록이 아니라 공지사항에 먼저 뜬다."""
     주소 = {l["name"]: l["url"] for l in _presale_tab(tmp_path)["links"]}
-    assert "wrtanc" in 주소["LH청약플러스"]      # 공고 목록
-    assert "noti" in 주소["LH 공지사항"]          # 알려드려요
-    assert 주소["LH청약플러스"] != 주소["LH 공지사항"]
+    assert "wrtanc" in 주소["LH청약+"]      # 공고 목록
+    assert "noti" in 주소["LH 공지"]          # 알려드려요
+    assert 주소["LH청약+"] != 주소["LH 공지"]
 
 
 def test_분양은_대문이_아니라_공고_목록으로_간다(tmp_path):
@@ -709,7 +721,7 @@ def test_분양은_대문이_아니라_공고_목록으로_간다(tmp_path):
     for site in _presale_tab(tmp_path)["links"]:
         assert "/" in site["url"].split("//", 1)[1], site["name"]
     주소 = {l["name"]: l["url"] for l in _presale_tab(tmp_path)["links"]}
-    assert 주소["LH청약플러스"].startswith("https://apply.lh.or.kr/")
+    assert 주소["LH청약+"].startswith("https://apply.lh.or.kr/")
     assert 주소["SH청약"].startswith("https://www.i-sh.co.kr/")
     assert 주소["GH청약"].startswith("https://gh.or.kr/")
 

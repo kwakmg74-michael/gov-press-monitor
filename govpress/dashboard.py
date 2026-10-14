@@ -192,8 +192,15 @@ def _link_tab(category: str) -> dict:
     module = _MODULES[category]
     order = list(module.LINK_GROUP_ORDER)
 
+    # 모듈이 차례를 직접 정해 둔 경우(분양)에는 적힌 그대로 둔다. 곳이
+    # 몇 안 되고 자주 보는 순서가 따로 있으면 가나다순이 오히려 거슬린다.
+    적은차례 = {link["name"]: i for i, link in enumerate(module.LINKS)}
+    적은대로 = getattr(module, "KEEP_WRITTEN_ORDER", False)
+
     def place(link) -> tuple:
         group = order.index(link["group"]) if link["group"] in order else len(order)
+        if 적은대로:
+            return (group, 적은차례[link["name"]], "")
         # 한글 이름을 먼저, 그다음 영문. 국내 기관을 찾으러 오는 화면이다.
         name = link["name"]
         return (group, 0 if name[:1] >= "가" else 1, name)
