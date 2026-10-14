@@ -16,7 +16,7 @@ import json
 from datetime import date, datetime
 from pathlib import Path
 
-from . import agencies, local_gov, models, public_org, research, storage
+from . import agencies, local_gov, models, presale, public_org, research, storage
 
 
 # 분류별 명단표를 가진 모듈. 정부기관은 코드표(agencies)라 따로 다룬다.
@@ -24,6 +24,7 @@ _MODULES = {
     models.LOCAL: local_gov,
     models.PUBLIC: public_org,
     models.RESEARCH: research,
+    models.PRESALE: presale,
 }
 
 
@@ -109,7 +110,10 @@ def _roster_size(category: str) -> int:
     if category == models.GOVERNMENT:
         return len(agencies.MINISTRIES)
     module = _MODULES.get(category)
-    if module is not None:
+    # 바로가기만 놓는 분류(분양)는 수집기가 없어 셀 게시판도 없다. 그쪽은
+    # _link_tab 이 바로가기 수를 세므로 여기 오지 않지만, 나중에 누가
+    # LINK_ONLY 에서 빼더라도 여기서 터지지는 않게 해 둔다.
+    if module is not None and hasattr(module, "agency_names"):
         # 게시판이 아니라 기관을 센다. 한 기관에 게시판이 여럿이어도 한 곳이다.
         return len(module.agency_names())
     return 0
@@ -169,7 +173,8 @@ def cutoff_date(today: date | None = None) -> str:
 # 연구소는 여섯 곳을 합쳐 한 달 22건이라 매일 훑을 칸이 아닌데, 게시판
 # 구조는 제일 까다로웠다. 들이는 품에 견줘 나오는 게 적어서 화면에서는
 # 가는 길만 놓아 둔다. 수집기 자체는 `research.SITES`에 그대로 있다.
-LINK_ONLY: dict[str, str] = {models.RESEARCH: "research"}
+# 분양은 처음부터 바로가기만 두기로 했다. 까닭은 presale.py 맨 위에.
+LINK_ONLY: dict[str, str] = {models.RESEARCH: "research", models.PRESALE: "presale"}
 
 # 탭에 적는 이름. 저장할 때 쓰는 분류 이름과 화면에 적는 이름을 갈라 둔다.
 #

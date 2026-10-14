@@ -7,12 +7,13 @@ from dataclasses import asdict, dataclass, field
 from datetime import date
 
 # 대시보드 상단 탭. 순서가 곧 탭 순서다.
-CATEGORIES = ("정부기관", "지자체", "공공기관", "연구소")
+CATEGORIES = ("정부기관", "지자체", "공공기관", "연구소", "분양")
 
 GOVERNMENT = "정부기관"
 LOCAL = "지자체"
 PUBLIC = "공공기관"
 RESEARCH = "연구소"
+PRESALE = "분양"
 
 _DATE_RE = re.compile(r"(\d{4})[.\-/](\d{1,2})[.\-/](\d{1,2})")
 

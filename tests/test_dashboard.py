@@ -6,7 +6,7 @@ import json
 import re
 from pathlib import Path
 
-from govpress import agencies, dashboard, models, storage
+from govpress import agencies, dashboard, models, presale, storage
 from govpress.korea_kr import parse_list
 
 FIXTURE = Path(__file__).parent / "fixtures" / "korea_list.html"
@@ -52,7 +52,7 @@ def test_링크가_새_탭으로_열린다(tmp_path):
 
 # --- 탭 --------------------------------------------------------------------
 
-def test_네_분류가_모두_탭으로_들어간다(tmp_path):
+def test_모든_분류가_탭으로_들어간다(tmp_path):
     """수집기가 없는 분류도 자리를 지켜야 나중에 붙일 곳이 보인다."""
     tabs = read_tabs(render(tmp_path))
     assert [t["category"] for t in tabs] == list(models.CATEGORIES)
@@ -662,3 +662,81 @@ def test_시각은_작업_스케줄러와_맞춰야_한다():
 def test_지금은_서버PC가_세_번_돈다():
     """바뀌면 이 테스트가 먼저 깨져서, 화면 문구도 같이 보게 된다."""
     assert dashboard.UPDATE_TIMES == ("오전 9시 30분", "오후 2시", "오후 5시")
+
+
+# --- 분양 탭 -------------------------------------------------------------------
+#
+# 2026-10-14에 붙였다. 연구·업계와 같은 결 — 글을 긁지 않고 가는 길만 놓는다.
+# 다만 주소가 가리키는 곳이 반대다. 연구·업계는 "그 기관이 뭘 내놓나"를
+# 둘러보는 자리라 대문이 오래 가고, 분양은 "지금 뜬 공고가 뭔가"를 보러
+# 가는 자리라 공고 목록에 바로 닿아야 한다.
+
+def _presale_tab(tmp_path) -> dict:
+    tabs = read_tabs(render(tmp_path))
+    return [t for t in tabs if t["category"] == models.PRESALE][0]
+
+
+def test_분양_탭이_연구업계_옆에_온다(tmp_path):
+    차례 = [t["label"] for t in read_tabs(render(tmp_path))]
+    assert 차례[-2:] == ["연구·업계", "분양"]
+
+
+def test_분양도_글을_긁지_않는다(tmp_path):
+    """공고는 결국 원문을 열어야 한다. 제목만 베껴 와도 한 번 더 누르게 될 뿐."""
+    탭 = _presale_tab(tmp_path)
+    assert 탭["kind"] == "links"
+    assert 탭["articles"] == []
+    assert models.PRESALE in dashboard.LINK_ONLY
+
+
+def test_네_곳이_들어_있다(tmp_path):
+    탭 = _presale_tab(tmp_path)
+    assert {l["name"] for l in 탭["links"]} == {
+        "LH청약플러스", "LH 공지사항", "SH청약", "GH청약"}
+    assert 탭["agencies"] == 4
+
+
+def test_LH는_공고와_공지가_따로다(tmp_path):
+    """일정 변경·정정은 공고 목록이 아니라 공지사항에 먼저 뜬다."""
+    주소 = {l["name"]: l["url"] for l in _presale_tab(tmp_path)["links"]}
+    assert "wrtanc" in 주소["LH청약플러스"]      # 공고 목록
+    assert "noti" in 주소["LH 공지사항"]          # 알려드려요
+    assert 주소["LH청약플러스"] != 주소["LH 공지사항"]
+
+
+def test_분양은_대문이_아니라_공고_목록으로_간다(tmp_path):
+    """여기만은 깊이 들어가는 것이 맞다. 연구·업계 쪽 규칙과 반대다."""
+    for site in _presale_tab(tmp_path)["links"]:
+        assert "/" in site["url"].split("//", 1)[1], site["name"]
+    주소 = {l["name"]: l["url"] for l in _presale_tab(tmp_path)["links"]}
+    assert 주소["LH청약플러스"].startswith("https://apply.lh.or.kr/")
+    assert 주소["SH청약"].startswith("https://www.i-sh.co.kr/")
+    assert 주소["GH청약"].startswith("https://gh.or.kr/")
+
+
+def test_분양도_묶음을_따른다(tmp_path):
+    탭 = _presale_tab(tmp_path)
+    assert {l["group"] for l in 탭["links"]} <= set(presale.LINK_GROUP_ORDER)
+
+
+def test_분양_주소에_빈_물음표를_남기지_않는다():
+    """`...do?` 처럼 끝나면 주소창에 군더더기가 남는다."""
+    for link in presale.LINKS:
+        assert not link["url"].endswith("?"), link["name"]
+        assert link["url"].startswith("https://"), link["name"]
+
+
+def test_분양_바로가기마다_설명이_있다():
+    for link in presale.LINKS:
+        assert link["note"].strip(), link["name"]
+
+
+def test_분양은_수집_대상이_아니다():
+    """수집기를 붙이지 않았다. SITES 가 생기면 그때 다시 생각한다."""
+    assert not hasattr(presale, "SITES")
+    assert not hasattr(presale, "agency_names")
+
+
+def test_수집기_없는_분류를_세어도_터지지_않는다():
+    """나중에 누가 LINK_ONLY 에서 빼더라도 화면 만들기가 멈추면 안 된다."""
+    assert dashboard._roster_size(models.PRESALE) == 0
