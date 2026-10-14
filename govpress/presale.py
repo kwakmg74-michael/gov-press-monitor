@@ -24,11 +24,15 @@ LINK_GROUP_ORDER = ("공공분양",)
 # 아래 적은 차례를 화면에서도 그대로 쓴다.
 #
 # 연구·업계는 마흔세 곳이라 가나다순이 찾기 쉽지만, 여기는 넷뿐이고 자주
-# 보는 순서가 따로 있다 — LH 공고를 먼저 보고, 일정이 바뀌었나 공지를
-# 확인하고, 그다음 SH·GH. 가나다순으로 두면 GH가 맨 앞에 온다.
+# 보는 순서가 따로 있다 — 청약홈에서 전국 일정을 보고, LH 공고를 열고,
+# 일정이 바뀌었나 공지를 확인하고, 그다음 SH·GH. 가나다순으로 두면
+# GH가 맨 앞에 온다.
 KEEP_WRITTEN_ORDER = True
 
 LINKS: tuple[dict[str, str], ...] = (
+    {"name": "청약홈", "group": "공공분양",
+     "note": "한국부동산원이 운영하는 청약 통합 창구. 전국 일정이 한자리에 모인다",
+     "url": "https://www.applyhome.co.kr/co/coa/selectMainView.do"},
     {"name": "LH청약+", "group": "공공분양",
      "note": "한국토지주택공사 분양·임대 공고. 전국이 한자리에 모인다",
      "url": "https://apply.lh.or.kr/lhapply/apply/wt/wrtanc/selectWrtancList.do?viewType=srch"},

@@ -689,12 +689,19 @@ def test_분양도_글을_긁지_않는다(tmp_path):
     assert models.PRESALE in dashboard.LINK_ONLY
 
 
-def test_네_곳이_적은_차례대로_나온다(tmp_path):
+def test_다섯_곳이_적은_차례대로_나온다(tmp_path):
     """가나다순이면 GH가 맨 앞에 온다. 자주 보는 순서가 따로 있다."""
     탭 = _presale_tab(tmp_path)
     assert [l["name"] for l in 탭["links"]] == [
-        "LH청약+", "LH 공지", "SH청약", "GH청약"]
-    assert 탭["agencies"] == 4
+        "청약홈", "LH청약+", "LH 공지", "SH청약", "GH청약"]
+    assert 탭["agencies"] == 5
+
+
+def test_청약홈이_맨_앞이다(tmp_path):
+    """전국 일정이 한자리에 모이는 곳이라 여기부터 본다."""
+    첫째 = _presale_tab(tmp_path)["links"][0]
+    assert 첫째["name"] == "청약홈"
+    assert 첫째["url"].startswith("https://www.applyhome.co.kr/")
 
 
 def test_연구업계는_그대로_가나다순이다(tmp_path):
