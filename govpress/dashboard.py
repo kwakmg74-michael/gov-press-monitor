@@ -320,6 +320,10 @@ _TEMPLATE = r"""<!doctype html>
     --muted: #6b6862;
     --accent: #b4552d;
     --accent-soft: #f2e6e0;
+    /* 시·도·구보 딱지. 흰 글씨를 얹으므로 두 테마에서 같은 값을 쓴다 —
+       어두운 테마의 --accent 는 밝아서 흰 글씨가 묻힌다. */
+    --tag: #b4552d;
+    --tag-fg: #ffffff;
     --danger: #b03434;
     --focus: #2f6f9f;
   }
@@ -576,7 +580,10 @@ _TEMPLATE = r"""<!doctype html>
   .chip input { accent-color: var(--accent); margin: 0; flex: none; }
   .chip .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chip .n {
-    margin-left: auto; flex: none;
+    /* 예전에는 margin-left:auto 로 칸 오른쪽 끝에 붙였다. 숫자는 줄이
+       맞았지만 '서울시'와 '347' 사이가 손가락 두 마디쯤 떨어져 한눈에
+       묶여 보이지 않았다. 이름 바로 뒤에 둔다. */
+    margin-left: 6px; flex: none;
     color: var(--muted); font-size: 11.5px;
     font-variant-numeric: tabular-nums;
   }
@@ -593,21 +600,22 @@ _TEMPLATE = r"""<!doctype html>
   /* 기관 이름 옆의 시·도·구보 바로가기.
      체크박스(label) 바깥에 두어야 한다 — 안에 넣으면 바로가기를 누를 때
      체크박스까지 같이 켜진다. */
-  .chip-row { display: flex; align-items: center; gap: 2px; min-width: 0; }
-  .chip-row .chip { flex: 1 1 auto; min-width: 0; }
+  .chip-row { display: flex; align-items: center; gap: 5px; min-width: 0; }
+  /* 0 1 auto — 칸을 다 채우지 않고 내용만큼만 차지한다. 그래야 딱지가
+     이름·숫자 바로 뒤에 따라붙는다. */
+  .chip-row .chip { flex: 0 1 auto; min-width: 0; }
   .gazette {
     flex: none;
-    font-size: 11px; line-height: 1.35;
-    padding: 2px 6px;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--muted);
+    font-size: 10.5px; font-weight: 600; line-height: 1.5;
+    letter-spacing: 0.02em;
+    padding: 1px 6px;
+    border-radius: 5px;
+    background: var(--tag);
+    color: var(--tag-fg);
     text-decoration: none;
     white-space: nowrap;
   }
-  .gazette:hover, .gazette:focus-visible {
-    color: var(--accent); border-color: var(--accent); background: var(--sunken);
-  }
+  .gazette:hover, .gazette:focus-visible { filter: brightness(1.12); }
 
   .count { font-size: 13px; color: var(--muted); padding: 4px 2px 12px; }
   .more-wrap { padding: 14px 2px 4px; text-align: center; }

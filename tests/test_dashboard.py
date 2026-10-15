@@ -847,3 +847,34 @@ def test_지자체_말고는_바로가기가_없다(tmp_path):
         for group in tab["groups"]:
             for dept in group["depts"]:
                 assert "gazette" not in dept, tab["category"]
+
+
+def test_이름과_숫자를_붙여_둔다(tmp_path):
+    """칸 끝으로 밀면 '서울시'와 '347' 사이가 손가락 두 마디쯤 떨어진다."""
+    html_text = render(tmp_path)
+    규칙 = html_text[html_text.index("  .chip .n {"):]
+    규칙 = 규칙[: 규칙.index("}")]
+    assert "margin-left: auto" not in 규칙
+    assert "margin-left: 6px" in 규칙
+
+
+def test_딱지가_이름_바로_뒤에_붙는다(tmp_path):
+    """칩이 칸을 다 채우면 딱지가 저만치 오른쪽으로 밀려난다."""
+    html_text = render(tmp_path)
+    assert ".chip-row .chip { flex: 0 1 auto;" in html_text
+
+
+def test_딱지는_색을_채우고_글씨는_희다(tmp_path):
+    html_text = render(tmp_path)
+    규칙 = html_text[html_text.index("  .gazette {"):]
+    규칙 = 규칙[: 규칙.index("}")]
+    assert "background: var(--tag)" in 규칙
+    assert "color: var(--tag-fg)" in 규칙
+
+
+def test_딱지_색은_두_테마에서_같다(tmp_path):
+    """어두운 테마의 --accent 는 밝아서 흰 글씨가 묻힌다. 그래서 따로 둔다."""
+    html_text = render(tmp_path)
+    assert html_text.count("--tag:") == 1, "테마마다 다시 정하면 한쪽이 안 읽힌다"
+    assert "--tag: #b4552d" in html_text
+    assert "--tag-fg: #ffffff" in html_text
