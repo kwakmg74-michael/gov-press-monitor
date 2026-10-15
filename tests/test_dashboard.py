@@ -6,7 +6,7 @@ import json
 import re
 from pathlib import Path
 
-from govpress import agencies, dashboard, models, presale, research, storage
+from govpress import agencies, dashboard, local_gov, models, presale, research, storage
 from govpress.korea_kr import parse_list
 
 FIXTURE = Path(__file__).parent / "fixtures" / "korea_list.html"
@@ -142,7 +142,8 @@ def test_체크박스에_정렬용_필드가_새지_않는다(tmp_path):
     for tab in read_tabs(render(tmp_path)):
         for group in tab["groups"]:
             for dept in group["depts"]:
-                assert set(dept) == {"name", "count", "parent"}
+                assert set(dept) <= {"name", "count", "parent", "gazette"}
+                assert "rank" not in dept
 
 
 def test_보도자료가_없는_부처도_목록에_나온다(tmp_path):
@@ -759,3 +760,90 @@ def test_분양은_수집_대상이_아니다():
 def test_수집기_없는_분류를_세어도_터지지_않는다():
     """나중에 누가 LINK_ONLY 에서 빼더라도 화면 만들기가 멈추면 안 된다."""
     assert dashboard._roster_size(models.PRESALE) == 0
+
+
+# --- 시·도·구보 바로가기 ---------------------------------------------------------
+#
+# 2026-10-15. 처음에는 시보를 긁어 올까 했는데, 받아 보니 "제4186호
+# 2026.10.15" 처럼 호수 목록이었다. 개별 고시는 116MB짜리 PDF 안에 있다.
+# 그래서 긁지 않고, 기관 이름 옆에 가는 길만 놓았다.
+
+def _local_depts(tmp_path) -> dict:
+    tabs = read_tabs(render(tmp_path))
+    local = [t for t in tabs if t["category"] == models.LOCAL][0]
+    return {d["name"]: d for g in local["groups"] for d in g["depts"]}
+
+
+def test_기관_이름_옆에_시도구보가_붙는다(tmp_path):
+    명단 = _local_depts(tmp_path)
+    assert 명단["서울시"]["gazette"]["label"] == "시보"
+    assert 명단["경기도"]["gazette"]["label"] == "도보"
+    assert 명단["성남시"]["gazette"]["label"] == "시보"
+
+
+def test_주소를_아직_모르는_곳에는_안_붙는다(tmp_path):
+    """없는 주소를 지어내느니 바로가기를 안 다는 쪽이 낫다."""
+    명단 = _local_depts(tmp_path)
+    for 이름 in 명단:
+        if 이름 not in local_gov.GAZETTES:
+            assert "gazette" not in 명단[이름], 이름
+
+
+def test_표의_이름이_실제_기관_이름과_맞는다():
+    """'하남시'를 '하남'으로 적어 두면 조용히 안 붙는다. 오류도 안 난다."""
+    기관 = {s.name for s in local_gov.SITES}
+    남는것 = set(local_gov.GAZETTES) - 기관
+    assert not 남는것, f"이런 기관은 없습니다: {sorted(남는것)}"
+
+
+def test_지금은_여덟_곳_모두_붙어_있다(tmp_path):
+    """새 지자체를 더하면 여기서 걸린다 — 관보 주소도 같이 챙기라는 뜻."""
+    명단 = _local_depts(tmp_path)
+    빠진곳 = [이름 for 이름 in 명단 if "gazette" not in 명단[이름]]
+    assert not 빠진곳, f"관보 주소가 없는 지자체: {빠진곳}"
+
+
+def test_구는_구보_시는_시보다():
+    """이름 끝 글자와 딱지가 어긋나면 눈에 거슬린다."""
+    맞는딱지 = {"구": "구보", "시": "시보", "도": "도보", "군": "군보"}
+    for 이름, 값 in local_gov.GAZETTES.items():
+        assert 값["label"] == 맞는딱지[이름[-1]], 이름
+
+
+def test_시도구보는_새_창으로_연다(tmp_path):
+    """보던 목록을 잃지 않아야 한다."""
+    html_text = render(tmp_path)
+    assert "go.target = '_blank'" in html_text
+    assert "go.rel = 'noopener noreferrer'" in html_text
+
+
+def test_바로가기는_체크박스_바깥에_있다(tmp_path):
+    """label 안에 넣으면 바로가기를 누를 때 체크박스까지 켜진다."""
+    html_text = render(tmp_path)
+    assert "row.appendChild(label);" in html_text
+    assert "row.appendChild(go);" in html_text
+    assert "grid.appendChild(row);" in html_text
+
+
+def test_바로가기가_없는_기관도_줄에_담긴다(tmp_path):
+    """gazette 가 없다고 그 기관이 빠지면 고를 수가 없다."""
+    html_text = render(tmp_path)
+    줄 = html_text[html_text.index("row.className = 'chip-row'"):]
+    줄 = 줄[: 줄.index("grid.appendChild(row);")]
+    assert "if (dept.gazette)" in 줄
+
+
+def test_시도구보_주소가_온전하다():
+    for 이름, 값 in local_gov.GAZETTES.items():
+        assert 값["url"].startswith("https://"), 이름
+        assert 값["label"] in ("시보", "도보", "구보", "군보"), 이름
+
+
+def test_지자체_말고는_바로가기가_없다(tmp_path):
+    """지금은 지자체에만 둔다. 다른 분류에 GAZETTES 를 더하면 거기도 붙는다."""
+    for tab in read_tabs(render(tmp_path)):
+        if tab["category"] == models.LOCAL:
+            continue
+        for group in tab["groups"]:
+            for dept in group["depts"]:
+                assert "gazette" not in dept, tab["category"]

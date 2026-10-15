@@ -1,0 +1,2197 @@
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>서울사랑</title>
+  <meta name="description" content="서울특별시청">
+	<meta property="og:type" content="website">
+	<meta property="og:title" content="서울특별시청">
+	<meta property="og:description" content="서울특별시청">
+	<meta property="og:image" content="https://www.seoul.go.kr/res_newseoul/images/main/seoul_bi.jpg">
+	<meta property="og:url" content="">
+
+	<link rel="shortcut icon" 		href="//www.seoul.go.kr/res_newseoul/images/favicon.ico"> 
+	<link rel="apple-touch-icon" 	href="//www.seoul.go.kr/res_newseoul/images/favicon.ico" >	
+	
+	
+	<link href="/func/common/css/reset.css" rel="stylesheet" type="text/css">
+	<link href="//www.seoul.go.kr/res_newseoul/css/common.css?241115" rel="stylesheet" type="text/css">
+	<link href="//www.seoul.go.kr/res_newseoul/css/style.css?241115" rel="stylesheet" type="text/css">
+	<link rel="stylesheet" href="//www.seoul.go.kr/res_newseoul/css/jquery-ui-1.13.3.min.css" 	type="text/css">
+	<link href="/func/common/css/www2.css" rel="stylesheet" type="text/css">
+	
+	<script src="//www.seoul.go.kr/res_newseoul/js/jquery-3.7.1.min.js"></script>
+	<script src="//www.seoul.go.kr/res_newseoul/js/jquery-ui-1.13.3.min.js"></script>
+	<script src="//www.seoul.go.kr/res_newseoul/js/jquery.cookie.js"></script>
+	
+	<script src="//www.seoul.go.kr/res_newseoul/js/common.js"></script>
+	<script src="//www.seoul.go.kr/res_newseoul/js/script.js"></script>
+	
+	<script src="//www.seoul.go.kr/res_newseoul/js/comapp.js"></script>
+	
+	<!--
+		자동검색완성 	
+	 -->
+	<link href="//www.seoul.go.kr/ksearch/res_newseoul/css/keyboard.css" rel="stylesheet" type="text/css" >
+	 
+
+    <script src="/ksearch/res_newseoul/js/jquery-ui-zindex-compat.js"></script>
+	<script src="//www.seoul.go.kr/ksearch/js/jquery/jquery.deserialize.min.js"></script><!-- Form deserialization -->
+
+	<script src="//www.seoul.go.kr/ksearch/js/search.js"></script><!-- Events -->
+	<script src="//www.seoul.go.kr/res_newseoul/js/jquery.konan.sf.js"></script><!-- KSF -->
+	<script src="//www.seoul.go.kr/ksearch/js/jquery/i18n/jquery.konan.sf-ko.js"></script><!-- KSF localization -->
+	<script src="//www.seoul.go.kr/ksearch/js/jquery/jquery.placeholder.js"></script><!-- Events -->
+	<script src="//www.seoul.go.kr/ksearch/res_newseoul/js/buildKeyboardInputs.js"></script> <!-- screen keyboard	-->
+	
+	<script src="/func/res_wp/js/sub_ssl_2018_new.js?ver251231"></script>
+	
+	<script src="/func/res_wp/js/tendina.min.js"></script>
+	
+	<script>
+		$(function() {
+			
+			// 자동완성 위젯 초기화
+			var flagAutoCompleteInitDone;
+
+			 // we assume that user will not start fill-in the form immediately
+			// setTimeout(function(){flagAutoCompleteInitDone =true;}, 1000);
+			
+			$('#inp_TopSearch')
+		     .each(function(){  // IE11 hack
+		         // first we handle 'input' event and prevent its further propagation
+		         // until our variable is initialized with setTimeout() handler call
+				 if ((navigator.appName == 'Netscape' && navigator.userAgent.search('Trident') != -1) || navigator.userAgent.search('Microsoft Internet Explorer')) {
+					this.addEventListener('input', 
+		             function(ev){   
+		                 if( typeof flagAutoCompleteInitDone === 'undefined'){
+		                     ev.stopImmediatePropagation();
+		                 }
+		             }, false);
+				 }
+		     }) // /IE11 hack
+		     .autocomplete({
+		    	// initialize autocomplete widget
+		   	 	source: '//newsearch.seoul.go.kr/ksearch/ksf/api/suggest.do?target=complete'
+		     });   
+			
+			//201809 add keyboard			
+			/* ***** Find tagged input & textarea elements ******************* */
+			var input_search1 = document.getElementById("inp_TopSearch");
+			var keyid = "inp_TopSearch";
+			//var keyboard =VKI_buildKeyboardInputs();
+			
+			var keybut = document.createElement('img');
+			      keybut.src = "//www.seoul.go.kr/ksearch/res_newseoul/images/search/keyboard.png";
+			      keybut.alt = "입력도구";
+			      keybut.className = "keyboardInputInitiator";
+			      keybut.title = "Display keyboard interface";
+			      keybut.onclick = (function(a) { return function() { VKI_show(a); }; })(keyid);
+			      input_search1.parentNode.insertBefore(keybut, input_search1.nextSibling);
+		});
+	</script>
+
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-YF59KRM6NR"></script>
+
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+	  gtag('config', 'G-YF59KRM6NR');
+	</script>
+	
+</head>
+	
+<body>
+
+	<form id="historyForm" action="//newsearch.seoul.go.kr/ksearch/search.do" method="get">
+		<input type="hidden" id="kwd" name="kwd" value="" >
+	</form>	
+
+	<div id="wrap" class="sub">
+		<div id="skip">
+			<a href="#content">본문 내용 바로가기</a>
+		</div>
+		
+		<!-- header -->
+		<header id="header">
+		
+			<!-- Gnb -->
+			<!-- ######################################################################## -->
+<!-- 
+	menu name: Pc Homepage Gnb
+--> 
+<!-- ######################################################################## -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+	<!-- 전자정부 상단 배너 -->
+	<div class="top-guide">
+		<div class="inner">
+			<p>이 누리집은 대한민국 공식 전자정부 누리집입니다.</p>
+		</div>
+	</div>
+
+	<div class="top-area">
+		<div class="inner">
+			<h1 class="logo">
+				
+				<a href="//www.seoul.go.kr?tr_code=gnb_seoul" title="메인페이지 바로가기"><span class="sr-only">서울특별시</span></a>
+			</h1>
+            <button class="btn_menu mo-view"><span class="sr-only">전체메뉴 열기</span></button>
+            <button class="btn_sch mo-view"><span class="sr-only">검색하기</span></button>
+			<!--gnb pc-view-->
+			<div class="gnb pc-view">
+				<ul>
+					<li><a href="//www.seoul.go.kr/realmnews/in/list.do?tr_code=gnb_news">서울소식</a></li>
+					<li><a href="//www.seoul.go.kr/citizen/citizen.do?tr_code=top_menu05">시민참여</a></li>
+					<li class="info_cate"><a href="https://news.seoul.go.kr"	target="_blank" title="새창열림"  onclick="action_logging({tr_code:'gnb_more'});" >분야별정보</a>
+					</li>
+					<li><a href="//www.seoul.go.kr/seoul/seoul.do?tr_code=top_menu04">서울소개</a></li>
+					<li><a href="//org.seoul.go.kr?tr_code=top_menu06">부서안내</a></li>
+					<li><a href="https://opengov.seoul.go.kr"  target="_blank" title="새창열림">정보공개</a></li>
+
+					<li><a href="https://eungdapso.seoul.go.kr?tr_code=gnb_eungdapso" target="_blank" title="새창열림">응답소</a></li>
+					<!-- <li><a href="https://citizen.seoul.kr?tr_code=top_menu03"  target="_blank">전자우편</a></li> -->
+					
+				</ul>
+				<ul class="other">					
+					<!-- <li><a href="//www.seoul.go.kr/member/info/mySeoul.do?tr_code=top_menu02">나의서울</a></li> -->
+					
+					
+					
+				</ul>
+
+				
+				
+			</div>
+			<!--//gnb pc-view pc일때 gnb-->
+			<!--gnb mo-view width 1152 미만 일때 gnb-->
+			<div class="gnb all_gnb">
+			
+				<div class="txt_login">
+				
+					
+					
+						<a href="//www.seoul.go.kr/member/userlogin/loginCheck.do?tr_code=top_menu01" class="txt-login">로그인</a>
+						
+					
+					
+                    <div class="btn_area">
+                        <button class="btn_setting"><span class="sr-only">설정</span></button>
+                        <button class="btn_close"><span class="sr-only">전체메뉴 닫기</span></button>
+                    </div>
+				</div>
+                
+			    <!-- 전체메뉴  -->
+				<h2 class="sr-only">전체메뉴</h2>
+                <ul id="all_menu" class="clfix">
+                </ul>
+                
+                <a class="view_all" href="https://news.seoul.go.kr/gov/site" target="_blank" title="새창열림">서비스 전체보기</a>
+                
+            </div>
+            <div class="dim"></div>
+		</div>
+		<!--//gnb mo-view width 1152 미만 일때 gnb-->
+		<!-- //top-area -->
+	</div>
+
+	<script>
+	var openNewWindow;
+	
+	function myCallback(data){
+		if(data.success == "true"){
+			location.reload();
+			openNewWindow=window.open("about:blank");
+			openNewWindow.location.href="https://citizen.seoul.kr?tr_code=top_menu03";
+		}else {
+			alert("전자메일 생성중 에러가 발생했습니다. \r\n다시 시도해 주세요...");
+			return;
+		}
+	}
+	
+	function checkMailUserYn(){
+		var delYN='';
+		var islogin="N";
+		var pk = '';
+		if(islogin == "Y"){
+			/*
+			if(delYN=="Y"){
+				alert("서울시 전자우편을 사용하지 않는 통합회원 계정으로\n서울시 전자우편 서비스 이용이 불가합니다.\n\nⓘ 서울시 전자우편 신규 생성 종료: 2025. 2. 27. 18:00부터 시행");
+				return;
+			}else if(delYN == "N"){
+				openNewWindow=window.open("about:blank");
+				openNewWindow.location.href="https://citizen.seoul.kr?tr_code=top_menu03";
+			}else {
+				alert("해당 쿠키가 존재하지 않습니다. 로그아웃 후 재 로그인 해주세요.");
+ 		    	return;
+			}
+			*/
+			
+			openNewWindow=window.open("about:blank");
+			openNewWindow.location.href="https://citizen.seoul.kr?tr_code=top_menu03";
+			
+		}else{
+			openNewWindow=window.open("about:blank");
+			openNewWindow.location.href="//www.seoul.go.kr/member/userlogin/loginCheck.do?SITE_GB=GB002&refresh_url=https://citizen.seoul.kr";
+		}
+	};
+	
+		// 팝업창에서 탭클릭시 팝업 내에서만 탭 포커싱 이동되게..
+		var btnCategory = $('.info_cate > button');
+		var layerCategory = $('.info_detail');
+		front.btnClick(btnCategory, function($this) {
+			front.showCallback(layerCategory, function() {				
+				layerCategory.addClass('on');
+				var closeBtn = layerCategory.find('.btn_close');
+				front.layerFocus(layerCategory, closeBtn);
+				
+				front.btnClick(closeBtn, function() {
+					front.hideCallback(layerCategory, function() {
+						$this.attr('tabindex', '0').focus();
+					});
+				});
+			});
+		});
+		
+		//오픈 클릭, click() 메서드 안에 익명 함수를 사용
+		$('.btn_menu').click(function(e){
+		    //기본 동작 취소, form action, a href 등등
+		    e.preventDefault();
+				$('html, body').addClass('menu-open');
+				$('#skip, .logo, .btn_menu, .btn_sch, #container, #footer').attr('aria-hidden',  true); //2020-08-12 앱접근성 실태조사 수정
+
+		    //클래스 추가			
+		    $('.gnb').addClass('on');
+		    $('.dim').addClass('on');
+			$('.txt_login>a').focus();		
+		});
+		
+		//닫기
+		$('.gnb .btn_close').click(function(e){
+		    e.preventDefault();
+				$('html, body').removeClass('menu-open');
+				$('#skip, .logo, .btn_menu, .btn_sch, #container, #footer').attr('aria-hidden',  false); //2020-08-12 앱접근성 실태조사 수정
+		    //닫기
+		    $('.gnb').removeClass('on');
+		    $('.dim').removeClass('on');
+			$('.btn_menu').focus();	
+		});
+		
+	    $('.btn_sch').click(function(){
+	        $('.search-line').slideToggle(100);
+	    });
+
+					
+		$(function() {
+
+			
+
+			
+	    	// beast000
+	    	var standalone = window.navigator.standalone, 
+			userAgent = window.navigator.userAgent.toLowerCase(),
+			safari = /safari/.test( userAgent ),
+			ios = /iphone|ipod|ipad/.test( userAgent ),
+			android = /android/.test( userAgent );
+	    	
+	    	var appSettingUrl = "";
+
+			if( ios ) {
+				if ( !standalone && safari ) {
+				// 아이폰 브라우저 접속
+			 	} else if ( standalone && !safari ) {
+			 	// 아이폰 Standalone 
+			 	} else if ( !standalone && !safari ) {
+			 	// 아이폰 웹뷰
+			 		appSettingUrl="setting://www.seoul.go.kr/"; // ??? 아이폰 설정 창 뜨는지 확인
+			 	};
+			} else {
+				//not iOS
+				if(android) {
+					if (typeof mobileseoulandroid === "undefined") {
+			    		// 안드로이드 모바일서울 웹 뷰 아님
+					} else {
+				    	// 안드로이드 웹뷰
+						appSettingUrl="javascript:mobileseoulandroid.openSetting()";
+					}
+				}
+			};
+			
+			if(appSettingUrl != "") {		
+			    $('.gnb .btn_setting').click(function(e){
+			    	e.preventDefault();
+			    	location.href=appSettingUrl;
+			    });
+			} else {
+				$('.gnb .btn_setting').hide();	
+			}
+			
+		});
+	    
+	    var _mecount 	= 0;
+	    var _memax 		= 0;
+	    var _res 		= '';
+	    var _selmenu	= '';		
+		var _patt1		= /http/gi;
+		var _patt2		= /\?/gi;
+	    
+		function fnSub_CreateMenu(data, parent){
+		
+			var out		= [];
+			var target	= '';
+			var cls1    = '';
+			
+			for(var i in data)
+			{
+				if(data[i].UPPER_MENU_ID == parent)
+				{
+					if(data[i].OK == 'N')
+					{
+						// find inner link
+						var link_url = data[i].LINK_URL;
+						if(!_patt1.test(link_url) && (link_url!='#') && (link_url)){
+							link_url = (!_patt2.test(link_url)) ? link_url + '?selmenu=' + data[i].MENU_ID : link_url + '&selmenu=' + data[i].MENU_ID ;
+						}
+						
+						var targetYn = 0;
+	                	
+	                	if(link_url == undefined) {
+	                		link_url = "#";
+	                	} else if(link_url.indexOf("org.seoul.go.kr")>-1) {
+	                		targetYn = 1;
+	                	} else if(link_url.indexOf("\/")==0) {
+	                		link_url = '//www.seoul.go.kr'+link_url;
+	                	}
+						
+						target = (data[i].NEW_WIN_YN=='Y') ? ' target="_blank" ' : '';
+						if(data[i].MENU_LEVEL=='1'){
+							
+							_res += (data[i].SEL_MENU=='Y') ? '<li sel_level="1" sel_menu="' + data[i].MENU_ID + '">' : '<li>';
+							_res += '<a href="' + link_url + '" ' + target + ' >' + data[i].MENU_NM + '</a>' + '\n';
+							if(data[i].LEAF=='N'){
+								_res += '<ul class="sub_menu">' + '\n';
+							}
+							data[i].OK = 'Y';
+							
+						} else if(data[i].MENU_LEVEL=='2'){
+							
+							cls1 = (data[i].LEAF=='Y') ? ' class="dep_no" ' : '';
+							_res += (data[i].SEL_MENU=='Y') ? '<li sel_level="2" sel_menu="' + data[i].MENU_ID + '" ' + cls1 + '>' : '<li' + cls1 + '>';
+							_res += '<a href="' + link_url + '" ' + target + ' >' + data[i].MENU_NM + '</a>' + '\n';
+							if(data[i].LEAF=='N'){
+								_res += '<ul class="dep3">' + '\n';
+							}
+							data[i].OK = 'Y';
+							
+						} else if(data[i].MENU_LEVEL=='3'){
+							
+							_res += (data[i].SEL_MENU=='Y') ? '<li sel_level="3" sel_menu="' + data[i].MENU_ID + '">' : '<li>';
+							_res += '<a href="' + link_url + '" ' + target + ' >' + data[i].MENU_NM + '</a></li>' + '\n';
+							data[i].OK = 'Y';
+						}
+					}
+					
+					var children = fnSub_CreateMenu(data, data[i].MENU_ID);
+					if(children.length){
+						//child yes
+						data[i].children = children;
+					}
+					//child no
+					if(data[i].MENU_LEVEL=='1'){
+						if(data[i].LEAF=='N'){
+							_res += '</ul>' + '\n';
+						}
+						_res += '</li>' + '\n';
+					} else if(data[i].MENU_LEVEL=='2'){
+						if(data[i].LEAF=='N'){
+							_res += '</ul>' + '\n';
+						}
+						_res += '</li>' + '\n';
+					}
+
+					out.push(data[i]);
+					_mecount ++;
+				}
+				if(_mecount == _memax) {
+					
+					//write html
+					$('#all_menu').html('');
+					//_res = '<h2 class="sr-only">전체메뉴</h2>' + _res;
+					$('#all_menu').html(_res);
+					
+					//select menu 
+					var star = null;
+					for(var i=0; i<data.length; i++)
+					{
+						if(data[i].SEL_MENU=='Y')
+						{
+							console.log(data[i].MENU_ID);						
+							star = $('[sel_menu=' + data[i].MENU_ID + ']');
+							if(star.attr('sel_level')=='1' || star.attr('sel_level')=='2'){
+								star.addClass('selected');
+							}else{
+								star.addClass('on');
+							}
+						}
+					}
+					
+					//모바일 헤더 영역 전체 아코디언 메뉴
+					$('.clfix').tendina({
+					    animate: true,
+					    speed: 100,
+					    onHover: false,
+					    hoverDelay: 300,
+						openCallback: function(clickedEl){
+							$('#all_menu>li>a>em').text('');
+							$('.sub_menu>li>a>em').text('메뉴 열기');
+							$('.sub_menu>li.dep_no>a>em').text('');
+							clickedEl.find('>a>em').text('선택됨');
+							if(clickedEl.has('>ul.dep3').length>0) {
+								clickedEl.find('>a>em').text('메뉴 닫기');			
+							}
+						},
+						closeCallback: function(clickedEl){
+							$('#all_menu>li>a>em').text('');
+							$('.sub_menu>li>a>em').text('메뉴 열기');
+							$('.sub_menu>li.dep_no>a>em').text('');
+							if(clickedEl.has('>ul.dep3').length>0) {
+								clickedEl.find('>a>em').text('메뉴 열기');		
+							}
+						}						
+					});
+					
+					return;
+				}
+			}
+			return out;
+		}
+	    
+		// 전체메뉴 가져오기
+		function fnSub_GetMenuList(){
+			
+			var param = {'selmenu' : _selmenu};
+			
+		 	$.ajax({
+		 		type		: "POST"
+		 		,url		: "https://www.seoul.go.kr/menu/menulist.do"
+		 		//,url		: "/menu/menulist.do"
+		 		,data		: param
+		 		,dataType 	: "json"
+		 		,success: function(sdata){
+		 			_memax = Number(sdata.data_tot)
+		 			fnSub_CreateMenu(sdata.data, 'ROOT');
+		 		}
+		 		,error	: function(edata){
+		 		}
+		 	});	
+		}
+				
+		$(document).ready(function() {
+			
+			//GNB 선택 2021.01
+			var gnbLeftTitle = $('h2.pc-view').text().replace(/ /gi,"");
+			var gnbTopArr = [0,1,2,3,4];
+			for(var i=0; i < gnbTopArr.length; i++ ){
+				var gnbTopTitle = $('.pc-view > ul > li > a').eq(i).text().replace(/ /gi,"");
+				if(gnbTopTitle == gnbLeftTitle){
+					$('.pc-view > ul > li').eq(i).addClass('on');
+					break;
+				}
+			}
+			
+			// 크로스 브라우징 도메인 에러 
+			fnSub_GetMenuList();
+			setTimeout(function(){
+				$('#all_menu li a').append('<em class="sr-only"></em>');
+				$('#all_menu>li.selected>a>em').text('선택됨');
+				$('.sub_menu>li:not(.selected):not(dep_no)>a>em').text('메뉴 열기');
+				$('.sub_menu>li.selected:not(.dep_no)>a>em').text('메뉴 닫기');
+				$('.sub_menu>li.dep_no.selected>a>em').text('선택됨');
+				$('.sub_menu>li.dep_no:not(.selected)>a>em').text('');
+				$('.dep3>li.on>a>em').text('현재페이지');
+			},300);
+		});
+
+
+		$(window).on('load', function(){
+
+			$('#all_menu>li:nth-child(1)').addClass('li-stmail').addClass('li-myseoul');
+			var emailInfoHtml = '<div class="mo-stmail-wrap">';
+				emailInfoHtml += '<button type="button" class="mo-btn-stmail"><span class="sr-only">나의서울 안내 팝업 열기</span></button>'; 
+				emailInfoHtml += '<div class="mo-stmail-layer">';
+				emailInfoHtml += '<p>회원정보 조회·변경 등이 가능합니다.</p>';
+				emailInfoHtml += '<button type="button" class="mo-btn-stmail-close"><span class="sr-only">나의서울 안내 팝업 닫기</span></button>';
+				emailInfoHtml += '</div>';
+				emailInfoHtml += '</div>';
+
+			$('.li-stmail').find('>a').before(emailInfoHtml);
+
+			$(document).on('click', '.mo-btn-stmail', function(){
+				$('.mo-stmail-layer').css('display', 'block');
+			});
+			$(document).on('click', '.mo-btn-stmail-close', function(){
+				$('.mo-stmail-layer').css('display', 'none');
+			});
+
+		});
+
+
+		/*
+
+		$(window).on('load', function(){
+			$('#all_menu>li:first-child>ul>li:last-child>a').addClass('a-stmail');
+			$('.a-stmail').append('<span>(2025. 12. 31. 18:00 종료)</span>');
+			$('#all_menu>li:nth-child(2)').addClass('li-stmail');
+
+			var emailInfoHtml = '<div class="mo-stmail-wrap">';
+				emailInfoHtml += '<button type="button" class="mo-btn-stmail"><span class="sr-only">전자우편 종료 안내 팝업 열기</span></button>'; 
+				emailInfoHtml += '<div class="mo-stmail-layer">';
+				emailInfoHtml += '<p>서울시 전자우편 서비스(@citizen.seoul.kr)가 <br><u>2025. 12. 31.(수) 18:00에 종료</u>됩니다.</p>';
+				emailInfoHtml += '<button type="button" class="mo-btn-stmail-close"><span class="sr-only">유료 안내팝업 닫기</span></button>';
+				emailInfoHtml += '</div>';
+				emailInfoHtml += '</div>';
+
+			$('.li-stmail').append(emailInfoHtml);
+
+			$(document).on('click', '.mo-btn-stmail', function(){
+				$('.mo-stmail-layer').css('display', 'block');
+			});
+			$(document).on('click', '.mo-btn-stmail-close', function(){
+				$('.mo-stmail-layer').css('display', 'none');
+			});
+			$('.btn-stmail').on('mouseenter', function(){
+				$(this).closest('.stmail-wrap').find('.stmail-layer').css('display', 'block');
+			});
+			$('.btn-stmail').on('mouseleave', function(){
+				$(this).closest('.stmail-wrap').find('.stmail-layer').css('display', 'none');
+			})
+		});
+		*/
+		
+	</script>
+
+
+
+			<!-- Gnb -->
+			
+			<!-- Header -->
+			<!-- ######################################################################## -->
+<!-- 
+	menu name: Pc Homepage Header
+--> 
+<!-- ######################################################################## -->
+
+
+
+
+
+
+
+  
+
+<!-- pc버전, 모바일버전 추가 기존의 isPcHome의 값은 null이었기때문에 제거 20190412 -->
+	<div class="search-line">
+		<div class="inner">
+			<h1 class="pc-view new">
+				
+				<a href="//www.seoul.go.kr?tr_code=seoul_bi" ><span class="sr-only">동행&middot;매력 특별시 서울</span></a>
+			</h1>
+			<form id="fm_TopSearch" target="_self" method="get" accept-charset="utf-8">		
+                 <div class="search" style="position: relative;">
+				  <input name="tr_code" id="tr_code" type="hidden" value="search">
+                     <label for="inp_TopSearch" class="sr-only">검색어를 입력해 주세요</label>
+                     <input type="text" id="inp_TopSearch" name="kwd" placeholder="검색어를 입력해 주세요" style="ime-mode:active;">
+                     <button id="btn_TopSearch" type="button" class="btn btn-search"><span class="sr-only">검색하기</span></button>
+                 </div>
+                 <!-- 언어선택, 날씨정보는 메인에서만 나옴 메인 헤더는 index_new.html 참고-->
+				 <input type="text" id="eng_text" title="영문" readonly style="display:none">
+			</form>
+		</div>
+	</div>
+
+
+<script>
+
+	var _isPcHome = 'Y';
+	if(navigator.userAgent.match(/ipad|Tablet|Android|iphone|ipod/i)){
+		  _isPcHome = "N";
+	}
+	
+	function fnTopSearch(){
+		
+		var params = { 
+				'tr_code' 	: $('input[name=tr_code]').val(),
+				'kwd'		: $('input[name=kwd]').val()
+		}
+		var url = "https://newsearch.seoul.go.kr/ksearch/search.do";
+		if(_isPcHome != "Y"){
+			url = "https://newsearch.seoul.go.kr/ksearch/msearch.do";
+			historyForm.action=url;
+		}
+		com.submit('#fm_TopSearch', true, url);
+	}
+	
+	
+	$('#inp_TopSearch').keydown(function(key){
+		if(key.keyCode==13){
+			fnTopSearch();
+		}
+	});
+
+	$('#btn_TopSearch').click(function(e){
+		fnTopSearch();
+	});
+
+	$('#inp_cityLang').click(function(e){
+		var url = $("#cityLang").val();
+		window.open(url,'language','');
+	});
+	
+	$('#btn_warn_close').click(function(){
+		$(this).closest(".layer_alert").slideUp(200);
+	});
+	
+	
+</script>
+
+
+			<!-- Header -->
+			
+		</header>
+		<!-- //header-->
+		
+		<section id="container">
+			<div class="inner">	
+				<!-- LNB -->
+				 
+
+
+
+ 
+
+		<!--  서울소식  -->
+				<aside id="snb" class="snb">
+					<h2 class="pc-view">서울소식</h2>
+					<ul class="clfix2">
+						<li class="dep0">
+							<a href="#">새소식<span class="sr-only">열림</span></a>
+							<ul class="depth">
+                               	<li><a href="//www.seoul.go.kr/realmnews/in/list.do">분야별 새소식</a></li>
+								<li><a href="//www.seoul.go.kr/realmnews/culture/calendar.do">문화참여 달력</a></li>
+                               	<li><a href="//www.seoul.go.kr/thismteventfstvl/list.do">행사 및 축제</a></li>
+                               	<li><a href="//www.seoul.go.kr/eventreqst/list.do">참여 신청</a></li>
+                                <li><a href="//www.seoul.go.kr/news/rssboard/list.do">자치구 주요뉴스</a></li>	
+                                <li><a href="https://sll.seoul.go.kr/" target="_blank" title="새창열림">강좌 교육</a></li>
+								<li><a href="//www.seoul.go.kr/seoul/smsAlarm/overView.do">시정소식 문자알림서비스</a></li>
+                                <li><a href="//www.seoul.go.kr/news/news_position.do">인사발령</a></li>	
+                           	</ul>
+						</li>
+						<li class="dep0 dep_no"><a href="//www.seoul.go.kr/seoul/mediahub.do" 	>서울시 정책 뉴스</a></li>
+						<li class="dep0 dep_no"><a href="https://www.seoul.go.kr/seoul/seoulVideo.do" 	>서울시 영상</a></li>
+						<li class="dep0 selected active" >
+							<a href="#">공고<span class="sr-only">열림</span></a>
+							<ul class="depth">
+                                <li><a href="//www.seoul.go.kr/news/news_tender.do">입찰공고</a></li>	
+                                <li><a href="//www.seoul.go.kr/news/news_contract.do">수의계약내역</a></li>	
+                                <li><a href="//www.seoul.go.kr/news/news_employ.do">채용시험</a></li>	
+                                <li class=" on selected"><a href="/func/seoulsibo/list.do">서울시보</a></li>	
+                                <li><a href="//www.seoul.go.kr/news/news_notice.do">고시공고</a></li>	
+								<li><a href="https://urban.seoul.go.kr/view/html/PMNU4010000000" target="_blank"  title="새창열림">도시관리계획안 열람공고</a></li>
+                                
+                                <li><a href="//www.seoul.go.kr/news/rssboard/asbList.do">석면해체ㆍ제거일정</a></li>	
+							</ul>
+						</li>
+						<li class="dep0">
+							<a href="#">보도ㆍ해명자료<span class="sr-only">열림</span></a>
+							<ul class="depth">
+                                <li><a href="//www.seoul.go.kr/news/news_report.do">보도자료</a></li>	
+                                <li><a href="//www.seoul.go.kr/news/news_explanation.do">해명자료</a></li>
+							</ul>
+						</li>
+						<li class="dep0 dep_no">
+							<a href="https://mediahub.seoul.go.kr/" target="_blank" title="새창열림">내 손안에 서울</a>
+						</li>
+						<li class="dep0 dep_no">
+							<a href="//www.seoul.go.kr/seoul/publication/seoul.do" >서울사랑</a>
+						</li>
+						<li class="dep0 dep_no">
+							<a href="//www.seoul.go.kr/seoul/publication/friend.do" >내친구서울</a>
+						</li>
+					</ul>
+				</aside>
+
+				<div class="snb_m">
+                    <ul class="snb_title clfix3">
+                        <li id="flexible_submenu" class="dep1">
+	                        
+	                        
+	                        
+	                        
+	                        
+	                        
+	                        	<a href="/publication/friend/friend.jsp">서울시보</a>
+	                        	
+	                        	<ul>
+	                        		<li><a href="//www.seoul.go.kr/news/news_tender.do">입찰공고</a></li>	
+	                                <li><a href="//www.seoul.go.kr/news/news_contract.do">수의계약내역</a></li>	
+	                                <li><a href="//www.seoul.go.kr/news/news_employ.do">채용시험</a></li>	
+	                                
+	                                <li><a href="/func/seoulsibo/list.do">서울시보</a></li>
+	                                	
+	                                <li><a href="//www.seoul.go.kr/news/news_notice.do">고시공고</a></li>	
+									<li><a href="https://urban.seoul.go.kr/view/html/PMNU4010000000" target="_blank"  title="새창열림">도시관리계획안 열람공고</a></li>
+	                                
+	                                <li><a href="//www.seoul.go.kr/news/rssboard/asbList.do">석면해체ㆍ제거일정</a></li>	
+	                        	</ul>
+	                        
+                        								
+						</li>
+                    </ul>
+                </div>
+		
+
+ 
+				<!-- LNB -->
+			
+				<div id="content" class="content">
+					<h2 class="sr-only">본문</h2>
+					
+					<!-- container -->
+					
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+var calendarEl = null;
+
+$(document).ready(function(){
+	$(".openpop").click(function(e){
+	    e.preventDefault();
+	    $(this).next(".pop-wrap").show();
+			$('html, body').css('overflow', 'hidden');
+	})
+	
+	$(".pop-wrap .btn-close").click(function(e){
+	    e.preventDefault();
+			$('html, body').css('overflow', '');
+	    $(this).parent().parent().hide();
+				$('#pop-open-button').focus();
+	});
+	
+		$(".pop-wrap .btn-close").on('keydown', function(e){
+			e.preventDefault();
+			if(e.keyCode == 9 && !e.shiftKey ){
+				$('html, body').css('overflow', '');
+				$(this).parent().parent().hide();
+				$('#pop-open-button').focus();
+			}
+		});
+		 	$('#schLCtg').change(function(){
+	       		//alert( $("#schLCtg option:selected").val() );
+	       		if($("#schLCtg option:selected").val() != 'all'){
+					$("#schTxtType option:eq(0)").attr("selected", "selected");
+	       			$("#schTxtType").attr('disabled', 'true');
+
+
+	       			//$('#schText').attr('readonly', 'true');
+	       			//$('#schText').attr('disabled','true');
+	       		} else {
+	       			$("#schTxtType").removeAttr('disabled');
+	       			//$('#schText').removeAttr('readonly');
+	       			//$('#schText').removeAttr('disabled');
+	       		}
+	   		 });
+
+		 	$('#schTxtType').change(function(){
+
+		 		if($("#schTxtType option:selected").val() == 'PDF'){
+					$("#schLCtg option:eq(0)").attr("selected", "selected");
+		 			$("#schLCtg").attr('disabled', 'true');
+		 		} else {
+		 			$("#schLCtg").removeAttr('disabled');
+		 		}
+		 	});
+			$('input.dateStart').datepicker({
+				showOn : 'button',
+				buttonImage: '/func/res_wp/images/ic_calendar.gif',
+				buttonText: "시작날짜 선택",
+				changeMonth: true,
+				changeYear: true,
+				nextText: '다음 달', 
+				prevText: '이전 달', 
+				yearSuffix: '년',
+				yearRange : "1953:c",
+				showButtonPanel: true,
+				currentText: '오늘 날짜', 
+				closeText: '닫기', 
+				dateFormat: "yy-mm-dd", 
+				showMonthAfterYear: true, 
+				dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'], 
+				monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				beforeShow: function(input, inst) {
+					calendarEl = $(input);
+				}
+			});
+
+			$('input.dateEnd').datepicker({
+				showOn : 'button',
+				buttonImage: '/func/res_wp/images/ic_calendar.gif',
+				buttonText: "종료날짜 선택",
+				changeMonth: true,
+				changeYear: true,
+				nextText: '다음 달', 
+				prevText: '이전 달', 
+				yearSuffix: '년',
+				yearRange : "1953:c",
+				showButtonPanel: true,
+				currentText: '오늘 날짜', 
+				closeText: '닫기', 
+				dateFormat: "yy-mm-dd", 
+				showMonthAfterYear: true, 
+				dayNamesMin: ['일', '월', '화', '수', '목', '금', '토'], 
+				monthNamesShort: ['1월','2월','3월','4월','5월','6월','7월','8월','9월','10월','11월','12월'],
+				beforeShow: function(input, inst) {
+					calendarEl = $(input);
+				}
+			});
+			$('.ui-datepicker-trigger').css({'position' : 'relative', 'top' : '0', 'margin' : '0 3px 0 0', 'padding' : '0', 'border' : '0', 'background' : 'transparent'});
+		});
+
+
+function doSearch(){
+	
+	
+	var regMust1 = /[0-9]/;
+	
+	if (document.searchForm.schStDt.value.length != 10) {
+		alert('발행일은 10자리로 입력해야 합니다.');
+		document.searchForm.schStDt.focus();
+		return false;
+	} else if (document.searchForm.schEdDt.value.length != 10) {
+		alert('발행일은 10자리로 입력해야 합니다.');
+		document.searchForm.schEdDt.focus();
+		return false;
+	} else if($("#schTxtType").val() == "HO" && $("#schText").val() != "" && !regMust1.test($("#schText").val())){
+		alert("서울시보의 시보호수는 숫자로만 검색가능합니다.\n단어로 검색시 다른 검색조건을 선택하셔야 합니다.");	
+		return false;
+	} else if(($("#schTxtType").val() == "DESC" ||  $("#schTxtType").val().substring(0,1)=="G") &&  $("#schText").val() == "" ){
+		alert("검색어를 넣지 않으셨습니다.");	
+		return false;
+	} else {
+		document.searchForm.submit();
+		return false;
+	}
+}
+
+//page 처리
+function fnGoPage(idx) {
+ 	// page default param
+ 	idx = (idx) ? idx : 1;
+ 	$("input[name=fetchStart]").val(idx);
+ 	// add find form param
+ 	com.util.mergeForm("#frm_page","#searchForm");
+ 	// submit
+ 	com.submit("#frm_page", true);	
+}
+
+function fileDown(file) {
+	var url = "/func/seoulsibo/fileDownload.do?fileName="+ encodeURI(file);
+	location.href = url;
+}	
+
+function goView(idx){
+	$("input[name=cn_seq]").val(idx);
+	com.submit("#frm_detail", true);	
+}
+ 
+//뷰스토리 적용 2023-07-12
+//file_url : 파일경로
+//file_name : 파일명 파일경로에서 파일명을 추출할 수 없는 경우 파일명을 입력해주십시오
+function previewAjax(file_url , file_name ){
+	var apiKey = "XXYPNDLVUGWBAN5LG7RO4W";
+	var cc = "sg";
+	var fileUrl = encodeURIComponent(file_url);
+	var fileName = encodeURIComponent(file_name);
+	window.open("https://seoul.viewstory.net/previewAjax.do?apikey={0}&cc={1}&url={2}&fileName={3}".format(apiKey,cc,fileUrl,fileName),"a", "width=1200, height=1000, left=100, top=50");
+}
+function preListen(file_url , file_name){
+	var apiKey = "XXYPNDLVUGWBAN5LG7RO4W";
+	var cc = "sg";
+	var fileUrl = encodeURIComponent(file_url);
+	var fileName = encodeURIComponent(file_name);
+	window.open("https://seoul.viewstory.net/voiceOverAjax.do?apikey={0}&cc={1}&url={2}&fileName={3}".format(apiKey,cc,fileUrl,fileName),"a", "width=1200, height=1000, left=100, top=50");
+}
+
+String.prototype.format = function(){
+	var formatted = this;
+	for( var arg in arguments ) {
+		formatted = formatted.replace ("{"+ arg + "}", arguments[arg]);
+	}
+	return formatted;
+}
+
+
+</script>
+
+<div id="cont" class="title-wrap pc-view">
+	<h3>서울시보</h3>
+	<div class="path">
+		<a href="//www.seoul.go.kr">HOME</a><span>&gt;</span><a	href="//www.seoul.go.kr/realmnews/in/list.do">서울소식</a><span>&gt;</span><a	href="https://www.seoul.go.kr/news/news_tender.do">공고</a><span>&gt;</span>서울시보
+	</div>
+	<div class="util">
+		<a href="#인쇄" onclick="window.print();return false;" title="현재 페이지">인쇄하기</a>
+	</div>
+</div>
+
+<div class="sibo-wrap">
+	<div class="sibobox1">
+		<div class="tit">
+			&quot;서울 시보 발간일은 <strong class="point">매주 목요일</strong>이며, <strong	class="point">공휴일인</strong> 경우는 다음날 발행합니다.&quot;	</div>
+		<div class="desc">
+			책자형 서울시보는 <strong>서울시청 옆 서울도서관</strong>(옛 서울시청사 건물) 
+			<strong>3층	서울자료실</strong>에서 열람할 수 있습니다.<br> <a href="https://lib.seoul.go.kr" target="_blank" title="새창 열림">서울도서관 홈페이지(<strong>https://lib.seoul.go.kr</strong>)</a><br>
+			월요일은 서울도서관 정기휴관일입니다.
+		</div>
+	</div>
+	<!-- //sibobox1 -->
+
+	<div class="box-type2">
+		<ul class="listtype-noti">
+			<li>시보는 PDF파일로 만들어져 있으며, PDF 문서를 확인하기 위해서는 사용자의 컴퓨터에 반드시 전용 뷰어가
+				설치되어 있어야 합니다. 설치되어 있지 않다면 뷰어를 다운로드 받아 설치하세요.
+				<div class="download">
+					<a href="https://www.korea.adobe.com/products/acrobat/readstep2.html" target="_blank" class="btn icon-pdfviewer tiny" title="새창열림"><span>Adobe Reader 다운로드</span></a>
+				</div>
+			</li>
+			<li>자치법규 첨부서식 등은 <strong><a	href="https://legal.seoul.go.kr" target="_blank" title="새창열림">서울시 법무행정서비스(https://legal.seoul.go.kr)</a>	</strong>에서 다운 받으실 수 있습니다.	</li>
+			<li>
+				<button type="button" class="openpop" id="pop-open-button">
+					<strong class="point">상세 안내 팝업</strong>
+				</button>
+				<div class="pop-wrap type1" id="pop1" style="display: none;">
+					<div class="pop-body">
+						<h2>상세안내</h2>
+						<div class="pop-cont">
+							<h3 class="h4-type1" style="font-size: 18px;">일반</h3>
+							<ol class="listtype-decimal">
+								<li>사업 추진 부서에서 게재 의뢰한 고시,공고만 시보에 실립니다. 모든 고시,공고가 시보에 실리는 것이
+									아닙니다.</li>
+								<li>같은 권호 내에서는 게재 의뢰받은 고시,공고 번호 순서대로 실리지만, 사업 부서에서 게재 의뢰를
+									늦게 했을 경우, 뒤의 권호에 실릴 수도 있습니다.</li>
+								<li>시보에 실리지 않은 고시,공고는 사업 부서에서 신문 공고, 인터넷 공고, 대한민국 관보 게재 등
+									여러 가지 다른 방법으로 고지했을 수 있습니다. 자세한 문의는 사업 부서로 해주시기 바랍니다.</li>
+							</ol>
+
+							<h3 class="h4-type1" style="font-size: 18px;">검색</h3>
+							<ol class="listtype-decimal">
+								<li>날짜에 따른 전체 시보 목록 열람은 [시보 호수] 상태에서 달력 아이콘으로 발행일 범위를 조정한 후
+									검색 버튼을 누르면 됩니다. 시보 호수를 아시면 숫자만 입력하고 검색 버튼을 누르세요.</li>
+								<li>전체 목차 또는 안건 종류에 따른 검색은 [시보 호수] 대신 해당 검색 조건을 선택한 후, 검색어를
+									입력하고 검색 버튼을 누르세요.</li>
+								<li>전체 목차 또는 안건 종류에 따른 검색은 제목 검색입니다. 사업 추진 부서에서 게재 의뢰시 제목에
+									해당 단어를 넣지 않았으면 검색되지 않습니다.</li>
+							</ol>
+						</div>
+						<!-- //pop-cont -->
+						<a href="#pop-open-button" class="btn-close"><i	class="sr-only">팝업 닫기</i></a>
+					</div>
+					<!-- //pop-body -->
+				</div>
+				<!-- //pop-wrap -->
+			</li>
+		</ul>
+	</div>
+	<!-- //box-type2 -->
+
+	<p>서울시보는 1953년 6월부터 발행됐습니다. 옛날 시보를 보려면 달력아이콘을 눌러서 발행일 범위를 바꾸고 검색
+		버튼을 누르세요. 서울시 고시/공고가 대한민국 관보 지방자치단체란에 실리는 경우도 있습니다.</p>
+	<p class="sitelink mgT20">
+		<strong><a href="https://gwanbo.go.kr/" target="_blank"  title="새창열림">대한민국 전자관보 (https://gwanbo.go.kr/)</a>	</strong>
+	</p>
+
+	<form name="searchForm"	action='/func/seoulsibo/list.do' method='get' target='_self'>
+		<div class="search-box2">
+			<div class="col">
+				<div>
+					<label for="schStDt">발행일</label>
+					<div
+						style="display: block; position: absolute; width: 0; height: 0; overflow: hidden; font-size: 0; line-height: 0;">
+						달력은 컨트롤 키와 조합하여 다음과 같은 기능을 가집니다. CTRL/COMMAND + 왼쪽 방향키 : (현재 날짜
+						기준) 이전 일 이동<br> CTRL/COMMAND + 오른쪽 방향키 : (현재 날짜 기준) 다음 일 이동<br>
+						CTRL/COMMAND + 위 방향키 : (현재 날짜 기준) 이전 주 이동<br> CTRL/COMMAND + 아래
+						방향키 : (현재 날짜 기준) 다음 주 이동<br> Page up 키로 이전 달을 Page down 키로 다음
+						달을 검색 CTRL + Shift + Page up 키로 이전 연도를 CTRL + Shift + Page down 키로
+						다음 연도를 검색할 수 있습니다.
+					</div>
+					<input type='text' name='schStDt' id='schStDt'	class='date dateStart' value="2024-10-15" title='발행 시작일자(입력예시:2018-01-01)' maxlength='10'>
+					<span class="dash">-</span> <input type='text' name='schEdDt' id='schEdDt' class='date dateEnd' value="2026-10-15" title='발행 종료일자(입력예시:2018-02-01)' maxlength='10'>
+				</div>
+			</div>
+			<div class="col">
+				<label for="schTxtType" class="sr-only">시보 호수 선택</label>
+				<!--</select>-->
+				<select name="schTxtType" title="시보 호수를 선택해주세요" id="schTxtType">
+					<option value='HO' >시보 호수</option>
+					<option value='DESC' >목차(전체)</option>
+					
+					<option value='G001'  >자치법규</option>
+					
+					<option value='G002'  >고시</option>
+					
+					<option value='G003'  >공고</option>
+					
+					<option value='G004'  >서울(특별)시의회</option>
+					
+					<option value='G005'  >(제1/제2)인사위원회</option>
+					
+					<option value='G006'  >공직자윤리위원회</option>
+					
+					<option value='G007'  >서울(특별)시교육청</option>
+					
+					<option value='G008'  >자치구고시</option>
+					
+					<option value='G009'  >자치구공고</option>
+					
+					<option value='G010'  >사업소고시</option>
+					
+					<option value='G011'  >사업소공고</option>
+					
+					<option value='G012'  >기타</option>
+					
+					<option value='G013'  >정정</option>
+					
+					<option value='PDF' >pdf파일(99년1월1일분부터)</option>
+				</select>
+			</div>
+			<div class="col col-search">
+				<label for="schText" class="sr-only">검색어</label> <input type="text" name="schTxt" value="" class="keyword" placeholder="검색어를 입력해 주세요"	id="schText">
+				<button type="button" class="btn tiny btn-sibo-search"	onclick="return doSearch();">
+					<span class="icon-search">검색</span>
+				</button>
+			</div>
+		</div>
+		<!-- //search-box2 -->
+
+
+		<p class="indent15">* 시보 호수는 숫자로만 검색가능하며 ( 예 : 3156 - 검색가능 .	제3138호- 검색불가 ) , 단어로 검색시 다른 검색조건을 선택하세요.</p>
+		
+		<!-- //siteguard -->
+		<div class="board">
+			<div class="board-top">
+				<a href="/func/seoulsibo/quarterlist.do" class="btn tiny bg-point"><span>분기별 목록 보기</span></a>
+				<div class="page_r">
+					<span><strong>1</strong> page / 9 page</span>
+					<!-- <select name="pageCnt" title="검색조건" onchange="changePageCnt();">-->
+					<select name="pageCnt" title="1페이지당 게시물 수 선택">
+						<option value='20' >20</option>
+						<option value='40' >40</option>
+						<option value='60' >60</option>
+						<option value='80' >80</option>
+						<option value='100' >100</option>
+					</select> <a href="javascript:doSearch();" class="btn tiny bg-white" title="페이지 이동"><span>페이지 보기</span></a>
+				</div>
+			</div>
+
+			<div class="tblscroll">
+				<table class="tstyle07">
+					<caption class="sr-only">서울시보 - 시보 호수, 발행일, PDF 파일 보기, 저장, 파일크기로 구성</caption>
+					<colgroup>
+						<!--<col style="width:10%;">-->
+						<col style="width: 16%;">
+						<col style="width: 16%;">
+						<col style="width: 28%;">
+						<col style="width: 12%;">
+						<col style="width: 18%;">
+					</colgroup>
+					<thead>
+						<tr>
+							<!--<th scope="col">번호</th>-->
+							<th scope="col">시보 호수</th>
+							<th scope="col">발행일</th>
+							<th scope="col">PDF 파일 보기</th>
+							<th scope="col">저장</th>
+							<th scope="col">파일크기</th>
+						</tr>
+					</thead>
+					<tbody>
+					
+						
+							
+							
+								
+								<tr>
+									<td><a href="javascript:goView('27530')">제4186호</a></td>
+									<td>2026.10.15</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261014155938_38180.pdf','seoulsibo_20261014155938_38180.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261014155938_38180.pdf','seoulsibo_20261014155938_38180.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20261014155938_38180.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>116.7MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27510')">제4185호</a></td>
+									<td>2026.10.12</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261012110441_30469.pdf','seoulsibo_20261012110441_30469.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261012110441_30469.pdf','seoulsibo_20261012110441_30469.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20261012110441_30469.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>4.3MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27490')">제4184호</a></td>
+									<td>2026.10.08</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261007142751_12293.pdf','seoulsibo_20261007142751_12293.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261007142751_12293.pdf','seoulsibo_20261007142751_12293.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20261007142751_12293.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>12.0MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27470')">제4183호</a></td>
+									<td>2026.10.01</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261007143103_93103.pdf','seoulsibo_20261007143103_93103.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261007143103_93103.pdf','seoulsibo_20261007143103_93103.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20261007143103_93103.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>73.8MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27450')">제4182호</a></td>
+									<td>2026.09.29</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260929102419_58004.pdf','seoulsibo_20260929102419_58004.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260929102419_58004.pdf','seoulsibo_20260929102419_58004.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260929102419_58004.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>11.3MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27430')">제4181호</a></td>
+									<td>2026.09.23</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261012152311_47944.pdf','seoulsibo_20261012152311_47944.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20261012152311_47944.pdf','seoulsibo_20261012152311_47944.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20261012152311_47944.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>348.8MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27390')">제4180호</a></td>
+									<td>2026.09.17</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260917152041_06420.pdf','seoulsibo_20260917152041_06420.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260917152041_06420.pdf','seoulsibo_20260917152041_06420.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260917152041_06420.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>114.9MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27370')">제4179호</a></td>
+									<td>2026.09.11</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260910153107_77021.pdf','seoulsibo_20260910153107_77021.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260910153107_77021.pdf','seoulsibo_20260910153107_77021.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260910153107_77021.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>3.1MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27350')">제4178호</a></td>
+									<td>2026.09.10</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260910094304_20028.pdf','seoulsibo_20260910094304_20028.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260910094304_20028.pdf','seoulsibo_20260910094304_20028.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260910094304_20028.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>64.8MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27330')">제4177호</a></td>
+									<td>2026.09.03</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260902135700_60919.pdf','seoulsibo_20260902135700_60919.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260902135700_60919.pdf','seoulsibo_20260902135700_60919.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260902135700_60919.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>90.9MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27310')">제4176호</a></td>
+									<td>2026.08.31</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260831133339_65375.pdf','seoulsibo_20260831133339_65375.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260831133339_65375.pdf','seoulsibo_20260831133339_65375.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260831133339_65375.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>2.5MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27290')">제4175호</a></td>
+									<td>2026.08.27</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260828163709_74413.pdf','seoulsibo_20260828163709_74413.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260828163709_74413.pdf','seoulsibo_20260828163709_74413.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260828163709_74413.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>124.6MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27271')">제4174호</a></td>
+									<td>2026.08.24</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260821174131_03590.pdf','seoulsibo_20260821174131_03590.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260821174131_03590.pdf','seoulsibo_20260821174131_03590.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260821174131_03590.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>2.5MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27270')">제4173호</a></td>
+									<td>2026.08.20</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260819150923_95839.pdf','seoulsibo_20260819150923_95839.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260819150923_95839.pdf','seoulsibo_20260819150923_95839.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260819150923_95839.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>43.6MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27251')">제4172호</a></td>
+									<td>2026.08.13</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260819094256_60756.pdf','seoulsibo_20260819094256_60756.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260819094256_60756.pdf','seoulsibo_20260819094256_60756.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260819094256_60756.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>34.0MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27250')">제4171호</a></td>
+									<td>2026.08.12</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260812153652_57510.pdf','seoulsibo_20260812153652_57510.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260812153652_57510.pdf','seoulsibo_20260812153652_57510.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260812153652_57510.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>2.5MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27230')">제4170호</a></td>
+									<td>2026.08.10</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260810102938_66634.pdf','seoulsibo_20260810102938_66634.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260810102938_66634.pdf','seoulsibo_20260810102938_66634.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260810102938_66634.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>49.0MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27210')">제4169호</a></td>
+									<td>2026.08.06</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260805144233_10330.pdf','seoulsibo_20260805144233_10330.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260805144233_10330.pdf','seoulsibo_20260805144233_10330.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260805144233_10330.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>116.9MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27190')">제4168호</a></td>
+									<td>2026.07.30</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260729143129_10900.pdf','seoulsibo_20260729143129_10900.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260729143129_10900.pdf','seoulsibo_20260729143129_10900.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260729143129_10900.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>60.3MB</td>
+								</tr>
+						
+							
+								<tr>
+									<td><a href="javascript:goView('27170')">제4167호</a></td>
+									<td>2026.07.27</td>
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+										
+										
+											<td>
+											<!-- 바로보기 버튼 -->
+											<button type="button" onclick="previewAjax('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260723145613_46106.pdf','seoulsibo_20260723145613_46106.pdf');" class="sib-button" title="새창열림"><span class="sib-ico-set-file-preview"></span>바로보기</button>
+											<!-- 바로듣기 버튼 -->
+											<button type="button" onclick="preListen('https://www.seoul.go.kr/func/seoulsibo/fileDownload.do?fileName=seoulsibo_20260723145613_46106.pdf','seoulsibo_20260723145613_46106.pdf')" class="sib-button" title="새창열림"><span class="sib-ico-set-file-sound"></span>바로듣기</button>
+											</td>
+											<td><a href="javascript:void(0)" onclick="fileDown('seoulsibo_20260723145613_46106.pdf');" title='시보 파일다운로드'><img src='/func/common/images/ico_save.gif' alt='저장'></a></td>
+										
+									
+									
+									
+									
+									<!-- 추후에 경로 맞춰야됨.수정필요 -->
+									
+									<td>4.0MB</td>
+								</tr>
+						
+							
+							 
+						
+					
+					
+					
+					</tbody>
+				</table>
+			</div>
+			<div class="pagingsec">
+				<!-- ######################################################################## -->
+<!-- 
+	menu name:		페이징
+	programmer1:	장성주 / 2018-03-29
+--> 
+<!-- ######################################################################## -->
+
+
+
+<div class="page-control" id="paging_main">
+	<ul class="pagination">
+<!-- 		<li class="btn-first">
+			<a href="javascript:fnPagingMove(1);"><span class="sr-only">처음</span></a>
+		</li>
+		<li class="btn-prev">
+			<a href="javascript:fnPreNxtPageMove(2);"><span class="sr-only">이전</span></a>
+		</li> -->
+		
+		
+		
+		
+			
+			
+				<li class="active">
+					<a href="javascript:fnPagingMove(1);" data-page="1" >1<span class="sr-only">(현재페이지)</span></a>
+				</li>
+			
+			
+			
+			
+		
+			
+			
+			
+			
+				<li>
+					<a href="javascript:fnPagingMove(2);" data-page="2" >2</a>
+				</li>
+			
+			
+		
+			
+			
+			
+			
+				<li>
+					<a href="javascript:fnPagingMove(3);" data-page="3" >3</a>
+				</li>
+			
+			
+		
+			
+			
+			
+			
+				<li>
+					<a href="javascript:fnPagingMove(4);" data-page="4" >4</a>
+				</li>
+			
+			
+		
+			
+			
+			
+			
+				<li>
+					<a href="javascript:fnPagingMove(5);" data-page="5" >5</a>
+				</li>
+			
+			
+		
+			
+			
+			
+			
+				<li>
+					<a href="javascript:fnPagingMove(6);" data-page="6" >6</a>
+				</li>
+			
+			
+		
+			
+			
+			
+			
+				<li>
+					<a href="javascript:fnPagingMove(7);" data-page="7" >7</a>
+				</li>
+			
+			
+		
+			
+			
+			
+			
+				<li>
+					<a href="javascript:fnPagingMove(8);" data-page="8" >8</a>
+				</li>
+			
+			
+		
+			
+			
+			
+			
+				<li>
+					<a href="javascript:fnPagingMove(9);" data-page="9" >9</a>
+				</li>
+			
+			
+		
+		
+		
+		
+
+	</ul>
+</div>
+
+
+
+<script>
+
+var pagingCnt		= "9";
+var pagingMinIdx	= "1";
+var pagingMaxIdx	= "9";
+var pageViewSize	= "10";
+
+function fnPreNxtPageMove(val) {
+/* 	var actIdx = $(".page-control li.active").find("a") .attr("data-page");
+	if(idx == "1"){
+		// 이전페이지
+		var preIdx = Number(actIdx) - 1;
+		if(Number(preIdx) > 0){
+			fnPagingMove(preIdx);
+		}
+	}else{
+		// 다음페이지
+		var nxttIdx = Number(actIdx) + 1;
+		if(Number(actIdx) < Number(pagingCnt)){
+			fnPagingMove(nxttIdx);
+		}
+	} */
+	if(val == "prev") {
+		// 이전
+		var preIdx = Number(pagingMinIdx) - pageViewSize;
+		fnPagingMove(preIdx);
+	}else {
+		// 다음
+		var nxttIdx = Number(pagingMaxIdx) + 1;
+		fnPagingMove(nxttIdx);
+	}
+}
+
+function fnPagingMove(idx){
+	var actIdx = $(".page-control li.active").find("a") .attr("data-page");
+	
+	if(idx != actIdx){
+		// 현재 선택된 페이지와 클릭한 페이지가 다를경우 페이지 이동을 한다.
+		if(typeof fnGoPage == "function"){
+			fnGoPage(idx);
+		}
+	}
+}
+
+/**
+ * 동적 페이징
+ * total 	 : 전체 건수
+ * pageNo 	 : 현재 페이지
+ * fetchSize : 페이지 갯수
+ */
+function fnMakePaging(total, pageNo, fetchSize){
+	$("#paging_main").html('');
+	var pageNum = pageNo;
+	var paggingStr = "";
+	
+	if(total > 0){
+		var PAGEBLOCK = fetchSize;
+		var pageSize  = fetchSize;
+		
+		var totalPages = Math.ceil(total/pageSize);
+		if(totalPages <= 0) totalPages = 1;
+		var firstPage  = Math.floor((pageNum-1)/PAGEBLOCK) * PAGEBLOCK+1;
+		if(firstPage <= 0) firstPage = 1;
+		var lastPage = firstPage-1 + PAGEBLOCK;
+		if(lastPage > totalPages) lastPage = totalPages;
+		
+		paggingStr += '<li class="btn-first"><a href="javascript:fnPagingMove(1);"><span class="sr-only">처음</span></a></li>';
+		paggingStr += '<li class="btn-prev"><a href="javascript:fnPreNxtPageMove(1);"><span class="sr-only">이전</span></a></li>';
+
+		for(var i=firstPage; i<=lastPage; i++){
+			if(pageNum == i){
+				paggingStr += '<li class="active"><a href="javascript:fnGoPage('+i+');" data-page="'+i+'" >'+i+'<span class="sr-only">(현재페이지)</span></a></li>';
+			}else{
+				paggingStr += '<li><a href="javascript:fnGoPage('+i+');" data-page="'+i+'" >'+i+'</a></li>';
+			};
+		}
+		paggingStr += '<li class="btn-next"><a href="javascript:fnPreNxtPageMove(2);"><span class="sr-only">다음</span></a></li>';
+		paggingStr += '<li class="btn-last"><a href="javascript:fnPagingMove('+totalPages+');"><span class="sr-only">마지막</span></a></li>';
+		
+		pagingCnt  = totalPages; 
+		
+		$("#paging_main").html(paggingStr);
+	}
+		
+}
+
+</script>
+			</div>
+			<!--// .paginate -->
+		</div>
+	</form>
+
+</div>
+<!--// .sibo-wrap -->
+
+
+<div class="content-info">
+	<div class="ccl-wrap">
+		<a href="https://www.kogl.or.kr/info/licenseType4.do" target="_blank" title="제4유형 공공누리 유형안내 사이트로 이동(새창)"><img src="//www.seoul.go.kr/res_newseoul/images/common/img_opentype04.png" alt="제4유형:출처표시+상업적 이용금지+변경금지" class="openCcl"></a>
+		<p>본 저작물은 "공공누리" <a href="https://www.kogl.or.kr/info/licenseType4.do" target="_blank" title="제4유형 공공누리 유형안내 사이트로 이동(새창)">제4유형:출처표시+상업적 이용금지+변경금지</a> 조건에 따라 이용 할 수 있습니다.</p>			
+	</div>
+	<div class="share-sns-wrap">
+		<button type="button" class="btn-share btn-print" onclick="window.print();" ><span class="sr-only">인쇄하기</span></button>
+		<button type="button" class="btn-share btn-share-open"><span class="sr-only">공유하기 <em>열기</em></span></button>
+		<div class="layer-share-sns">
+			<h4 class="sr-only">공유하기 레이어</h4>
+			<button type="button" class="btn-share btn-share-close"><span class="sr-only">공유하기 레이어 닫기</span></button>
+			<ul class="list-share-sns">
+				<li><button type="button" class="btn-share btn-share-ka" id="kakao-link-btn"><span>카카오톡</span></button></li>
+				<li><button type="button" class="btn-share btn-share-fb" onclick="goFaceBook(window.location.href, '서울시보 | 서울특별시')"><span>페이스북</span></button></li>
+				<li><button type="button" class="btn-share btn-share-tw" onclick="goTwitter(window.location.href, '서울시보 | 서울특별시')"><span>x</span></button></li>
+				<li><button type="button" class="btn-share btn-share-nb" onclick="goBlog(window.location.href, '서울시보 | 서울특별시')"><span>네이버블로그</span></button></li>				
+				
+				
+				<li><button type="button" class="btn-share btn-share-url"  onclick="copyUrl(window.location.href);"><span>URL 복사</span></button></li>
+			</ul>
+			
+		</div>
+	</div>
+	<div class="dept-info-wrap">
+		<dl>
+			<dt>담당부서</dt>
+			<dd>홍보기획관-홍보담당관</dd>
+			<dt>문 의</dt>
+			<dd>02-2133-6455</dd>
+		</dl>
+	</div>
+
+	
+
+	<script src="//developers.kakao.com/sdk/js/kakao.min.js"></script>
+	<script>
+		var currentUrl = window.location.href;
+		var snsTitle = '서울시보 | 서울특별시';
+		var htmlText = $('.sibo-wrap').html();
+		var snsEncode = encodeURIComponent(htmlText);
+		$('input[name="content"]').attr('value', htmlText);
+
+		Kakao.init('65082f7a844c4b6f0df62fd48d73d8f9');
+		// 카카오링크 버튼을 생성합니다. 처음 한번만 호출하면 됩니다.
+		Kakao.Link.createDefaultButton({
+			container: '#kakao-link-btn',
+			objectType: 'feed',
+			content: {
+				title: snsTitle,
+				description: '서울특별시 서울시보 리스트',
+				imageUrl: 'https://www.seoul.go.kr/res_newseoul/images/main/seoul_slogan_kakao.jpg',
+				link: {
+					webUrl: currentUrl,
+					mobileWebUrl: currentUrl
+				}
+			},
+
+			buttons: [
+				{
+					title: '서울시보 | 서울특별시',
+					link: {
+						mobileWebUrl: currentUrl,
+						webUrl: currentUrl
+					}
+				}
+			]
+		});							
+	</script>
+</div>
+<!--// .content-info -->
+
+
+<!-- page 처리  -->
+<form id="frm_page" method="get" action="/func/seoulsibo/list.do">
+	<!-- 페이지 넘버 -->
+	<input type="hidden" name="fetchStart" value="1">
+	<input type="hidden" name="schStDt" value="2024-10-15">
+	<input type="hidden" name="schEdDt" value="2026-10-15">
+	<input type="hidden" name="schTxtType" value="">
+	<input type="hidden" name="schTxt" value="">
+	<input type="hidden" name="pageCnt" value="">
+</form>	
+
+<form id="frm_detail" method="get" action="/func/seoulsibo/detailview.do">
+	<!-- 페이지 넘버 -->
+	<input type="hidden" name="cn_seq" value="">
+</form>	
+
+
+					<!-- container -->
+				
+				</div>
+			</div>
+		</section>
+		<!-- container -->
+			
+
+		<!-- footer -->
+		
+		
+
+
+
+
+	<footer id="footer" class="footer-2019">
+		<div class="inner inner-2019">
+			<div class="footer-link footer-link-new">
+				<ul>
+					<li class=""><a href="//www.seoul.go.kr/helper/view.do" onclick="action_logging({tr_code:'footer_01'});">누리집 도우미</a></li>
+					<li class="policy"><a href="//www.seoul.go.kr/helper/privacy.do?type=www" onclick="action_logging({tr_code:'footer_02'});">개인정보 처리방침</a></li>
+					<li><a href="//www.seoul.go.kr/member/rule/rule.do" 			onclick="action_logging({tr_code:'footer_08'});" >이용약관</a></li>
+					<li class="pc-view"><a href="//www.seoul.go.kr/helper/copyright.do" onclick="action_logging({tr_code:'footer_03'});">저작권 정책</a></li>
+					<li class="pc-view"><a href="//www.seoul.go.kr/helper/media.do" onclick="action_logging({tr_code:'footer_04'});">고정형 영상정보처리기기 운영·관리 방침</a></li>
+					<li><a href="//www.seoul.go.kr/homepageCorrect/user/hpCorrect.do" onclick="action_logging({tr_code:'footer_05'});">누리집 바로잡기</a></li>
+					<li class=""><a href="//www.seoul.go.kr/helper/siteMap.do" onclick="action_logging({tr_code:'footer_06'});">누리집지도</a></li>
+					<li class="kc"><a href="https://pf.kakao.com/_WlXsV" class="kc" target="_blank" title="새창열림" onclick="se_click_logging('https://pf.kakao.com/_WlXsV?tr_code=sns',location.href);"><span class="sr-only">서울시 카카오톡 채널 추가</span></a></li>
+				</ul>
+				<div class="sns sns-new sns-new-2019 sns-202309">
+					<!-- <a href="//www.seoul.go.kr/main/rss.xml" class="rss">RSS</a> -->					
+					<a href="https://www.instagram.com/seoul_official" class="ins"  target="_blank" title="새창열림"  onclick="se_click_logging('https://www.instagram.com/seoul_official?tr_code=sns',location.href);" >인스타그램</a>
+					<a href="https://www.youtube.com/seoullive" class="yt"  target="_blank" title="새창열림"  onclick="se_click_logging('https://www.youtube.com/seoullive?tr_code=sns',location.href);" >유튜브</a>
+					<a href="https://www.facebook.com/seoul.kr" class="fb" target="_blank" title="새창열림" onclick="se_click_logging('https://www.facebook.com/seoul.kr?tr_code=sns',location.href);" >페이스북</a>
+					<a href="https://twitter.com/seoulmania" class="tw"  target="_blank" title="새창열림"  onclick="se_click_logging('https://twitter.com/seoulmania?tr_code=sns',location.href);" >엑스</a>
+					<a href="https://blog.naver.com/haechiseoul" class="bl"  target="_blank" title="새창열림"  onclick="se_click_logging('https://blog.naver.com/haechiseoul?tr_code=sns',location.href);" >블로그</a>
+					<a href="https://story.kakao.com/ch/seoul" class="ks"  target="_blank" title="새창열림"  onclick="se_click_logging('https://story.kakao.com/ch/seoul?tr_code=sns',location.href);" >카카오스토리</a>
+					
+				</div>
+			</div>
+		</div>
+		<div class="row">
+			<div class="inner">
+				<div class="foo-logo foo-logo-new">
+					<span class="seoul-bi"><em class="sr-only">서울특별시</em></span>
+					<a href="https://www.120dasan.or.kr/" title="120다산콜재단(새창)" target="_blank" class="dasan"><em class="sr-only">문의 전화번호 120, 120 다산콜재단</em></a>
+				</div>
+				<div class="address">
+					<p class="city">서울특별시청  04524 서울특별시 중구 세종대로 110 <a href="//www.seoul.go.kr/seoul/map.do?tr_code=footer_07" class="map">[찾아오시는 길]</a></p>
+					
+					<div class="p-only chatbot with-pop">대표전화: 02-120 또는 02-731-2120 (365일 24시간 운영/유료
+						<div class="footer-pop-wrap">
+							<button type="button" class="btn-popinfo"><span class="sr-only">안내팝업 열기</span></button>
+							<div class="footer-pop-cont">
+								‘120다산콜재단’의 통화요금은 행정기관의 서비스 제공에 대한 <span><em>수익자 부담원칙에 따라 <b>별도의 정보이용료 없이 일반 통화요금이 부과</b></em>되며</span> 휴대전화 이용시 본인이 가입한 이동통신사의 요금체계에 따릅니다.
+							</div>
+						</div>)<a href="https://pf.kakao.com/_xemMXj" onclick="action_logging({tr_code:'footer_09'});" target="_blank" title="서울톡 카카오톡 채널 추가(새창)" class="ico-chatbot"><img src="//www.seoul.go.kr/res_newseoul/images/main/img-seoultalk.png" alt="서울톡"></a>
+					</div>
+					<div class="m-only chatbot with-pop">
+						<div class="txt-chatbot">
+							대표전화: <a href="tel:02-120" title="전화걸기">02-120</a> 또는 <a href="tel:02-120" title="전화걸기">02-731-2120</a>
+						</div>
+						<div class="txt-chatbot">
+							(365일 24시간 운영/유료
+							<div class="footer-pop-wrap">
+								<button type="button" class="btn-popinfo"><span class="sr-only">유료 안내팝업 열기</span></button>
+								<div class="footer-pop-cont">
+									‘120다산콜재단’의 통화요금은 행정기관의 서비스 제공에 대한 <span><em>수익자 부담원칙에 따라 <b>별도의 정보이용료 없이 일반 통화요금이 부과</b></em>되며</span> 휴대전화 이용시 본인이 가입한 이동통신사의 요금체계에 따릅니다.
+									<button type="button" class="btn-pop-cont-close"><span class="sr-only">유료 안내팝업 닫기</span></button>
+								</div>
+							</div>
+							)
+							<a href="https://pf.kakao.com/_xemMXj" onclick="action_logging({tr_code:'footer_09'});" target="_blank" title="서울톡 카카오톡 채널 추가(새창)" class="ico-chatbot"><img src="//www.seoul.go.kr/res_newseoul/images/main/img-seoultalk.png" alt="서울톡"></a>
+						</div>
+
+					</div>
+
+					<p class="copy">&copy; Seoul Metropolitan Government all rights reserved</p>
+				</div>
+
+				<div class="mark  pc-view">
+					<!--a href="//www.seoul.go.kr/seoul/gcs.do?tr_code=gcs" target="_blank" title="굿콘텐츠제공서비스 품질인증서"><img src="//spp.seoul.go.kr/spp_inc/accessibility/images/footer_mark_good.png" alt="이용자가 선택한 우수 콘텐츠 서비스 - 한국데이터베이스진흥원 인증마크" /></a-->
+					
+					
+					<a href="//www.seoul.go.kr/helper/web_accessibility.do" onclick="action_logging({tr_code:'wa'});" title="서울시 웹접근성 품질마크 페이지로 이동"><img src="//www.seoul.go.kr/res_newseoul/images/footer_mark_wah_2026.png" alt="과학기술정보통신부 WA(WEB접근성) 품질인증 마크, 웹와치(WebWatch) 2025.11.02~2026.11.01" title="WA 품질인증 마크, 웹와치(WebWatch) 2025.11.02~2026.11.01"></a>
+				</div>
+			</div>
+		</div>
+		<!--// .inner -->
+
+		<!-- 20180903 TOP Button 추가 -->
+		<button type="button" class="btn-top btn-top-2019" title="페이지 상단으로 이동">상단으로</button>
+		<!-- <a href="#wrap" class="btn-top" title="페이지 상단으로 이동"><img src="//www.seoul.go.kr/res_newseoul/images/btn_top.png" alt="상단으로"></a> -->
+		<script>
+			(function(global, $) {
+				'use strict';
+				var _scope, ctrl, topBtn;
+				var init = function() {
+					_scope = global;
+					ctrl = false;
+					topBtn = document.querySelector('.btn-top');
+					bind();
+				};
+				var bind = function() {
+					$(_scope).on('scroll', function() {
+						var _scrollTop = $(_scope).scrollTop();
+						if(ctrl == true && _scrollTop == 0) {
+							ctrl = false;
+							$(topBtn).removeClass('show');
+						} else if( ctrl == false && _scrollTop > 20 ) {
+							ctrl = true;
+							$(topBtn).addClass('show');
+							$(topBtn).off('click').on('click', function() {$("html, body").animate({ scrollTop: 0 }, 300)});
+						}
+					});
+				};
+				init();
+
+				$('.p-only .btn-popinfo').on('keydown', function(e){
+					if(e.keyCode == 13) {
+						if($(this).hasClass('open')) {
+							$(this).removeClass('open').find('.sr-only').text('유료 안내팝업 열기')
+							$(this).closest('.footer-pop-wrap').find('.footer-pop-cont').css('display', 'none');
+						} else {
+							$(this).addClass('open').find('.sr-only').text('유료 안내팝업 닫기');
+							$(this).closest('.footer-pop-wrap').find('.footer-pop-cont').css('display', 'block');
+						}
+					}
+				})
+				$('.m-only .btn-popinfo').on('click', function(e){
+					if($(this).hasClass('open')) {
+						$(this).removeClass('open').find('.sr-only').text('유료 안내팝업 열기')
+						$(this).closest('.footer-pop-wrap').find('.footer-pop-cont').css('display', 'none');
+					} else {
+						$(this).addClass('open').find('.sr-only').text('유료 안내팝업 닫기');
+						$(this).closest('.footer-pop-wrap').find('.footer-pop-cont').css('display', 'block');
+					}
+				})
+				$('.m-only .btn-pop-cont-close').on('click', function(){
+					$(this).closest('.footer-pop-wrap').find('.footer-pop-cont').css('display', 'none');
+					$(this).closest('.footer-pop-wrap').find('.btn-popinfo').removeClass('open').find('.sr-only').text('유료 안내팝업 열기')
+				});
+				$('.p-only .btn-popinfo').on('mouseenter', function(){
+					$('.footer-pop-cont').css('display', 'block');
+				});
+				$('.p-only .footer-pop-wrap, .p-only .btn-popinfo').on('mouseleave', function(event){
+					if(!$(event.relatedTarget).closest('.p-only .footer-pop-wrap, .p-only .btn-popinfo').length) {
+						$('.footer-pop-cont').css('display', 'none');
+					}
+				})
+			})(window, jQuery);
+		</script>
+		<!-- //20180903 TOP Button 추가 -->
+	</footer>
+	<!-- footer -->
+
+<!--// #wrap -->
+<form id="layoutform" name="layoutform" method="get" target="_self"></form>
+
+<!-- <script type="text/javascript" src="//weblog.eseoul.go.kr/wlo/js/install.js"></script> -->
+<script>
+
+	//front.accordion($('.clfix2'), 'active');
+
+
+	function fnLayoutMove(actionName){		
+		$("#layoutform").attr("action", actionName).submit();
+	}
+	/*
+	$('.clfix2').tendina({
+	        animate: true,
+	        speed: 200,
+	        onHover: false,
+	        hoverDelay: 300
+	    });
+	*/
+	    $('.clfix3').tendina({
+	        animate: true,
+	        speed: 300,
+	        onHover: false,
+	        hoverDelay: 300
+	    });
+
+</script>
+ 
+		<!-- footer -->
+
+	</div>
+	
+	<script>	
+	    
+		$(document).ready(function() {
+			// set title
+			document.title = $('.title-wrap').find('h3').text() + ' | 서울특별시';
+
+			/* 2019-10-10 set og:title, og:url */
+			var docTit = document.title;
+			var params = window.location.href;
+			$('meta[property="og:title"]').attr('content', docTit); 
+			$('meta[property="og:url"]').attr('content', params); 
+
+			// 모바일서브메뉴 모바일앱 접근성 수정 2019-08-22
+			$('li#flexible_submenu.dep1>a').append('<em class="sr-only">메뉴 열기</em>'); 
+		});
+
+		
+	 	front.accordion($('.clfix2'), 'active');
+	
+		$('.clfix3').tendina({
+				animate: true,
+				speed: 300,
+				onHover: false,
+				hoverDelay: 300,
+			openCallback: function(clickedEl) {
+				clickedEl.find('>a>em').text('메뉴 닫기');
+			},
+			closeCallback: function(clickedEl) {
+				clickedEl.find('>a>em').text('메뉴 열기');
+			}
+		});
+
+	</script>
+	
+	<!-- weblog -->
+	<script src="//weblog.eseoul.go.kr/wlo/js/install.js" ></script>
+	<!-- //weblog -->
+	
+</body>
+</html>

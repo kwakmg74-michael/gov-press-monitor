@@ -60,17 +60,20 @@ def _dept_groups(rows, category: str) -> list[dict]:
         # 분야 목록에 이미 '기타'가 있을 수 있으므로 중복을 걸러 낸다 —
         # 그대로 두면 같은 묶음이 화면에 두 번 그려진다.
         order = _unique(list(module.GROUP_ORDER) + [agencies.OTHER_GROUP])
+        # 시·도·구보처럼 기관 이름 옆에 놓을 바로가기. 없는 기관은 그냥 없다.
+        관보 = getattr(module, "GAZETTES", {})
         for group, sites in module.sites_by_group():
             for site in sites:
-                buckets.setdefault(group, []).append(
-                    {
-                        "name": site.name,
-                        "count": counts.pop(site.name, 0),
-                        "parent": "",
-                        # 대표 기관(광역자치단체)이 그 묶음 맨 앞에 온다.
-                        "rank": 0 if site.primary else 1,
-                    }
-                )
+                항목 = {
+                    "name": site.name,
+                    "count": counts.pop(site.name, 0),
+                    "parent": "",
+                    # 대표 기관(광역자치단체)이 그 묶음 맨 앞에 온다.
+                    "rank": 0 if site.primary else 1,
+                }
+                if site.name in 관보:
+                    항목["gazette"] = dict(관보[site.name])
+                buckets.setdefault(group, []).append(항목)
 
     if category == models.GOVERNMENT:
         notes = dict(agencies.GROUP_DESCRIPTIONS)
@@ -587,6 +590,25 @@ _TEMPLATE = r"""<!doctype html>
   .chip.zero { color: var(--muted); }
   .chip.zero .n { opacity: 0.55; }
 
+  /* 기관 이름 옆의 시·도·구보 바로가기.
+     체크박스(label) 바깥에 두어야 한다 — 안에 넣으면 바로가기를 누를 때
+     체크박스까지 같이 켜진다. */
+  .chip-row { display: flex; align-items: center; gap: 2px; min-width: 0; }
+  .chip-row .chip { flex: 1 1 auto; min-width: 0; }
+  .gazette {
+    flex: none;
+    font-size: 11px; line-height: 1.35;
+    padding: 2px 6px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .gazette:hover, .gazette:focus-visible {
+    color: var(--accent); border-color: var(--accent); background: var(--sunken);
+  }
+
   .count { font-size: 13px; color: var(--muted); padding: 4px 2px 12px; }
   .more-wrap { padding: 14px 2px 4px; text-align: center; }
   #moreBtn { font-size: 13.5px; padding: 9px 26px; }
@@ -1004,7 +1026,24 @@ _TEMPLATE = r"""<!doctype html>
         label.innerHTML = '<input type="checkbox" id="' + id + '" value="' + esc(dept.name) + '">'
           + '<span class="nm">' + esc(dept.name) + '</span>'
           + '<span class="n">' + dept.count + '</span>';
-        grid.appendChild(label);
+
+        var row = document.createElement('div');
+        row.className = 'chip-row';
+        row.appendChild(label);
+
+        /* 시·도·구보가 있는 기관만 바로가기가 붙는다. 새 창으로 연다 —
+           보던 목록을 잃지 않아야 한다. */
+        if (dept.gazette) {
+          var go = document.createElement('a');
+          go.className = 'gazette';
+          go.href = dept.gazette.url;
+          go.target = '_blank';
+          go.rel = 'noopener noreferrer';
+          go.textContent = dept.gazette.label;
+          go.title = dept.name + ' ' + dept.gazette.label + ' — 새 창으로 열립니다';
+          row.appendChild(go);
+        }
+        grid.appendChild(row);
       });
       section.appendChild(grid);
       deptsEl.appendChild(section);

@@ -502,6 +502,33 @@ def sites_by_region() -> list[tuple[str, list[Site]]]:
     return boards.sites_by_group(SITES, REGION_ORDER)
 
 
+# 시·도·구보 — 기관 이름 옆에 붙는 바로가기.
+#
+# 2026-10-15. 처음에는 이것도 긁어 올까 했는데, 받아 보니 셋 다 "제4186호
+# 2026.10.15" 처럼 **호수 목록**이었다. 개별 고시는 PDF 안에 들어 있고 그
+# PDF가 116MB, 어떤 호는 348MB였다. 긁어 봐야 "이번 주 호가 나왔다"는 것
+# 말고는 알 수 없어서, 가는 길만 놓기로 했다.
+#
+# 여기 없는 기관은 화면에 바로가기가 안 붙는다. 주소를 확인하면 한 줄씩
+# 보태면 된다 — tools/find_gazette.py 가 찾아 준다.
+GAZETTES: dict[str, dict[str, str]] = {
+    # 서울
+    "서울시": {"label": "시보", "url": "https://www.seoul.go.kr/func/seoulsibo/list.do"},
+    "강동구": {"label": "구보", "url": "https://www.gangdong.go.kr/web/newportal/bbs/b_074"},
+    "송파구": {"label": "구보",
+             "url": "https://www.songpa.go.kr/book/selectBbsNttList.do?bbsNo=153&key=3770"},
+    # 경기
+    "경기도": {"label": "도보", "url": "https://www.gg.go.kr/gg-dobo"},
+    "구리시": {"label": "시보",
+             "url": "https://www.guri.go.kr/media/selectBbsNttList.do?bbsNo=567&key=1598"},
+    "성남시": {"label": "시보", "url": "https://www.seongnam.go.kr/bbs010308"},
+    "용인시": {"label": "시보",
+             "url": "https://www.yongin.go.kr/user/bbs/BD_selectBbsList.do?q_bbsCode=1001&q_clCode=4"},
+    "하남시": {"label": "시보",
+             "url": "https://www.hanam.go.kr/www/selectBbsNttList.do?bbsNo=37&key=178"},
+}
+
+
 def sites_by_group():
     """`sites_by_region`의 다른 이름. 대시보드는 분류마다 이 이름으로 부른다."""
     return sites_by_region()
